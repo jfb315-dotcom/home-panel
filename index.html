@@ -6,47 +6,29 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.10">
+<meta name="panel-version" content="2026-11-21.11">
 <link rel="apple-touch-icon" href="icon.png">
-<script>
-// Simple look: no web font, sky, see-through tiles or frame (the look from before the photo picker broke).
-var SIMPLE=false;try{SIMPLE=localStorage.getItem("panel-simple")==="1";}catch(e){}
-if(!SIMPLE)document.write('<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">');
-</script>
 <title>Home Panel</title>
 <style>
 /* Built for iPad mini 2 on iOS 12: no flex gap, no ?. or ??, no inset, no clamp(). */
-:root{--tileA:rgba(16,22,36,.64);--bg:#0E1420;--tile:#182131;--tile2:#243045;--ink:#F2F4F7;--muted:#A7B0BF;--accent:#F5A524;--onaccent:#1A1206;--accentTxt:#F5A524;--line:#2E3A4B}
-body.light{--tileA:rgba(255,255,255,.80);--bg:#EEF1F5;--tile:#FFFFFF;--tile2:#E3E8EF;--ink:#141A24;--muted:#556070;--accent:#F5A524;--onaccent:#1A1206;--accentTxt:#9A5A00;--line:#D5DCE5}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Nunito,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden;-webkit-text-size-adjust:100%}
+:root{--bg:#0E1420;--tile:#182131;--tile2:#243045;--ink:#F2F4F7;--muted:#A7B0BF;--accent:#F5A524;--onaccent:#1A1206;--accentTxt:#F5A524;--line:#2E3A4B}
+body.light{--bg:#EEF1F5;--tile:#FFFFFF;--tile2:#E3E8EF;--ink:#141A24;--muted:#556070;--accent:#F5A524;--onaccent:#1A1206;--accentTxt:#9A5A00;--line:#D5DCE5}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden;-webkit-text-size-adjust:100%}
 button,input,select{font:inherit;color:inherit}
 button{border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;-webkit-appearance:none;border-radius:0}
 button:active{opacity:.7}
 svg{display:block}
-#home{position:fixed;z-index:1;top:0;left:0;right:0;bottom:0;padding:36px 26px 26px;display:flex;flex-direction:column;box-sizing:border-box}
+#home{position:fixed;top:0;left:0;right:0;bottom:0;padding:28px 24px 24px;display:flex;flex-direction:column;box-sizing:border-box}
 header{display:flex;align-items:flex-end;justify-content:space-between;height:72px;margin-bottom:14px;flex:none}
-.clock{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);font-size:62px;font-weight:700;line-height:1;letter-spacing:-.02em}
-.clock small{font-size:24px;font-weight:700;margin-left:6px;letter-spacing:0;color:rgba(255,255,255,.85)}
-.hdate{font-size:21px;color:rgba(255,255,255,.95);text-shadow:0 1px 6px rgba(0,0,0,.5);font-weight:600;margin-top:6px}
+.clock{font-size:60px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.clock small{font-size:24px;font-weight:600;margin-left:6px;letter-spacing:0;color:var(--muted)}
+.hdate{font-size:21px;color:var(--muted);margin-top:6px}
 .hright{display:flex;align-items:center}
-.pill{height:52px;padding:0 20px;border-radius:999px;background:var(--tileA);font-size:17px;font-weight:600;display:flex;align-items:center;margin-left:12px}
+.pill{height:52px;padding:0 20px;border-radius:999px;background:var(--tile);font-size:17px;font-weight:600;display:flex;align-items:center;margin-left:12px}
 .pill svg{margin-right:8px}
 .gag{background:var(--accent);color:var(--onaccent)}
 .grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);grid-gap:12px}
-#sky{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;background:#0B1736}
-#skyBody{position:absolute;top:0;left:0;right:0;bottom:0}
-#skyFx{position:absolute;top:0;left:0;width:100%;height:100%}
-#flash{position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;-webkit-transition:opacity .08s;transition:opacity .08s}
-.cloud{position:absolute;left:0;-webkit-animation:drift linear infinite;animation:drift linear infinite}
-.fog{position:absolute;left:-50%;width:200%;height:18%;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(230,235,240,.35),rgba(255,255,255,0));-webkit-animation:fogmove ease-in-out infinite alternate;animation:fogmove ease-in-out infinite alternate}
-.tw{-webkit-animation:tw 3s ease-in-out infinite alternate;animation:tw 3s ease-in-out infinite alternate}
-@-webkit-keyframes drift{from{-webkit-transform:translate3d(-560px,0,0)}to{-webkit-transform:translate3d(1600px,0,0)}}
-@keyframes drift{from{transform:translate3d(-560px,0,0)}to{transform:translate3d(1600px,0,0)}}
-@-webkit-keyframes fogmove{from{-webkit-transform:translate3d(-8%,0,0)}to{-webkit-transform:translate3d(8%,0,0)}}
-@keyframes fogmove{from{transform:translate3d(-8%,0,0)}to{transform:translate3d(8%,0,0)}}
-@-webkit-keyframes tw{from{opacity:.15}to{opacity:1}}
-@keyframes tw{from{opacity:.15}to{opacity:1}}
-.tile{background:var(--tileA);border-radius:20px;padding:20px;box-sizing:border-box;display:flex;align-items:center;overflow:hidden;position:relative;min-width:0;min-height:0;width:100%;height:100%}
+.tile{background:var(--tile);border-radius:20px;padding:20px;box-sizing:border-box;display:flex;align-items:center;overflow:hidden;position:relative;min-width:0;min-height:0;width:100%;height:100%}
 .span2{grid-column:span 2}
 .col{display:flex;flex-direction:column;justify-content:center;min-width:0}
 .lbl{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
@@ -104,12 +86,6 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #photoBig{flex:1;background-size:contain;background-repeat:no-repeat;background-position:center;margin:0 24px}
 .pbar{display:flex;align-items:center;justify-content:center;padding:12px 24px 20px;flex:none}
 .pbar .btn{background:#222;color:#fff;margin:0 6px}
-.simple #frame,.simple #sky{display:none}
-.simple .tile,.simple .pill{background:var(--tile)}
-.simple .clock,.simple .hdate{color:var(--ink);text-shadow:none}
-.simple .clock small,.simple .hdate{color:var(--muted)}
-.simple #home{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif}
-#frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #toast{position:fixed;left:50%;bottom:40px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#000;color:#fff;font-size:22px;font-weight:600;padding:16px 28px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:.9}
 .ring{color:var(--accentTxt)}
@@ -129,7 +105,6 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 </style>
 </head>
 <body>
-<div id="sky"><div id="skyBody"></div><canvas id="skyFx"></canvas><div id="flash"></div></div>
 <div id="home">
   <header>
     <div>
@@ -138,10 +113,6 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div class="hright">
       <button class="pill" id="themeBtn" aria-label="Screen color: automatic, day or night"></button>
-      <button class="pill" data-act="toBedside" aria-label="Switch to the bedside clock">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
-        Bedside
-      </button>
       <button class="pill" data-open="fun" aria-label="Fun: trivia, joke and word of the day">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01" stroke-width="3"></path></svg>
         Fun
@@ -183,7 +154,6 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 
 <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
 <div id="toast"></div>
-<div id="frame"></div>
 
 <script>
 //---------------------------------------------------------------------
@@ -2555,7 +2525,7 @@ var themeMode=lsGet("panel-theme","auto");
 function applyTheme(){
  var dark;
  if(themeMode==="auto"){var s=sunToday(),n=new Date();dark=n<s.rise||n>s.set;} else dark=themeMode==="dark";
- document.body.className=(dark?"":"light")+(SIMPLE?" simple":"");
+ document.body.className=dark?"":"light";
  var lab={auto:"Auto",light:"Day",dark:"Night"}[themeMode];
  $("themeBtn").innerHTML=icon(themeMode==="auto"?"auto":themeMode==="light"?"sun":"moon",22,2)+lab;
 }
@@ -2572,7 +2542,7 @@ function tickClock(){
  $("hdate").textContent=DAYS[d.getDay()]+", "+MONTHS[d.getMonth()]+" "+d.getDate();
  var dn=dayNum(d);
  if(dn!==lastDay){lastDay=dn;jokeShown=false;renderWordTile();renderVerse();renderCount();renderPhotoTile();renderMoon();}
- applyTheme();if(typeof renderSky==="function")renderSky();
+ applyTheme();
  // Pick up any app updates once a night, unless a timer is going.
  if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},1000);
 }
@@ -2602,7 +2572,7 @@ function loadWeather(){
  var done=false,ctl=window.AbortController?new AbortController():null;
  var to=setTimeout(function(){if(ctl)ctl.abort();},15000);
  fetch(WX_URL,ctl?{signal:ctl.signal}:{}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
- .then(function(j){loadWeather.failed=false;j.fetched=Date.now();lsSet("wx",j);renderWeather();renderMoon();applyTheme();renderSky();})
+ .then(function(j){loadWeather.failed=false;j.fetched=Date.now();lsSet("wx",j);renderWeather();renderMoon();applyTheme();})
  .catch(function(){loadWeather.failed=true;renderWeather();})
  .then(function(){clearTimeout(to);});
 }
@@ -2828,7 +2798,7 @@ function renderPhotoTile(){
 }
 function renderPhotoView(){
  var big=$("photoBig"),bar=$("photoBar");
- if(!photos.length){big.style.backgroundImage="";big.innerHTML='<div class="center" style="padding-top:90px;font-size:24px;color:#bbb">No photos yet. Tap Add photos and pick some from this iPad.<div style="font-size:19px;margin-top:18px;line-height:1.5">If the picker says “No Photos or Videos”: double-press the Home button, swipe this app away,<br>open it again, and tap Add photos first thing. That’s an iOS 12 bug with Home Screen apps.</div></div>';bar.innerHTML='<button class="btn pri" data-act="padd">Add photos</button>';$("photoTitle").textContent="Photos";return;}
+ if(!photos.length){big.style.backgroundImage="";big.innerHTML='<div class="center" style="padding-top:120px;font-size:24px;color:#bbb">No photos yet. Tap Add photos and pick some from this iPad.</div>';bar.innerHTML='<button class="btn pri" data-act="padd">Add photos</button>';$("photoTitle").textContent="Photos";return;}
  if(photoIdx>=photos.length)photoIdx=0;
  big.innerHTML="";big.style.backgroundImage="url("+photos[photoIdx].data+")";
  $("photoTitle").textContent="Photo "+(photoIdx+1)+" of "+photos.length;
@@ -3102,8 +3072,7 @@ function renderFun(){
   L("movie","Movie night picker",movies.length?movies.length+" movies on the list":"Add movies, it picks")+
   L("wifi","Guest Wi-Fi","QR code for guests")+'</div>'+
   '<button class="card fcard" data-act="joke" style="display:block;width:100%"><div class="lbl">Joke or riddle of the day</div><div style="font-size:26px;font-weight:600;margin-top:8px;line-height:1.3">'+esc(j[0])+'</div><div style="font-size:24px;margin-top:10px;color:var(--accentTxt);font-weight:600">'+(jokeShown?esc(j[1]):"Tap for the answer")+'</div></button>'+
-  '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:34px;font-weight:700;margin-top:6px">'+esc(w[0])+' <span style="font-size:18px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:22px;margin-top:6px">'+esc(w[2])+'</div><div style="font-size:19px;color:var(--muted);margin-top:8px">“'+esc(w[3])+'”</div></div>'+
-  '<div class="row" style="justify-content:space-between;margin-top:4px"><div class="ref">Version '+esc(APP_VERSION)+' · updates itself, no need to re-add the icon</div><div><button class="btn" data-act="simple" style="margin:0 10px 0 0">'+(SIMPLE?"Simple look: on":"Simple look: off")+'</button><button class="btn" data-act="latest" style="margin:0">Get latest version</button></div></div>';
+  '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:34px;font-weight:700;margin-top:6px">'+esc(w[0])+' <span style="font-size:18px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:22px;margin-top:6px">'+esc(w[2])+'</div><div style="font-size:19px;color:var(--muted);margin-top:8px">“'+esc(w[3])+'”</div></div>';
 }
 
 function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var k=n-1;k>0;k--){var r=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[r];a[r]=t;}return a;}
@@ -3264,117 +3233,13 @@ function movieAct(a,t){
  return false;
 }
 
-/* ---------- Live sky behind the tiles: matches the weather and the time of day ---------- */
-var skyKey="",skyFx={kind:null,parts:[],raf:0,last:0},skySeed=1;
-function srand(){skySeed=(skySeed*9301+49297)%233280;return skySeed/233280;}
-var SKY={
- day:"linear-gradient(to bottom,#2E7BD6 0%,#6FB1EE 55%,#B4DAFA 100%)",
- dayGray:"linear-gradient(to bottom,#66768A 0%,#8E9CAD 55%,#B3BEC9 100%)",
- dawn:"linear-gradient(to bottom,#27365F 0%,#8A5C86 40%,#E58A62 75%,#F7C48D 100%)",
- dusk:"linear-gradient(to bottom,#1F2A55 0%,#7A4A7E 40%,#D7656F 72%,#F29C68 100%)",
- duskGray:"linear-gradient(to bottom,#2D3446 0%,#5B5868 60%,#8A7A7E 100%)",
- night:"linear-gradient(to bottom,#03071A 0%,#0B1736 55%,#1A2A50 100%)",
- nightGray:"linear-gradient(to bottom,#0D1119 0%,#1A212D 60%,#27303E 100%)"
-};
-function skyNow(){
- var wx=lsGet("wx",null),now=new Date(),s=sunToday(),tw=40*60000;
- var code=wx&&wx.current?+wx.current.weather_code:0,k=wxInfo(code,1).k;
- var phase=(now<s.rise-tw||now>+s.set+tw)?"night":(Math.abs(now-s.rise)<=tw?"dawn":(Math.abs(now-s.set)<=tw?"dusk":"day"));
- var cover=(k==="sun"||k==="moon")?0:k==="partly"?1:2;
- var fx=null;
- if(k==="rain")fx=(code>=51&&code<=57)?"drizzle":(code===65||code===82||code===67)?"heavy":"rain";
- if(k==="storm")fx="storm";if(k==="snow")fx="snow";if(k==="fog")fx="fog";
- return {phase:phase,cover:cover,fx:fx,s:s,now:now};
-}
-function cloudSvg(w,fill,op){
- return '<svg width="'+w+'" height="'+Math.round(w*0.45)+'" viewBox="0 0 200 90" aria-hidden="true"><g fill="'+fill+'" opacity="'+op+'"><ellipse cx="60" cy="58" rx="50" ry="28"/><ellipse cx="105" cy="42" rx="48" ry="36"/><ellipse cx="148" cy="60" rx="45" ry="26"/><rect x="30" y="58" width="150" height="28" rx="14"/></g></svg>';
-}
-function skyMoonSvg(p,size){
- var R=45,k=Math.cos(2*Math.PI*p),rx=Math.abs(k)*R,right=p<0.5,lit;
- var outer=right?1:0,inner=k>0?(right?0:1):(right?1:0);
- if(p<0.0339||p>0.9661)lit="";
- else if(Math.abs(p-0.5)<0.0339)lit='<circle cx="50" cy="50" r="45" fill="#F4ECD0"/>';
- else lit='<path d="M50 5 A45 45 0 0 '+outer+' 50 95 A'+rx.toFixed(2)+' 45 0 0 '+inner+' 50 5z" fill="#F4ECD0"/>';
- return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="rgba(255,255,255,.07)"/>'+lit+'</svg>';
-}
-var skyPaused=false;
-function pauseSky(on){
- skyPaused=on;
- if(on){skyFx.kind=null;if(skyFx.raf){cancelAnimationFrame(skyFx.raf);skyFx.raf=0;}skyFx.parts=[];var c=$("skyFx");c.width=1;c.height=1;$("skyBody").innerHTML="";skyKey="";}
- else renderSky();
-}
-function renderSky(){
- if(skyPaused||SIMPLE)return;
- var st=skyNow(),night=st.phase==="night",W=window.innerWidth,H=window.innerHeight;
- var key=st.phase+"|"+st.cover+"|"+st.fx+"|"+W+"x"+H;
- if(key!==skyKey){
-  skyKey=key;skySeed=dayNum(st.now)%1000+7;
-  var bg=night?(st.cover===2?SKY.nightGray:SKY.night):st.phase==="day"?(st.cover===2?SKY.dayGray:SKY.day):(st.cover===2?SKY.duskGray:(st.phase==="dawn"?SKY.dawn:SKY.dusk));
-  $("sky").style.backgroundImage=bg;
-  var html="";
-  // Stars on clear or partly cloudy nights; a few of them twinkle.
-  if(night&&st.cover<2){
-   var n=st.cover===1?70:150;html+='<svg width="'+W+'" height="'+H+'" style="position:absolute;top:0;left:0" aria-hidden="true">';
-   for(var i=0;i<n;i++){var r=(0.5+srand()*1.2).toFixed(2);html+='<circle cx="'+Math.round(srand()*W)+'" cy="'+Math.round(srand()*H*0.9)+'" r="'+r+'" fill="#fff" opacity="'+(0.35+srand()*0.65).toFixed(2)+'"'+(i%6===0?' class="tw" style="-webkit-animation-delay:-'+(srand()*3).toFixed(1)+'s;animation-delay:-'+(srand()*3).toFixed(1)+'s"':'')+'/>';}
-   html+='</svg>';
-  }
-  html+='<div id="orb" style="position:absolute"></div>';
-  // Drifting clouds; more and grayer when it's overcast.
-  if(st.cover>0||st.fx){
-   var nc=st.cover===1?4:8,fill=night?"#56637A":(st.cover===2?"#C9D0D8":"#FFFFFF"),op=night?0.55:(st.cover===2?0.8:0.9);
-   for(var c=0;c<nc;c++){var w=220+Math.round(srand()*260),dur=160+Math.round(srand()*140),del=-Math.round(srand()*dur);
-    html+='<div class="cloud" style="top:'+Math.round(srand()*H*0.75)+'px;-webkit-animation-duration:'+dur+'s;animation-duration:'+dur+'s;-webkit-animation-delay:'+del+'s;animation-delay:'+del+'s">'+cloudSvg(w,fill,op)+'</div>';}
-  }
-  if(st.fx==="fog")for(var f=0;f<4;f++)html+='<div class="fog" style="top:'+(15+f*22)+'%;-webkit-animation-duration:'+(90+f*30)+'s;animation-duration:'+(90+f*30)+'s"></div>';
-  $("skyBody").innerHTML=html;
-  startFx(st.fx==="fog"?null:st.fx);
- }
- // Sun crosses the sky from sunrise to sunset; the moon crosses at night.
- var orb=$("orb");if(!orb)return;
- var t,html2="",size;
- if(!night){t=(st.now-st.s.rise)/(st.s.set-st.s.rise);size=86;
-  html2=st.cover===2?"":'<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+(st.phase==="day"?"#FFE68A":"#FFB36B")+';box-shadow:0 0 50px 22px rgba(255,214,120,.55)"></div>';}
- else{var set=st.s.set,rise=sunCalc(new Date(st.now.getTime()+864e5)).rise;if(st.now<st.s.rise){set=sunCalc(new Date(st.now.getTime()-864e5)).set;rise=st.s.rise;}
-  t=(st.now-set)/(rise-set);size=74;html2=st.cover===2?"":'<div style="border-radius:50%;box-shadow:0 0 40px 10px rgba(244,236,208,.18)">'+skyMoonSvg(moonPhase(Date.now()),size)+'</div>';}
- t=Math.max(0,Math.min(1,t));
- orb.style.left=Math.round(W*(0.08+0.84*t)-size/2)+"px";orb.style.top=Math.round(150-Math.sin(Math.PI*t)*110)+"px";
- if(orb.innerHTML!==html2)orb.innerHTML=html2;
-}
-// Rain and snow are drawn on a canvas at 30 frames a second, and paused while a full-screen view covers the sky.
-function startFx(kind){
- skyFx.kind=kind;skyFx.parts=[];var c=$("skyFx"),W=window.innerWidth,H=window.innerHeight;
- c.width=W;c.height=H;c.getContext("2d").clearRect(0,0,W,H);
- if(!kind){return;}
- var n={drizzle:70,rain:150,heavy:240,storm:220,snow:120}[kind];
- for(var i=0;i<n;i++)skyFx.parts.push({x:Math.random()*W,y:Math.random()*H,l:kind==="snow"?1+Math.random()*2.4:10+Math.random()*12,v:kind==="snow"?0.6+Math.random()*1.1:(kind==="drizzle"?9:14)+Math.random()*8,p:Math.random()*6.28});
- if(!skyFx.raf)skyFx.raf=requestAnimationFrame(fxFrame);
-}
-function fxFrame(ts){
- skyFx.raf=0;if(!skyFx.kind)return;
- skyFx.raf=requestAnimationFrame(fxFrame);
- if(view||document.hidden||ts-skyFx.last<32)return;skyFx.last=ts;
- var c=$("skyFx"),g=c.getContext("2d"),W=c.width,H=c.height,snow=skyFx.kind==="snow";
- g.clearRect(0,0,W,H);
- if(snow){g.fillStyle="rgba(255,255,255,.85)";g.beginPath();}
- else{g.strokeStyle="rgba(210,225,255,.55)";g.lineWidth=1.3;g.beginPath();}
- for(var i=0;i<skyFx.parts.length;i++){var d=skyFx.parts[i];
-  if(snow){d.p+=0.02;d.x+=Math.sin(d.p)*0.6;d.y+=d.v;g.moveTo(d.x+d.l,d.y);g.arc(d.x,d.y,d.l,0,6.283);}
-  else{d.y+=d.v;d.x+=1.5;g.moveTo(d.x,d.y);g.lineTo(d.x-d.l*0.12,d.y-d.l);}
-  if(d.y>H+20){d.y=-20;d.x=Math.random()*W;}if(d.x>W+20)d.x=-10;
- }
- if(snow)g.fill();else g.stroke();
- if(skyFx.kind==="storm"&&Math.random()<0.004)flash();
-}
-function flash(){var f=$("flash");f.style.opacity=".55";setTimeout(function(){f.style.opacity="0";},90);setTimeout(function(){f.style.opacity=".35";},200);setTimeout(function(){f.style.opacity="0";},290);}
-
 /* ---------- Views, taps, idle return ---------- */
-var view=null,lastTouch=Date.now(),toBedArm=false;
+var view=null,lastTouch=Date.now();
 function openView(name){
- if(view==="photo"&&name!=="photo")pauseSky(false);
  if(view)$("v-"+view).className="view";
  view=name;removeArm=null;photoRmArm=false;
  if(name==="timer")renderTimerView();
- if(name==="photo"){pauseSky(true);var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
+ if(name==="photo"){var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
  if(name==="count")renderCount();
  if(name==="wifi"){wifiEdit=false;renderWifi();}
  if(name==="fun")renderFun();
@@ -3386,7 +3251,7 @@ function openView(name){
  $("v-"+name).className="view on";var sc=$("v-"+name).querySelector(".vbody, #photoBig");if(sc)sc.scrollTop=0;
  if(name==="draw")setupCanvas();
 }
-function closeView(){if(view==="photo")pauseSky(false);if(view)$("v-"+view).className="view";view=null;}
+function closeView(){if(view)$("v-"+view).className="view";view=null;}
 document.addEventListener("click",function(e){
  var t=e.target;while(t&&t!==document&&!(t.getAttribute&&(t.hasAttribute("data-open")||t.hasAttribute("data-timer")||t.hasAttribute("data-act")||t.hasAttribute("data-back"))))t=t.parentNode;
  if(!t||t===document)return;
@@ -3394,9 +3259,6 @@ document.addEventListener("click",function(e){
  if(t.hasAttribute("data-timer")){startTimer(+t.getAttribute("data-timer"));return;}
  if(t.hasAttribute("data-open")){var n=t.getAttribute("data-open");if(n==="photo"&&!photos.length&&db){openView("photo");$("photoInput").click();return;}openView(n);return;}
  var a=t.getAttribute("data-act");
- if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
- if(a==="latest"){getLatest();return;}
- if(a==="simple"){try{localStorage.setItem("panel-simple",SIMPLE?"0":"1");}catch(e){}toast(SIMPLE?"Turning the sky back on…":"Switching to the simple look…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},700);return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
@@ -3432,11 +3294,6 @@ function checkUpdate(){
  }).catch(function(){});
 }
 setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
-// Also check whenever the app is reopened or brought back to the front.
-document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(checkUpdate,1500);},false);
-window.addEventListener("pageshow",function(){setTimeout(checkUpdate,1500);},false);
-// A fresh address always gets the newest copy; saved photos and settings stay because they live on this iPad, not in the page.
-function getLatest(){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);}
 
 /* ---------- Start ---------- */
 applyTheme();
@@ -3445,7 +3302,7 @@ tickClock();setInterval(tickClock,10000);
 setInterval(tickTimer,250);
 loadWeather();setInterval(loadWeather,15*60000);
 idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){photos=all.map(function(r){return {id:r.id,data:r.data};});renderPhotoTile();}).catch(function(){renderPhotoTile();});
-window.addEventListener("resize",function(){skyKey="";renderSky();fitText($("verseText"),22,14);renderWordTile();});
+window.addEventListener("resize",function(){fitText($("verseText"),22,14);renderWordTile();});
 })();
 </script>
 </body>
