@@ -67,7 +67,7 @@ and Night vision scope (`v-scope`, drawn backyard or the panel photos, night/the
 No camera by John's choice. Fonts: Share Tech Mono, Oswald. Spy views keep their "spyview" class (open/close strip only " on").
 Round 2 (all 10-minute idle except agent): Vault cracker (`v-vault`, drag the dial, clicks and the stethoscope meter grow near the number, release on it to lock; 3 numbers; `spy-vault` best time),
 Code breaker (`v-code`, 4 pegs, 6 colors, 10 tries; `spy-code`), Laser grid (`v-laser`, drag from START to EXIT, sliding-gap gates and spinners, 3 lives; `spy-laser` best level),
-Lie detector (`v-lie`, hold thumb 5 s, random verdict; host secret: tap the title = next is LIE, tap READY = next is TRUTH), Agent ID scan (`v-agent`, button under the radar, hold hand 3 s, random code name).
+Lie detector (`v-lie`, hold thumb 5 s, random verdict; host secret: tap the title = next is LIE, tap READY = next is TRUTH; ink and paper turn light red on a LIE), Agent ID scan (`v-agent`, button under the radar, thumbprint pad, hold 3 s, random code name).
 `press()` binds touch+mouse for these; `window.__spy` exists only on localhost for tests.
 
 ## Bedside app (bedside/index.html)

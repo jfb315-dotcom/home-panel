@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.24">
+<meta name="panel-version" content="2026-11-21.25">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -266,16 +266,16 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #lieV b{font-family:Oswald,"Arial Narrow",sans-serif;font-size:58px;letter-spacing:.1em;line-height:1.1}
 #lieV span{font-size:17px}
 #agBox{flex:1;display:flex;align-items:center;justify-content:center;padding:0 24px 24px;min-height:0}
-.agcol{width:170px;font-size:14px;line-height:1.6;color:#2BBF6A;white-space:pre;overflow:hidden;height:380px}
-#agMid{display:flex;flex-direction:column;align-items:center;margin:0 30px;width:340px}
-#agPad{position:relative;width:300px;height:360px;border:2px solid #2BBF6A;border-radius:24px;overflow:hidden;touch-action:none;background:rgba(3,10,6,.9);display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none}
+.agcol{width:170px;font-size:14px;line-height:1.6;color:#2BBF6A;white-space:pre;overflow:hidden;height:300px}
+#agMid{display:flex;flex-direction:column;align-items:center;margin:0 30px;width:380px}
+#agPad{position:relative;width:220px;height:260px;border:2px solid #2BBF6A;border-radius:24px;overflow:hidden;touch-action:none;background:rgba(3,10,6,.9);display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none}
 #agPad svg{pointer-events:none}
 #agLine{position:absolute;left:0;right:0;height:4px;background:#39FF88;box-shadow:0 0 18px 4px rgba(57,255,136,.6);top:0;display:none}
 #agPad.scan{border-color:#FFB020}
 #agPad.scan #agLine{display:block;-webkit-animation:agscan 1s ease-in-out infinite alternate;animation:agscan 1s ease-in-out infinite alternate}
 #agPad.done{border-color:#39FF88;box-shadow:0 0 30px rgba(57,255,136,.45)}
-@-webkit-keyframes agscan{from{top:0}to{top:352px}}
-@keyframes agscan{from{top:0}to{top:352px}}
+@-webkit-keyframes agscan{from{top:0}to{top:252px}}
+@keyframes agscan{from{top:0}to{top:252px}}
 #agMsg{text-align:center;margin-top:18px;min-height:130px}
 .agbig{font-family:Oswald,"Arial Narrow",sans-serif;font-size:34px;font-weight:700;letter-spacing:.08em}
 .agsub{font-size:17px;margin-top:6px;color:#E9FFF2}
@@ -469,7 +469,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
   <div id="agBox">
     <div class="agcol" id="agL"></div>
     <div id="agMid">
-      <div id="agPad"><svg width="220" height="300" viewBox="0 0 220 300" stroke="#39FF88" stroke-width="2.5" aria-hidden="true"><g fill="#07150D"><rect x="42" y="56" width="30" height="120" rx="15"></rect><rect x="78" y="24" width="30" height="150" rx="15"></rect><rect x="114" y="32" width="30" height="142" rx="15"></rect><rect x="150" y="66" width="28" height="112" rx="14"></rect><rect x="8" y="150" width="30" height="96" rx="15" transform="rotate(-32 23 198)"></rect><rect x="40" y="146" width="140" height="138" rx="48"></rect></g></svg><div id="agLine"></div></div>
+      <div id="agPad"><svg width="130" height="165" viewBox="0 0 150 190" fill="none" stroke="#39FF88" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><ellipse cx="75" cy="95" rx="64" ry="86" stroke-dasharray="60 10"></ellipse><ellipse cx="75" cy="100" rx="52" ry="72" stroke-dasharray="44 9"></ellipse><ellipse cx="75" cy="104" rx="40" ry="58" stroke-dasharray="70 8"></ellipse><ellipse cx="75" cy="108" rx="28" ry="44" stroke-dasharray="30 7"></ellipse><ellipse cx="75" cy="112" rx="16" ry="28" stroke-dasharray="50 6"></ellipse><path d="M75 100v26"></path></svg><div id="agLine"></div></div>
       <div id="agMsg"></div>
     </div>
     <div class="agcol" id="agR"></div>
@@ -4434,16 +4434,16 @@ function lieDraw(){
  else if(lie.st==="truth")amp=0.18;
  lie.ph++;
  for(var k=0;k<3;k++){var a=lie.tr[k];a.push(Math.max(-1,Math.min(1,Math.sin(lie.ph*[0.05,0.19,0.08][k])*(k===1?0.4:0.25)+(Math.random()-.5)*amp*(k===2?1.6:1))));if(a.length>W/2)a.shift();}
- g.fillStyle="#EFE8D2";g.fillRect(0,0,W,H);
+ var liar=lie.st==="lie";g.fillStyle=liar?"#F7E2DC":"#EFE8D2";g.fillRect(0,0,W,H);
  g.strokeStyle="rgba(200,60,60,.2)";g.lineWidth=1;g.beginPath();
  for(var x=20-(lie.ph*2)%20;x<W;x+=20){g.moveTo(x,0);g.lineTo(x,H);}for(var y=0;y<H;y+=20){g.moveTo(0,y);g.lineTo(W,y);}g.stroke();
  g.font="13px 'Share Tech Mono', Menlo, monospace";
  ["BREATHING","PULSE","SWEAT"].forEach(function(lb,k){
   var cy=H*(k*2+1)/6,A=H/8,a=lie.tr[k],nx=W-40;
-  g.strokeStyle="#1B1B1B";g.lineWidth=2;g.beginPath();
+  g.strokeStyle=liar?"#F05A5F":"#1B1B1B";g.lineWidth=2;g.beginPath();
   for(var i=0;i<a.length;i++){var px=nx-(a.length-1-i)*2,py=cy+a[i]*A;if(i)g.lineTo(px,py);else g.moveTo(px,py);}
   g.stroke();g.fillStyle="#B03030";g.fillText(lb,10,cy-A-8);
-  var ly=cy+(a.length?a[a.length-1]:0)*A;g.strokeStyle="#666";g.lineWidth=3;g.beginPath();g.moveTo(W,cy-A*1.4);g.lineTo(nx,ly);g.stroke();
+  var ly=cy+(a.length?a[a.length-1]:0)*A;g.strokeStyle=liar?"#F05A5F":"#666";g.lineWidth=3;g.beginPath();g.moveTo(W,cy-A*1.4);g.lineTo(nx,ly);g.stroke();
  });
 }
 press($("liePad"),function(){
@@ -4455,7 +4455,7 @@ press($("liePad"),function(){
 /* Agent ID scan */
 var AG_A=["NIGHT","SILVER","SHADOW","IRON","MIDNIGHT","GOLDEN","SILENT","ARCTIC","THUNDER","GHOST","CRIMSON","STEALTH"],AG_B=["OWL","FOX","FALCON","WOLF","PANTHER","VIPER","HAWK","BADGER","RAVEN","SHARK","LYNX","MONGOOSE"],ag={st:"idle"};
 function agMsg(a,b,col,btn){$("agMsg").innerHTML='<div class="agbig" style="color:'+col+'">'+a+'</div><div class="agsub">'+b+'</div>'+(btn?'<button class="sbtn2 sgo" data-back style="border:0;margin-top:16px">ENTER HQ ▸</button>':'');}
-function startAgent(){clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";ag.L=[];ag.R=[];$("agPad").className="";$("agL").textContent="";$("agR").textContent="";agMsg("PLACE YOUR HAND ON THE SCANNER","HOLD STILL FOR 3 SECONDS","#7DFFB0");}
+function startAgent(){clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";ag.L=[];ag.R=[];$("agPad").className="";$("agL").textContent="";$("agR").textContent="";agMsg("PLACE YOUR THUMB ON THE SCANNER","HOLD STILL FOR 3 SECONDS","#7DFFB0");}
 function hex(n){var s="";while(s.length<n)s+="0123456789ABCDEF".charAt(Math.floor(Math.random()*16));return s;}
 function agGrant(){
  if(view!=="agent")return;ag.st="idle";chime();
@@ -4463,18 +4463,18 @@ function agGrant(){
  agMsg("ACCESS GRANTED","WELCOME, AGENT "+name+" · CLEARANCE LEVEL "+(1+Math.floor(Math.random()*9)),"#39FF88",true);
 }
 press($("agPad"),function(){
- if(ag.st!=="idle")return;ag.st="scan";$("agPad").className="scan";agMsg("SCANNING…","KEEP YOUR HAND ON THE SCANNER","#FFB020");
+ if(ag.st!=="idle")return;ag.st="scan";$("agPad").className="scan";agMsg("SCANNING…","KEEP YOUR THUMB ON THE SCANNER","#FFB020");
  var W=["PALM","RIDGE","VEIN","DNA","PULSE","IRIS","SHOE SIZE","SNACK LEVEL"];
  ag.iv=setInterval(function(){
   ag.L.push("0x"+hex(4)+" "+W[Math.floor(Math.random()*W.length)]);ag.R.push(hex(6)+(Math.random()<.5?" MATCH":" OK"));
-  if(ag.L.length>20){ag.L.shift();ag.R.shift();}$("agL").textContent=ag.L.join("\n");$("agR").textContent=ag.R.join("\n");spyBeep(1800+Math.random()*600,0.02,0.06);
+  if(ag.L.length>16){ag.L.shift();ag.R.shift();}$("agL").textContent=ag.L.join("\n");$("agR").textContent=ag.R.join("\n");spyBeep(1800+Math.random()*600,0.02,0.06);
  },120);
  ag.to=setTimeout(function(){
   clearInterval(ag.iv);if(view!=="agent")return;$("agPad").className="done";ag.st="wait";
   if(Math.random()<0.12){alarm();agMsg("ACCESS DENIED","…JUST KIDDING","#FF4D4D");ag.to=setTimeout(agGrant,1800);}else agGrant();
  },3000);
 },function(){},function(){
- if(ag.st!=="scan")return;clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";$("agPad").className="";agMsg("SCAN INTERRUPTED","KEEP YOUR HAND DOWN UNTIL IT FINISHES","#FF8A8A");
+ if(ag.st!=="scan")return;clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";$("agPad").className="";agMsg("SCAN INTERRUPTED","KEEP YOUR THUMB DOWN UNTIL IT FINISHES","#FF8A8A");
 });
 
 // Local testing only.
