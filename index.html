@@ -6,9 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.9">
+<meta name="panel-version" content="2026-11-21.10">
 <link rel="apple-touch-icon" href="icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+// Simple look: no web font, sky, see-through tiles or frame (the look from before the photo picker broke).
+var SIMPLE=false;try{SIMPLE=localStorage.getItem("panel-simple")==="1";}catch(e){}
+if(!SIMPLE)document.write('<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">');
+</script>
 <title>Home Panel</title>
 <style>
 /* Built for iPad mini 2 on iOS 12: no flex gap, no ?. or ??, no inset, no clamp(). */
@@ -100,6 +104,11 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #photoBig{flex:1;background-size:contain;background-repeat:no-repeat;background-position:center;margin:0 24px}
 .pbar{display:flex;align-items:center;justify-content:center;padding:12px 24px 20px;flex:none}
 .pbar .btn{background:#222;color:#fff;margin:0 6px}
+.simple #frame,.simple #sky{display:none}
+.simple .tile,.simple .pill{background:var(--tile)}
+.simple .clock,.simple .hdate{color:var(--ink);text-shadow:none}
+.simple .clock small,.simple .hdate{color:var(--muted)}
+.simple #home{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif}
 #frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #toast{position:fixed;left:50%;bottom:40px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#000;color:#fff;font-size:22px;font-weight:600;padding:16px 28px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:.9}
@@ -2546,7 +2555,7 @@ var themeMode=lsGet("panel-theme","auto");
 function applyTheme(){
  var dark;
  if(themeMode==="auto"){var s=sunToday(),n=new Date();dark=n<s.rise||n>s.set;} else dark=themeMode==="dark";
- document.body.className=dark?"":"light";
+ document.body.className=(dark?"":"light")+(SIMPLE?" simple":"");
  var lab={auto:"Auto",light:"Day",dark:"Night"}[themeMode];
  $("themeBtn").innerHTML=icon(themeMode==="auto"?"auto":themeMode==="light"?"sun":"moon",22,2)+lab;
 }
@@ -3094,7 +3103,7 @@ function renderFun(){
   L("wifi","Guest Wi-Fi","QR code for guests")+'</div>'+
   '<button class="card fcard" data-act="joke" style="display:block;width:100%"><div class="lbl">Joke or riddle of the day</div><div style="font-size:26px;font-weight:600;margin-top:8px;line-height:1.3">'+esc(j[0])+'</div><div style="font-size:24px;margin-top:10px;color:var(--accentTxt);font-weight:600">'+(jokeShown?esc(j[1]):"Tap for the answer")+'</div></button>'+
   '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:34px;font-weight:700;margin-top:6px">'+esc(w[0])+' <span style="font-size:18px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:22px;margin-top:6px">'+esc(w[2])+'</div><div style="font-size:19px;color:var(--muted);margin-top:8px">“'+esc(w[3])+'”</div></div>'+
-  '<div class="row" style="justify-content:space-between;margin-top:4px"><div class="ref">Version '+esc(APP_VERSION)+' · updates itself, no need to re-add the icon</div><button class="btn" data-act="latest" style="margin:0">Get latest version</button></div>';
+  '<div class="row" style="justify-content:space-between;margin-top:4px"><div class="ref">Version '+esc(APP_VERSION)+' · updates itself, no need to re-add the icon</div><div><button class="btn" data-act="simple" style="margin:0 10px 0 0">'+(SIMPLE?"Simple look: on":"Simple look: off")+'</button><button class="btn" data-act="latest" style="margin:0">Get latest version</button></div></div>';
 }
 
 function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var k=n-1;k>0;k--){var r=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[r];a[r]=t;}return a;}
@@ -3295,7 +3304,7 @@ function pauseSky(on){
  else renderSky();
 }
 function renderSky(){
- if(skyPaused)return;
+ if(skyPaused||SIMPLE)return;
  var st=skyNow(),night=st.phase==="night",W=window.innerWidth,H=window.innerHeight;
  var key=st.phase+"|"+st.cover+"|"+st.fx+"|"+W+"x"+H;
  if(key!==skyKey){
@@ -3387,6 +3396,7 @@ document.addEventListener("click",function(e){
  var a=t.getAttribute("data-act");
  if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="latest"){getLatest();return;}
+ if(a==="simple"){try{localStorage.setItem("panel-simple",SIMPLE?"0":"1");}catch(e){}toast(SIMPLE?"Turning the sky back on…":"Switching to the simple look…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},700);return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
