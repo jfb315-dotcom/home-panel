@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b3">
+<meta name="panel-version" content="2026-11-21.b4">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -18,13 +18,15 @@ button{border:0;background:none;padding:0;margin:0;cursor:pointer;-webkit-appear
 button:active{opacity:.6}
 #sky{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;-webkit-transition:background-color 8s linear;transition:background-color 8s linear}
 #home{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-transition:opacity 1.5s;transition:opacity 1.5s}
-#clock{font-size:230px;font-weight:300;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+#clock{font-size:230px;font-weight:300;line-height:1;letter-spacing:-.03em;white-space:nowrap;-webkit-font-feature-settings:"lnum" 1;font-feature-settings:"lnum" 1;font-variant-numeric:lining-nums}
 #top{position:absolute;top:26px;left:0;right:0;text-align:center;font-size:24px;display:flex;align-items:center;justify-content:center}
 #top svg{margin-right:10px}
 .dim #top{opacity:.3}
 #top{-webkit-transition:opacity 2s;transition:opacity 2s}
 .fchip{height:64px;padding:0 22px;font-size:26px}
 #clock small{font-size:46px;margin-left:10px;letter-spacing:0;font-weight:400}
+.colon{display:inline-block;position:relative;height:.7em;width:.22em;margin:0 .03em}
+.colon i{position:absolute;left:50%;background:currentColor;display:block}
 #line{font-size:24px;margin-top:18px;text-align:center;opacity:.85}
 #nudge{font-size:30px;margin-top:14px;font-weight:600;display:none}
 #bar{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center}
@@ -148,11 +150,26 @@ function applyLook(){
  var F=FONTS[S.font]||FONTS.thin,C=COLORS[S.color]||COLORS.amber,px=(SIZES[S.size]||SIZES.m).px,c=$("clock");
  loadFont(S.font);
  document.body.style.setProperty("--c",C.c);document.body.style.setProperty("--cb",C.b);
- c.style.fontFamily=F.f;c.style.fontWeight=fontWeight(F);c.style.letterSpacing=S.font==="digital"?"0":"-.03em";
+ c.style.fontFamily=F.f;c.style.fontWeight=fontWeight(F);placeColons(c,F.f,fontWeight(F),S.font==="digital"||S.font==="space"||S.font==="tall");c.style.letterSpacing=S.font==="digital"?"0":"-.03em";
  // Shrink to fit the screen width (the Huge size on a long time like 12:59 would run off the edge).
  if(window.innerHeight>window.innerWidth)px=Math.round(px*0.75);
  var sm=c.getElementsByTagName("small")[0],size=function(){c.style.fontSize=px+"px";if(sm)sm.style.fontSize=Math.round(px/5)+"px";};
  size();var max=window.innerWidth*0.94;while(px>80&&c.scrollWidth>max){px-=8;size();}
+}
+// Fonts put the colon low (lined up with small letters); draw our own dots centered on the digits instead.
+function capRatio(fam,wt){
+ try{var g=document.createElement("canvas").getContext("2d");g.font=wt+" 100px "+fam;var m=g.measureText("0");
+  if(m.actualBoundingBoxAscent>20&&m.actualBoundingBoxAscent<100)return m.actualBoundingBoxAscent/100;}catch(e){}
+ return 0.7;
+}
+function placeColons(el,fam,wt,square){
+ var cap=capRatio(fam,wt),dot=0.055+Math.max(0,wt-200)/600*0.075;
+ Array.prototype.forEach.call(el.querySelectorAll(".colon"),function(c){
+  c.style.height=cap.toFixed(3)+"em";c.style.width=(dot+0.14).toFixed(3)+"em";
+  var d=c.getElementsByTagName("i");
+  for(var k=0;k<2;k++){var st=d[k].style;st.width=st.height=dot.toFixed(3)+"em";st.marginLeft=(-dot/2).toFixed(3)+"em";st.borderRadius=square?"0":"50%";
+   st.top=(cap*(k?0.72:0.28)-dot/2).toFixed(3)+"em";}
+ });
 }
 function renderStyle(){
  Object.keys(FONTS).forEach(loadFont);
@@ -207,7 +224,7 @@ function nextWake(){
 var lastTouch=Date.now(),view=null;
 function render(){
  var now=new Date(),h=now.getHours(),m=now.getMinutes();
- $("clock").innerHTML=((h%12)||12)+":"+pad(m)+"<small>"+(h<12?"AM":"PM")+"</small>";
+  $("clock").innerHTML=((h%12)||12)+'<span class="colon"><i></i><i></i></span>'+pad(m)+"<small>"+(h<12?"AM":"PM")+"</small>";
  var nw=nextWake(),parts=[];
  if(nw){var hrs=(nw-now)/36e5;parts.push("Sunrise "+fmtTime(S.h,S.m)+(nw.getDate()!==now.getDate()&&hrs>16?" "+DAYS[nw.getDay()]:"")+(hrs<14?" · "+(hrs>=1?Math.floor(hrs)+" hr ":"")+(Math.floor((nw-now)/60000)%60)+" min":""));}
  if(snd.on)parts.push(SOUNDS[snd.kind].n+(snd.end?" · "+Math.max(1,Math.ceil((snd.end-Date.now())/60000))+" min left":""));
@@ -225,7 +242,7 @@ function render(){
  var st=sunState(now);
  var sk=$("sky").style,tr="background-color "+(demo?"1.2s":"8s")+" linear";sk.webkitTransition=tr;sk.transition=tr;sk.backgroundColor=st?skyColor(st.p):"#000";
  $("clock").style.color=$("line").style.color=$("top").style.color=st&&st.p>0.6?"#3A1A00":"";
- if(st&&st.morning){$("morning").style.display="flex";$("mClock").textContent=((h%12)||12)+":"+pad(m);$("mWx").textContent=dayWx(0)?"Today: "+dayWx(0):"";if(view)closeView();}
+ if(st&&st.morning){$("morning").style.display="flex";$("mClock").innerHTML=((h%12)||12)+'<span class="colon"><i></i><i></i></span>'+pad(m);placeColons($("mClock"),"-apple-system,sans-serif",300);$("mWx").textContent=dayWx(0)?"Today: "+dayWx(0):"";if(view)closeView();}
  else $("morning").style.display="none";
  document.body.className=Date.now()-lastTouch>15000&&!st?"dim":"";
 }
