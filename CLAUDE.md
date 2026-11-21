@@ -54,3 +54,6 @@ Has its own `panel-version` meta and the same self-update; it never reloads duri
 John asked to roll the wall panel back to commit 85987d5 (before Bedside, live sky, Nunito, frame, Bedside button) to test
 whether the photo picker works again. index.html = 85987d5 with panel-version bumped to 2026-11-21.11. The later version is in
 git history (097b8f7). Re-add later features one at a time, testing the photo picker after each. Bedside app files are unchanged.
+Step 1 (2026-11-21.12): sky + Nunito + see-through tiles (from 697026b) + frame. NOT yet back: Bedside button, update-on-reopen
+and "Get latest version", pauseSky, Simple look. Picker worked on .11; Simple look on .10 still failed, so the Bedside button or
+update-on-reopen (visibilitychange/pageshow + ?v= reloads) are the main suspects.
