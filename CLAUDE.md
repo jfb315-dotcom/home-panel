@@ -26,3 +26,10 @@ Idle return: 1 minute; a running timer never closes; trivia in progress, scorebo
 ## Publishing
 Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live page every 15 minutes and reloads
 itself (when idle on the home screen) only if that value differs; without a bump it keeps its cached copy.
+
+## Bedside app (bedside/index.html)
+Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
+over 10/20/30 min, then a "Good morning" screen for 45 min or until tapped), sleep sounds generated with Web Audio
+(white/pink/brown/rain/ocean/fan, sleep timer with 1-minute fade), night light, bedtime reminder, today/tomorrow weather.
+No alarm sound by John's choice. Storage: `bedside` (settings), `bed-done`, `bed-mins`, `bed-glow`, `bed-wx`.
+Has its own `panel-version` meta and the same self-update; it never reloads during a sunrise or while a sound plays.

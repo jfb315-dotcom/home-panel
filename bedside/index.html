@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Bedside">
+<meta name="panel-version" content="2026-11-21.b1">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Bedside</title>
+<style>
+/* Built for iPad mini 2 on iOS 12: no flex gap, no ?. or ??, no inset, no clamp(). */
+html,body{margin:0;height:100%;background:#000;color:#FF9F43;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden;-webkit-text-size-adjust:100%}
+button,input,select{font:inherit;color:inherit}
+button{border:0;background:none;padding:0;margin:0;cursor:pointer;-webkit-appearance:none;border-radius:0}
+button:active{opacity:.6}
+#sky{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;-webkit-transition:background-color 8s linear;transition:background-color 8s linear}
+#home{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-transition:opacity 1.5s;transition:opacity 1.5s}
+#clock{font-size:230px;font-weight:300;line-height:1;letter-spacing:-.03em}
+#clock small{font-size:46px;margin-left:10px;letter-spacing:0;font-weight:400}
+#line{font-size:24px;margin-top:18px;text-align:center;opacity:.85}
+#nudge{font-size:30px;margin-top:14px;font-weight:600;display:none}
+#bar{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center}
+.bb{height:64px;padding:0 26px;margin:0 8px;border-radius:999px;border:1px solid rgba(255,159,67,.35);font-size:20px;display:flex;align-items:center}
+.bb svg{margin-right:8px}
+.dim #clock,.dim #line,.dim #bar{opacity:.3}
+#clock,#line,#bar{-webkit-transition:opacity 2s;transition:opacity 2s}
+.view{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;display:none;flex-direction:column;z-index:10}
+.view.on{display:flex}
+.vbar{height:96px;padding:0 24px;display:flex;align-items:center;flex:none}
+.back{height:60px;padding:0 22px 0 14px;border-radius:16px;border:1px solid rgba(255,159,67,.35);font-size:21px;display:flex;align-items:center}
+.vbar h1{font-size:30px;margin:0 0 0 20px;font-weight:600}
+.vbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 24px 24px}
+.card{border:1px solid rgba(255,159,67,.25);border-radius:20px;padding:22px;margin-bottom:12px}
+.lbl{font-size:14px;text-transform:uppercase;letter-spacing:.08em;opacity:.7;font-weight:600;margin-bottom:12px}
+.row{display:flex;align-items:center;flex-wrap:wrap}
+.chip{height:60px;min-width:60px;padding:0 20px;border-radius:14px;border:1px solid rgba(255,159,67,.35);font-size:20px;margin:0 10px 10px 0;display:inline-flex;align-items:center;justify-content:center}
+.chip.on{background:#FF9F43;color:#1A0C00;border-color:#FF9F43;font-weight:600}
+.big{font-size:24px}
+input[type=time]{height:64px;font-size:34px;background:#000;border:1px solid rgba(255,159,67,.35);border-radius:14px;padding:0 14px;color:#FF9F43;-webkit-appearance:none}
+input[type=range]{width:100%;height:44px}
+.snd{width:140px;height:110px;border-radius:18px;border:1px solid rgba(255,159,67,.35);font-size:22px;margin:0 12px 12px 0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center}
+.snd.on{background:#FF9F43;color:#1A0C00;font-weight:600}
+.snd svg{margin-bottom:8px}
+#v-light{background:#000}
+#glow{flex:1}
+.note{font-size:18px;opacity:.75;line-height:1.4}
+#morning{position:fixed;top:0;left:0;right:0;bottom:0;background:#FFF3DC;display:none;flex-direction:column;align-items:center;justify-content:center;color:#3A1A00;z-index:20}
+#morning .t{font-size:160px;font-weight:300;line-height:1}
+#morning .g{font-size:44px;font-weight:600;margin-top:10px}
+#morning .w{font-size:26px;margin-top:12px}
+#morning .h{font-size:20px;margin-top:40px;opacity:.7}
+#toast{position:fixed;left:50%;bottom:120px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#1A0C00;color:#FF9F43;font-size:22px;padding:14px 26px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap;border:1px solid rgba(255,159,67,.4)}
+#toast.on{opacity:1}
+@media (orientation:portrait){#clock{font-size:170px}#clock small{font-size:36px}}
+</style>
+</head>
+<body>
+<div id="sky"></div>
+<div id="home">
+  <div id="clock">--:--</div>
+  <div id="line"></div>
+  <div id="nudge">Time for bed</div>
+  <div id="bar">
+    <button class="bb" data-open="sunrise">SUNICON Sunrise</button>
+    <button class="bb" data-open="sounds">WAVEICON Sounds</button>
+    <button class="bb" data-open="light">BULBICON Night light</button>
+  </div>
+</div>
+
+<section class="view" id="v-sunrise"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Sunrise wake-up</h1></div><div class="vbody" id="sunBody"></div></section>
+<section class="view" id="v-sounds"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Sleep sounds</h1></div><div class="vbody" id="sndBody"></div></section>
+<section class="view" id="v-light"><div class="vbar" style="position:absolute;top:0;left:0;z-index:2"><button class="back" data-back style="color:#7a4a10;border-color:rgba(122,74,16,.4)">BACKICON Back</button></div><button id="glow" data-act="glow" aria-label="Change brightness"></button></section>
+
+<div id="morning" role="button" data-act="morning"><div class="t" id="mClock"></div><div class="g">Good morning</div><div class="w" id="mWx"></div><div class="h">Tap anywhere to turn off</div></div>
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var LAT=35.19,LON=-84.87;
+var $=function(id){return document.getElementById(id);};
+var lsGet=function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}};
+var lsSet=function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+var pad=function(n){return (n<10?"0":"")+n;};
+var DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var fmtTime=function(h,m){return ((h%12)||12)+":"+pad(m)+" "+(h<12?"AM":"PM");};
+var dayKey=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
+function toast(msg){var t=$("toast");t.textContent=msg;t.className="on";clearTimeout(toast.t);toast.t=setTimeout(function(){t.className="";},2200);}
+
+var IC={sun:'<circle cx="12" cy="14" r="4"/><path d="M12 4v2M4.9 7.9l1.4 1.4M19.1 7.9l-1.4 1.4M2 18h20M2 14h2M20 14h2"/>',
+ wave:'<path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0M2 17c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>',
+ rain:'<path d="M7 13h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.7 1.4A3.3 3.3 0 0 0 7 13z"/><path d="M8 16l-1 3M12 16l-1 3M16 16l-1 3"/>',
+ fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s2 5-2 7M14 12c4 0 7 1 7 4s-5 2-7-2M12 14c0 4-1 7-4 7s-2-5 2-7M10 12c-4 0-7-1-7-4s5-2 7 2"/>',
+ noise:'<path d="M3 12h2l2-6 3 12 3-9 2 6 2-3h4"/>'};
+function icon(n,s,sw){return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>';}
+Array.prototype.forEach.call(document.querySelectorAll("button"),function(b){b.innerHTML=b.innerHTML.replace("BACKICON",icon("back",26,2.4)).replace("SUNICON",icon("sun",24)).replace("WAVEICON",icon("wave",24)).replace("BULBICON",icon("bulb",24));});
+
+/* ---------- Settings ---------- */
+var S=lsGet("bedside",null)||{on:false,h:6,m:30,days:[1,2,3,4,5],len:20,bedOn:false,bh:22,bm:0,vol:0.6};
+function saveS(){lsSet("bedside",S);}
+
+/* ---------- Weather (tomorrow, for the clock line and the morning screen) ---------- */
+var WX_URL="https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON+"&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=3";
+function wxText(c){c=+c;if(c===0||c===1)return "Clear";if(c===2)return "Partly cloudy";if(c===3)return "Cloudy";if(c===45||c===48)return "Fog";if(c>=51&&c<=67)return "Rain";if(c>=71&&c<=77)return "Snow";if(c>=80&&c<=82)return "Showers";if(c===85||c===86)return "Snow showers";if(c>=95)return "Storms";return "";}
+function loadWx(){if(!window.fetch)return;fetch(WX_URL).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(j){j.got=Date.now();lsSet("bed-wx",j);render();}).catch(function(){});}
+function dayWx(offset){
+ var j=lsGet("bed-wx",null);if(!j||!j.daily)return "";
+ var d=new Date();d.setDate(d.getDate()+offset);var i=j.daily.time.indexOf(dayKey(d));if(i<0)return "";
+ var dd=j.daily;return wxText(dd.weather_code[i])+" · "+Math.round(dd.temperature_2m_max[i])+"° / "+Math.round(dd.temperature_2m_min[i])+"°"+(dd.precipitation_probability_max[i]>=20?" · rain "+dd.precipitation_probability_max[i]+"%":"");
+}
+
+/* ---------- Sunrise ---------- */
+// Black to deep red to orange to warm white, like a real sunrise.
+var STOPS=[[0,[0,0,0]],[0.25,[43,6,0]],[0.5,[138,36,0]],[0.75,[255,138,42]],[1,[255,243,220]]];
+function skyColor(p){
+ for(var i=1;i<STOPS.length;i++)if(p<=STOPS[i][0]){var a=STOPS[i-1],b=STOPS[i],t=(p-a[0])/(b[0]-a[0]);
+  return "rgb("+[0,1,2].map(function(k){return Math.round(a[1][k]+(b[1][k]-a[1][k])*t);}).join(",")+")";}
+ return "rgb(255,243,220)";
+}
+var demo=null,doneDay=lsGet("bed-done","");
+function sunState(now){
+ // Returns {p:0..1 during the ramp, morning:true for 45 minutes after wake time}.
+ if(demo){var dp=(now-demo)/30000;if(dp<1)return {p:dp};if(dp<1.5)return {p:1,morning:true};demo=null;}
+ if(!S.on)return null;
+ var wake=new Date(now.getFullYear(),now.getMonth(),now.getDate(),S.h,S.m);
+ if(S.days.indexOf(wake.getDay())<0)return null;
+ if(doneDay===dayKey(now))return null;
+ var start=wake-S.len*60000,end=+wake+45*60000;
+ if(now<start||now>end)return null;
+ if(now<=wake)return {p:(now-start)/(wake-start)};
+ return {p:1,morning:true};
+}
+function nextWake(){
+ if(!S.on||!S.days.length)return null;
+ var now=new Date();
+ for(var i=0;i<8;i++){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,S.h,S.m);if(d>now&&S.days.indexOf(d.getDay())>=0&&!(i===0&&doneDay===dayKey(now)))return d;}
+ return null;
+}
+
+/* ---------- Clock and home ---------- */
+var lastTouch=Date.now(),view=null;
+function render(){
+ var now=new Date(),h=now.getHours(),m=now.getMinutes();
+ $("clock").innerHTML=((h%12)||12)+":"+pad(m)+"<small>"+(h<12?"AM":"PM")+"</small>";
+ var nw=nextWake(),parts=[];
+ if(nw){var hrs=(nw-now)/36e5;parts.push("Sunrise "+fmtTime(S.h,S.m)+(nw.getDate()!==now.getDate()&&hrs>16?" "+DAYS[nw.getDay()]:"")+(hrs<14?" · "+(hrs>=1?Math.floor(hrs)+" hr ":"")+(Math.floor((nw-now)/60000)%60)+" min":""));}
+ var tw=h>=15?dayWx(1):dayWx(0);if(tw)parts.push((h>=15?"Tomorrow: ":"Today: ")+tw);
+ if(snd.on)parts.push(SOUNDS[snd.kind].n+(snd.end?" · "+Math.max(1,Math.ceil((snd.end-Date.now())/60000))+" min left":""));
+ $("line").textContent=parts.join("   ·   ");
+ // Bedtime reminder shows for 30 minutes from the set time.
+ var bt=new Date(now.getFullYear(),now.getMonth(),now.getDate(),S.bh,S.bm);
+ $("nudge").style.display=S.bedOn&&now>=bt&&now-bt<30*60000?"block":"none";
+ var st=sunState(now);
+ var sk=$("sky").style,tr="background-color "+(demo?"1.2s":"8s")+" linear";sk.webkitTransition=tr;sk.transition=tr;sk.backgroundColor=st?skyColor(st.p):"#000";
+ $("clock").style.color=$("line").style.color=st&&st.p>0.6?"#3A1A00":"";
+ if(st&&st.morning){$("morning").style.display="flex";$("mClock").textContent=((h%12)||12)+":"+pad(m);$("mWx").textContent=dayWx(0)?"Today: "+dayWx(0):"";if(view)closeView();}
+ else $("morning").style.display="none";
+ document.body.className=Date.now()-lastTouch>15000&&!st?"dim":"";
+}
+
+/* ---------- Sleep sounds (made on the fly, no files) ---------- */
+var AC=null,snd={on:false,kind:"brown",src:null,gain:null,end:0,timer:0};
+var SOUNDS={white:{n:"White noise",i:"noise"},pink:{n:"Pink noise",i:"noise"},brown:{n:"Brown noise",i:"noise"},rain:{n:"Rain",i:"rain"},ocean:{n:"Ocean",i:"wave"},fan:{n:"Fan",i:"fan"}};
+var bufs={};
+function audio(){if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C();}if(AC.state==="suspended"&&AC.resume)AC.resume();return AC;}
+function makeBuf(kind){
+ var a=audio(),sr=a.sampleRate,len=Math.floor(sr*8),b=a.createBuffer(1,len,sr),d=b.getChannelData(0),i;
+ var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0,last=0;
+ for(i=0;i<len;i++){
+  var w=Math.random()*2-1,v;
+  if(kind==="white")v=w*0.25;
+  else if(kind==="pink"||kind==="rain"){b0=0.99886*b0+w*0.0555179;b1=0.99332*b1+w*0.0750759;b2=0.969*b2+w*0.153852;b3=0.8665*b3+w*0.3104856;b4=0.55*b4+w*0.5329522;b5=-0.7616*b5-w*0.016898;v=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.06;b6=w*0.115926;}
+  else {last=(last+0.02*w)/1.02;v=last*3.2;}
+  d[i]=v;
+ }
+ if(kind==="rain")for(var k=0;k<len/sr*60;k++){var at=Math.floor(Math.random()*(len-2000)),amp=0.15+Math.random()*0.35;for(var j=0;j<600;j++)d[at+j]+=(Math.random()*2-1)*amp*Math.exp(-j/90);}
+ // Fade the ends together so the 8-second loop has no click.
+ var f=Math.floor(sr*0.5);for(i=0;i<f;i++){var t=i/f;d[i]=d[i]*t+d[len-f+i]*(1-t);}
+ return a.createBuffer?(function(){var nb=a.createBuffer(1,len-f,sr);nb.getChannelData(0).set(d.subarray(0,len-f));return nb;})():b;
+}
+function startSound(kind){
+ var a=audio();if(!a)return;stopSound(true);
+ var base=kind==="ocean"?"brown":kind==="fan"?"brown":kind;
+ if(!bufs[base])bufs[base]=makeBuf(base);
+ var src=a.createBufferSource();src.buffer=bufs[base];src.loop=true;
+ var g=a.createGain(),node=src;
+ if(kind==="fan"){var lp=a.createBiquadFilter();lp.type="lowpass";lp.frequency.value=600;src.connect(lp);node=lp;}
+ if(kind==="rain"){var hp=a.createBiquadFilter();hp.type="highpass";hp.frequency.value=350;src.connect(hp);node=hp;}
+ if(kind==="ocean"){
+  // Slow swell, about one wave every 9 seconds.
+  var sw=a.createGain();sw.gain.value=0.55;var lfo=a.createOscillator();lfo.frequency.value=0.11;var lg=a.createGain();lg.gain.value=0.45;lfo.connect(lg);lg.connect(sw.gain);lfo.start(0);src.connect(sw);node=sw;snd.lfo=lfo;
+ }
+ node.connect(g);g.connect(a.destination);
+ g.gain.setValueAtTime(0,a.currentTime);g.gain.linearRampToValueAtTime(S.vol,a.currentTime+2);
+ src.start(0);snd.src=src;snd.gain=g;snd.on=true;snd.kind=kind;
+ setSleepTimer(snd.mins);renderSounds();render();
+}
+function stopSound(quick){
+ if(!snd.on)return;var a=audio(),src=snd.src,g=snd.gain,lfo=snd.lfo,fade=quick?0.2:4;
+ g.gain.cancelScheduledValues(a.currentTime);g.gain.setValueAtTime(g.gain.value,a.currentTime);g.gain.linearRampToValueAtTime(0,a.currentTime+fade);
+ setTimeout(function(){try{src.stop();if(lfo)lfo.stop();}catch(e){}},fade*1000+100);
+ snd.on=false;snd.src=null;snd.lfo=null;snd.end=0;clearTimeout(snd.timer);renderSounds();render();
+}
+snd.mins=lsGet("bed-mins",60);
+function setSleepTimer(mins){
+ snd.mins=mins;lsSet("bed-mins",mins);clearTimeout(snd.timer);snd.end=0;
+ if(snd.on&&mins){snd.end=Date.now()+mins*60000;
+  // Fade out over the last minute.
+  snd.timer=setTimeout(function(){var a=audio();snd.gain.gain.setValueAtTime(snd.gain.gain.value,a.currentTime);snd.gain.gain.linearRampToValueAtTime(0,a.currentTime+60);snd.timer=setTimeout(function(){stopSound(true);},60500);},Math.max(0,mins*60000-60000));}
+}
+function renderSounds(){
+ if(view!=="sounds")return;
+ var html='<div class="card"><div class="lbl">Pick a sound</div><div>'+Object.keys(SOUNDS).map(function(k){return '<button class="snd'+(snd.on&&snd.kind===k?" on":"")+'" data-snd="'+k+'">'+icon(SOUNDS[k].i,34)+SOUNDS[k].n+'</button>';}).join("")+'</div>'+(snd.on?'<button class="chip" data-act="stop" style="margin-top:4px">Stop</button>':'')+'</div>'+
+  '<div class="card"><div class="lbl">Turn off after</div><div class="row">'+[[15,"15 min"],[30,"30 min"],[60,"1 hour"],[120,"2 hours"],[0,"All night"]].map(function(o){return '<button class="chip'+(snd.mins===o[0]?" on":"")+'" data-mins="'+o[0]+'">'+o[1]+'</button>';}).join("")+'</div><div class="note">It fades out slowly over the last minute.</div></div>'+
+  '<div class="card"><div class="lbl">Volume</div><input type="range" id="vol" min="0.05" max="1" step="0.05" value="'+S.vol+'"><div class="note">The iPad’s side volume buttons work too. If you hear nothing, check the mute switch on the side.</div></div>';
+ $("sndBody").innerHTML=html;
+ $("vol").addEventListener("input",function(){S.vol=+this.value;saveS();if(snd.on){var a=audio();snd.gain.gain.cancelScheduledValues(a.currentTime);snd.gain.gain.setValueAtTime(S.vol,a.currentTime);}});
+}
+
+/* ---------- Sunrise settings ---------- */
+function renderSunrise(){
+ var tv=pad(S.h)+":"+pad(S.m),btv=pad(S.bh)+":"+pad(S.bm);
+ $("sunBody").innerHTML=
+  '<div class="card"><div class="row" style="justify-content:space-between"><div class="big">Sunrise wake-up is <b>'+(S.on?"on":"off")+'</b></div><button class="chip'+(S.on?" on":"")+'" data-act="sunToggle" style="margin:0">'+(S.on?"Turn off":"Turn on")+'</button></div></div>'+
+  '<div class="card"><div class="lbl">Fully bright at</div><input type="time" id="wakeT" value="'+tv+'"><div class="lbl" style="margin-top:22px">On these days</div><div class="row">'+DAYS.map(function(d,i){return '<button class="chip'+(S.days.indexOf(i)>=0?" on":"")+'" data-day="'+i+'">'+d+'</button>';}).join("")+'</div>'+
+  '<div class="lbl" style="margin-top:12px">Sunrise length</div><div class="row">'+[10,20,30].map(function(n){return '<button class="chip'+(S.len===n?" on":"")+'" data-len="'+n+'">'+n+' min</button>';}).join("")+'</div>'+
+  '<div class="note">The screen starts glowing deep red '+S.len+' minutes before, warms to orange, then bright warm white at your time. It stays bright for 45 minutes or until you tap it.</div>'+
+  '<button class="chip" data-act="demo" style="margin-top:16px">Preview it (30 seconds)</button></div>'+
+  '<div class="card"><div class="lbl">Bedtime reminder</div><div class="row"><input type="time" id="bedT" value="'+btv+'" style="margin:0 14px 10px 0"><button class="chip'+(S.bedOn?" on":"")+'" data-act="bedToggle">'+(S.bedOn?"On":"Off")+'</button></div><div class="note">Shows "Time for bed" under the clock for 30 minutes.</div></div>';
+ $("wakeT").addEventListener("change",function(){var p=(this.value||"").split(":");if(p.length>=2){S.h=+p[0];S.m=+p[1];doneDay="";lsSet("bed-done","");saveS();render();toast("Sunrise set for "+fmtTime(S.h,S.m));}});
+ $("bedT").addEventListener("change",function(){var p=(this.value||"").split(":");if(p.length>=2){S.bh=+p[0];S.bm=+p[1];saveS();render();}});
+}
+
+/* ---------- Night light ---------- */
+var GLOWS=["rgb(60,22,0)","rgb(140,60,10)","rgb(255,170,90)"],glowI=lsGet("bed-glow",0),lightOn=0;
+function showGlow(){$("glow").style.backgroundColor=GLOWS[glowI];$("v-light").style.backgroundColor=GLOWS[glowI];}
+
+/* ---------- Views and taps ---------- */
+function openView(n){if(view)$("v-"+view).className="view";view=n;$("v-"+n).className="view on";if(n==="sounds")renderSounds();if(n==="sunrise")renderSunrise();if(n==="light"){lightOn=Date.now();showGlow();}}
+function closeView(){if(view)$("v-"+view).className="view";view=null;render();}
+document.addEventListener("click",function(e){
+ var t=e.target;while(t&&t!==document&&!(t.getAttribute&&(t.hasAttribute("data-open")||t.hasAttribute("data-back")||t.hasAttribute("data-act")||t.hasAttribute("data-snd")||t.hasAttribute("data-mins")||t.hasAttribute("data-day")||t.hasAttribute("data-len"))))t=t.parentNode;
+ if(!t||t===document)return;
+ if(t.hasAttribute("data-back")){closeView();return;}
+ if(t.hasAttribute("data-open")){openView(t.getAttribute("data-open"));return;}
+ if(t.hasAttribute("data-snd")){var k=t.getAttribute("data-snd");if(snd.on&&snd.kind===k)stopSound();else startSound(k);return;}
+ if(t.hasAttribute("data-mins")){setSleepTimer(+t.getAttribute("data-mins"));renderSounds();render();return;}
+ if(t.hasAttribute("data-day")){var d=+t.getAttribute("data-day"),i=S.days.indexOf(d);if(i>=0)S.days.splice(i,1);else S.days.push(d);saveS();renderSunrise();render();return;}
+ if(t.hasAttribute("data-len")){S.len=+t.getAttribute("data-len");saveS();renderSunrise();return;}
+ var a=t.getAttribute("data-act");
+ if(a==="sunToggle"){S.on=!S.on;saveS();renderSunrise();render();toast(S.on?"Sunrise on for "+fmtTime(S.h,S.m):"Sunrise off");}
+ else if(a==="bedToggle"){S.bedOn=!S.bedOn;saveS();renderSunrise();render();}
+ else if(a==="demo"){closeView();demo=new Date();render();}
+ else if(a==="stop")stopSound();
+ else if(a==="glow"){glowI=(glowI+1)%GLOWS.length;lsSet("bed-glow",glowI);showGlow();}
+ else if(a==="morning"){demo=null;var n=new Date();if(S.on){doneDay=dayKey(n);lsSet("bed-done",doneDay);}render();}
+},false);
+["touchstart","mousedown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();if(document.body.className==="dim")render();},true);});
+// iOS only allows sound after a tap; wake the audio on the first touch.
+document.addEventListener("touchend",function(){var a=audio();if(!a)return;var b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);},false);
+setInterval(function(){
+ // Settings screens close after a minute; the night light turns off after 30 minutes.
+ if(view&&view!=="light"&&Date.now()-lastTouch>60000)closeView();
+ if(view==="light"&&Date.now()-lightOn>30*60000&&Date.now()-lastTouch>30*60000)closeView();
+},5000);
+
+/* ---------- Self-update (same as the wall panel) ---------- */
+var APP_VERSION=document.querySelector('meta[name="panel-version"]').getAttribute("content");
+function checkUpdate(){
+ if(!window.fetch)return;
+ fetch(location.pathname+"?check="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():"";}).then(function(t){
+  var m=t.match(/name="panel-version" content="([^"]+)"/);if(!m||m[1]===APP_VERSION)return;
+  // Never reload mid-sunrise or while a sound is playing.
+  if(view||snd.on||sunState(new Date())||Date.now()-lastTouch<60000){setTimeout(checkUpdate,60000);return;}
+  location.replace(location.pathname+"?v="+encodeURIComponent(m[1]));
+ }).catch(function(){});
+}
+
+render();setInterval(render,5000);setInterval(function(){if(demo)render();},1000);
+loadWx();setInterval(loadWx,30*60000);
+setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
+})();
+</script>
+</body>
+</html>

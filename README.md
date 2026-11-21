@@ -8,3 +8,5 @@ Open https://jfb315-dotcom.github.io/home-panel/ in Safari on the iPad, then Sha
 - Weather: Open-Meteo (no key), Cleveland, TN at town level.
 - Photos, guest Wi-Fi details and countdowns are saved on the iPad only, never uploaded.
 - QR codes: qrcode-generator by Kazuhiko Arase (MIT license), included in index.html.
+
+Bedside clock: https://jfb315-dotcom.github.io/home-panel/bedside/ (silent sunrise wake-up, sleep sounds, night light).
