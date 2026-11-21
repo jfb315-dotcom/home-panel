@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b5">
+<meta name="panel-version" content="2026-11-21.b6">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -60,6 +60,8 @@ input[type=range]{width:100%;height:44px}
 #morning .w{font-size:26px;margin-top:12px}
 #morning .h{font-size:20px;margin-top:40px;opacity:.7}
 #frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
+#frame:after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;border-radius:26px;border:2px solid var(--cb);opacity:.8;-webkit-transition:opacity 2s;transition:opacity 2s}
+.dim #frame:after{opacity:.4}
 #toast{position:fixed;left:50%;bottom:120px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#111;color:var(--c);font-size:22px;padding:14px 26px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap;border:1px solid var(--cb)}
 #toast.on{opacity:1}
 @media (orientation:portrait){#clock{font-size:170px}#clock small{font-size:36px}}
