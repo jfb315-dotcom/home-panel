@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.14">
+<meta name="panel-version" content="2026-11-21.15">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -29,6 +29,21 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .pill svg{margin-right:8px}
 .gag{background:var(--accent);color:var(--onaccent)}
 .grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);grid-gap:12px}
+#pager{flex:1;min-height:0;position:relative;overflow:hidden}
+.page{position:absolute;top:0;left:0;width:100%;height:100%;display:grid;-webkit-transition:-webkit-transform .35s ease;transition:transform .35s ease}
+#p1{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);grid-gap:12px}
+#p2{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 2fr;grid-gap:12px;-webkit-transform:translate3d(105%,0,0);transform:translate3d(105%,0,0)}
+.on2 #p1{-webkit-transform:translate3d(-105%,0,0);transform:translate3d(-105%,0,0)}
+.on2 #p2{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+#p2side{display:flex;flex-direction:column;min-height:0}
+#p2side .tile{flex:1;height:auto;margin-top:12px;flex-direction:column;align-items:flex-start;justify-content:center;padding:14px 18px}
+#p2side .tile:first-child{margin-top:0}
+#p2Photo{grid-column:span 2;padding:0;background:#0B1020;position:relative;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;-webkit-transition:opacity 1.5s;transition:opacity 1.5s}
+.sarrow{position:absolute;top:50%;margin-top:-30px;width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;z-index:2}
+#dots{position:fixed;left:0;right:0;bottom:10px;display:flex;justify-content:center;z-index:5;pointer-events:none}
+#dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.45);margin:0 5px;display:block}
+#dots i.on{background:#fff}
 #sky{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;background:#0B1736}
 #skyBody{position:absolute;top:0;left:0;right:0;bottom:0}
 #skyFx{position:absolute;top:0;left:0;width:100%;height:100%}
@@ -143,7 +158,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
       </button>
     </div>
   </header>
-  <div class="grid">
+  <div id="pager">
+  <div class="page grid" id="p1">
     <button class="tile span2" id="tWeather" data-open="weather" aria-label="Weather"></button>
     <div class="tile" id="tTimer"></div>
     <button class="tile span2" id="tVerse" data-open="verse" aria-label="Verse of the day">
@@ -156,6 +172,18 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     <button class="tile" id="tMoon" data-open="moon" aria-label="Moon and stars"></button>
     <button class="tile" id="tWord" data-open="fun" aria-label="Word of the day"></button>
   </div>
+  <div class="page" id="p2">
+    <button class="tile span2" id="p2Weather" data-open="weather" aria-label="Weather"></button>
+    <button class="tile" id="p2Count" data-open="count" aria-label="Countdown"></button>
+    <div class="tile" id="p2Photo"><div class="slide" id="slideA"></div><div class="slide" id="slideB" style="opacity:0"></div><button id="p2PhotoTap" data-act="p2photo" aria-label="Open photos" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1"></button><div id="p2PhotoMsg"></div><button class="sarrow" data-act="sprev" style="left:14px" aria-label="Previous photo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><button class="sarrow" data-act="snext" style="right:14px" aria-label="Next photo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button></div>
+    <div id="p2side">
+      <button class="tile" id="p2Verse" data-open="verse" aria-label="Verse of the day"></button>
+      <button class="tile" id="p2Word" data-open="fun" aria-label="Word of the day"></button>
+      <button class="tile" id="p2Joke" data-act="joke2" aria-label="Joke of the day"></button>
+    </div>
+  </div>
+  </div>
+  <div id="dots"><i class="on"></i><i></i></div>
 </div>
 
 <section class="view" id="v-weather"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Weather</h1></div><div class="vbody" id="wxBody"></div></section>
@@ -2562,7 +2590,7 @@ function tickClock(){
  $("clock").innerHTML=((h%12)||12)+":"+pad(d.getMinutes())+"<small>"+(h<12?"AM":"PM")+"</small>";
  $("hdate").textContent=DAYS[d.getDay()]+", "+MONTHS[d.getMonth()]+" "+d.getDate();
  var dn=dayNum(d);
- if(dn!==lastDay){lastDay=dn;jokeShown=false;renderWordTile();renderVerse();renderCount();renderPhotoTile();renderMoon();}
+ if(dn!==lastDay){lastDay=dn;jokeShown=false;joke2=false;renderWordTile();renderVerse();renderCount();renderPhotoTile();renderMoon();}
  applyTheme();if(typeof renderSky==="function")renderSky();
  // Pick up any app updates once a night, unless a timer is going.
  if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},1000);
@@ -2842,7 +2870,7 @@ $("photoInput").addEventListener("change",function(){
  // One at a time so the iPad's small memory isn't swamped.
  var chain=Promise.resolve();
  files.forEach(function(f){chain=chain.then(function(){return shrink(f);}).then(function(data){if(!data)return;return idbReq("readwrite",function(s){return s.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});added++;});});});
- chain.then(function(){self.value="";renderPhotoTile();photoIdx=photos.length-added;renderPhotoView();toast("Added "+added+" photo"+(added===1?"":"s"));})
+ chain.then(function(){self.value="";renderPhotoTile();if(page===2){renderSlideMsg();startSlides();}photoIdx=photos.length-added;renderPhotoView();toast("Added "+added+" photo"+(added===1?"":"s"));})
  .catch(function(){self.value="";renderPhotoTile();renderPhotoView();toast("Some photos didn’t save. The iPad may be full.");});
 });
 
@@ -3380,6 +3408,9 @@ document.addEventListener("click",function(e){
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
  if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
+ if(a==="joke2"){joke2=!joke2;renderPage2();return;}
+ if(a==="sprev"||a==="snext"){showSlide(slideIdx+(a==="snext"?1:-1));startSlides();return;}
+ if(a==="p2photo"){if(!photos.length&&db){openView("photo");$("photoInput").click();return;}openView("photo");photoIdx=slideIdx;renderPhotoView();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
  if(a==="tpause"&&timer){if(timer.paused){timer.end=Date.now()+timer.left;timer.paused=false;}else{timer.left=timeLeft();timer.paused=true;}tickTimer();}
@@ -3390,7 +3421,7 @@ document.addEventListener("click",function(e){
  else if(a==="padd")$("photoInput").click();
  else if(a==="pprev"){photoIdx=(photoIdx-1+photos.length)%photos.length;photoRmArm=false;renderPhotoView();}
  else if(a==="pnext"){photoIdx=(photoIdx+1)%photos.length;photoRmArm=false;renderPhotoView();}
- else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
+ else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();if(page===2){slideShown="A";$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";renderSlideMsg();startSlides();}toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
  else if(a==="wedit"){wifiEdit=true;renderWifi();}
  else if(a==="wcancel"){wifiEdit=false;renderWifi();}
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
@@ -3415,13 +3446,63 @@ function checkUpdate(){
 }
 setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
 
+
+/* ---------- Second screen (swipe left): big photo slideshow ---------- */
+var page=lsGet("panel-page",1),slideIdx=0,slideShown="A",slideT=0,joke2=false;
+function setPage(n){page=n;lsSet("panel-page",n);var h=$("home");h.className=n===2?"on2":"";var d=$("dots").children;d[0].className=n===1?"on":"";d[1].className=n===2?"on":"";if(n===2){renderPage2();startSlides();}else stopSlides();}
+function renderPage2(){
+ var wx=lsGet("wx",null),el=$("p2Weather"),html;
+ if(wx&&wx.current){var info=wxInfo(wx.current.weather_code,wx.current.is_day),d=wx.daily;
+  html='<div class="mr wxicon">'+icon(info.k,72)+'</div><div class="col"><div class="lbl">Cleveland, TN</div><div class="big" style="font-size:64px;margin-top:4px">'+Math.round(wx.current.temperature_2m)+'°</div><div class="sub">'+info.t+' · H '+Math.round(d.temperature_2m_max[0])+'° L '+Math.round(d.temperature_2m_min[0])+'°'+(d.precipitation_probability_max[0]>=20?' · '+d.precipitation_probability_max[0]+'% rain':'')+'</div></div>';}
+ else html='<div class="mr wxicon">'+icon("cloud",72)+'</div><div class="col"><div class="lbl">Cleveland, TN</div><div class="sub">Weather loading…</div></div>';
+ if(el.innerHTML!==html)el.innerHTML=html;
+ var c=$("tCount").innerHTML;if($("p2Count").innerHTML!==c)$("p2Count").innerHTML=c;
+ var dn=dayNum(new Date()),v=verseFor(dn),w=WORDS[dn%WORDS.length],j=JOKES[dn%JOKES.length];
+ var vh='<div class="lbl">Verse of the day</div><div id="p2vt" style="font-size:17px;line-height:1.3;margin-top:4px">'+esc(v[0])+'</div><div class="ref" style="font-size:13px;margin-top:2px">'+esc(v[1])+'</div>';
+ if($("p2Verse").innerHTML.indexOf(esc(v[1]))<0){$("p2Verse").innerHTML=vh;}
+ fitText($("p2vt"),17,11);
+ var wh='<div class="lbl">Word of the day</div><div style="font-size:24px;font-weight:700;margin-top:2px">'+esc(w[0])+'</div><div id="p2wm" style="font-size:15px;line-height:1.25">'+esc(w[2])+'</div>';
+ if($("p2Word").innerHTML.indexOf(esc(w[0]))<0)$("p2Word").innerHTML=wh;
+ fitText($("p2wm"),15,11);
+ var jh='<div class="lbl">Joke of the day</div><div id="p2jq" style="font-size:16px;line-height:1.25;margin-top:2px">'+esc(j[0])+'</div><div style="font-size:15px;margin-top:4px;font-weight:700;color:var(--accentTxt)">'+(joke2?esc(j[1]):"Tap for the answer")+'</div>';
+ if($("p2Joke").innerHTML!==jh){$("p2Joke").innerHTML=jh;fitText($("p2jq"),16,11);}
+ renderSlideMsg();
+}
+function renderSlideMsg(){
+ var none=!photos.length;
+ $("p2PhotoMsg").innerHTML=none?'<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);pointer-events:none">'+icon("photo",64)+'<div style="font-size:22px;font-weight:600;margin-top:10px">Tap to add photos</div></div>':'';
+ Array.prototype.forEach.call(document.querySelectorAll(".sarrow"),function(b){b.style.display=photos.length>1?"flex":"none";});
+}
+// Two layers that cross-fade, so the iPad only ever holds two photos on screen.
+function showSlide(i){
+ if(!photos.length){$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";return;}
+ slideIdx=((i%photos.length)+photos.length)%photos.length;
+ var next=slideShown==="A"?"B":"A";
+ $("slide"+next).style.backgroundImage="url("+photos[slideIdx].data+")";
+ $("slide"+next).style.opacity="1";$("slide"+slideShown).style.opacity="0";slideShown=next;
+}
+function startSlides(){stopSlides();if(!photos.length){renderSlideMsg();return;}if(!$("slide"+slideShown).style.backgroundImage)showSlide(slideIdx);slideT=setInterval(function(){if(!view)showSlide(slideIdx+1);},10000);}
+function stopSlides(){if(slideT){clearInterval(slideT);slideT=0;}}
+// Swipe left or right on the home screen to switch screens.
+(function(){
+ var sx=0,sy=0,tracking=false;
+ function down(x,y){sx=x;sy=y;tracking=true;}
+ function up(x,y){if(!tracking||view)return;tracking=false;var dx=x-sx,dy=y-sy;if(Math.abs(dx)>70&&Math.abs(dx)>2*Math.abs(dy)){if(dx<0&&page===1)setPage(2);else if(dx>0&&page===2)setPage(1);}}
+ var pg=$("pager");
+ pg.addEventListener("touchstart",function(e){var t=e.touches[0];down(t.clientX,t.clientY);},false);
+ pg.addEventListener("touchend",function(e){var t=e.changedTouches[0];up(t.clientX,t.clientY);},false);
+ pg.addEventListener("mousedown",function(e){down(e.clientX,e.clientY);},false);
+ pg.addEventListener("mouseup",function(e){up(e.clientX,e.clientY);},false);
+})();
+
 /* ---------- Start ---------- */
 applyTheme();
 renderWeather();renderTimerTile();renderWifi();
 tickClock();setInterval(tickClock,10000);
 setInterval(tickTimer,250);
 loadWeather();setInterval(loadWeather,15*60000);
-idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){photos=all.map(function(r){return {id:r.id,data:r.data};});renderPhotoTile();}).catch(function(){renderPhotoTile();});
+idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){photos=all.map(function(r){return {id:r.id,data:r.data};});renderPhotoTile();setPage(page);}).catch(function(){renderPhotoTile();setPage(page);});
+setInterval(function(){if(page===2)renderPage2();},10000);
 window.addEventListener("resize",function(){skyKey="";renderSky();fitText($("verseText"),22,14);renderWordTile();});
 })();
 </script>
