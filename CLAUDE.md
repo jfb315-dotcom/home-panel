@@ -31,8 +31,9 @@ Header "Bedside" pill goes to bedside/ (blocked while a timer runs; asks twice d
 
 ## Layout
 Two screens: swipe left/right on the home area (`#pager`, `setPage`, saved in `panel-page`; dots at the bottom).
-Screen 2 (`#p2`): big photo slideshow fills the left two columns top to bottom (whole photo shown, `contain`, cross-fades
-every 10 s, no arrows; tap opens full view) with a right column of compact weather, countdown, verse and word. No timer, moon or joke.
+Screen 2 (`#p2`): big photo slideshow fills the left two columns top to bottom (whole photo over a blurred copy of itself, made
+by shrinking it to 16px on a canvas, so no black bars and no blur filter; or "Fill the box" = cover; change interval 5 s to 5 min;
+both set on the Photos view, saved as `slide-sec` and `slide-fit`; no arrows; tap opens full view) with a right column of compact weather, countdown, verse and word. No timer, moon or joke.
 Screen 1 home grid is full (7 tiles; Word of the day replaced the Guest Wi-Fi tile). Extra features live behind the header "Fun" button:
 trivia, scoreboard, dice and coin, drawing pad, movie night picker, guest Wi-Fi, joke or riddle, word of the day.
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.

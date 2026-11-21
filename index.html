@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.17">
+<meta name="panel-version" content="2026-11-21.18">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -40,6 +40,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #p2side #p2Weather{flex-direction:row;align-items:center;justify-content:flex-start}
 #p2side .tile:first-child{margin-top:0}
 #p2Photo{grid-column:span 2;padding:0;background:#0B1020;position:relative;overflow:hidden}
+.sbg,.sfg{position:absolute;top:0;left:0;width:100%;height:100%;background-repeat:no-repeat;background-position:center}
+.sbg{background-size:cover;opacity:.85}
+.sfg{background-size:contain}
+.fill .sfg{background-size:cover;background-position:center 30%}
 .slide{position:absolute;top:0;left:0;width:100%;height:100%;background-size:contain;background-repeat:no-repeat;background-position:center;-webkit-transition:opacity 1.5s;transition:opacity 1.5s}
 .sarrow{position:absolute;top:50%;margin-top:-30px;width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;z-index:2}
 #dots{position:fixed;left:0;right:0;bottom:10px;display:flex;justify-content:center;z-index:5;pointer-events:none}
@@ -114,7 +118,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #v-photo{background:#000;color:#fff}
 #v-photo .back{background:#222;color:#fff}
 #photoBig{flex:1;background-size:contain;background-repeat:no-repeat;background-position:center;margin:0 24px}
-.pbar{display:flex;align-items:center;justify-content:center;padding:12px 24px 20px;flex:none}
+.pbar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;padding:12px 24px 20px;flex:none}
+.pset{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;margin-top:6px;font-size:17px;color:#bbb}
+.pset .btn{height:48px;padding:0 16px;font-size:17px;margin:4px}
+.pset .btn.pri{background:var(--accent);color:var(--onaccent)}
 .pbar .btn{background:#222;color:#fff;margin:0 6px}
 #frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #toast{position:fixed;left:50%;bottom:40px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#000;color:#fff;font-size:22px;font-weight:600;padding:16px 28px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap}
@@ -2845,13 +2852,19 @@ function renderPhotoTile(){
  if(p){el.style.backgroundImage="url("+p.data+")";el.innerHTML='<div class="ptag">Photo of the day</div>';}
  else{el.style.backgroundImage="";el.innerHTML=icon("photo",52)+'<div style="font-size:18px;margin-top:10px;font-weight:600">Photo of the day</div><div style="font-size:16px;margin-top:4px">Tap to add photos</div>';}
 }
+// Slideshow settings for the big photo on the second screen.
+function slideSettings(){
+ var secs=[[5,"5 sec"],[10,"10 sec"],[20,"20 sec"],[30,"30 sec"],[60,"1 min"],[300,"5 min"]];
+ return '<div class="pset">Slideshow: change every'+secs.map(function(o){return '<button class="btn'+(slideSec===o[0]?' pri':'')+'" data-act="ssec" data-v="'+o[0]+'">'+o[1]+'</button>';}).join("")+'</div>'+
+  '<div class="pset">Show'+[["whole","Whole photo"],["fill","Fill the box (trims edges)"]].map(function(o){return '<button class="btn'+(slideFit===o[0]?' pri':'')+'" data-act="sfit" data-v="'+o[0]+'">'+o[1]+'</button>';}).join("")+'</div>';
+}
 function renderPhotoView(){
  var big=$("photoBig"),bar=$("photoBar");
  if(!photos.length){big.style.backgroundImage="";big.innerHTML='<div class="center" style="padding-top:120px;font-size:24px;color:#bbb">No photos yet. Tap Add photos and pick some from this iPad.</div>';bar.innerHTML='<button class="btn pri" data-act="padd">Add photos</button>';$("photoTitle").textContent="Photos";return;}
  if(photoIdx>=photos.length)photoIdx=0;
  big.innerHTML="";big.style.backgroundImage="url("+photos[photoIdx].data+")";
  $("photoTitle").textContent="Photo "+(photoIdx+1)+" of "+photos.length;
- bar.innerHTML='<button class="btn" data-act="pprev">Previous</button><button class="btn" data-act="pnext">Next</button><button class="btn pri" data-act="padd">Add photos</button><button class="btn'+(photoRmArm?' warn':'')+'" data-act="prm">'+(photoRmArm?"Tap again to remove":"Remove this one")+'</button>';
+ bar.innerHTML='<button class="btn" data-act="pprev">Previous</button><button class="btn" data-act="pnext">Next</button><button class="btn pri" data-act="padd">Add photos</button><button class="btn'+(photoRmArm?' warn':'')+'" data-act="prm">'+(photoRmArm?"Tap again to remove":"Remove this one")+'</button>'+slideSettings();
 }
 /* Backup: a smaller copy of every photo also goes in localStorage (iOS 12 can drop or lock up IndexedDB in Home Screen apps). */
 function bkKey(id){return "photo-bk-"+id;}
@@ -3419,6 +3432,8 @@ document.addEventListener("click",function(e){
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
  if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
+ if(a==="ssec"){slideSec=+t.getAttribute("data-v");lsSet("slide-sec",slideSec);renderPhotoView();if(page===2)startSlides();toast("Changes every "+(slideSec<60?slideSec+" seconds":slideSec/60+" minute"+(slideSec>60?"s":"")));return;}
+ if(a==="sfit"){slideFit=t.getAttribute("data-v");lsSet("slide-fit",slideFit);applyFit();renderPhotoView();return;}
  if(a==="p2photo"){if(!photos.length&&db){openView("photo");$("photoInput").click();return;}openView("photo");photoIdx=slideIdx;renderPhotoView();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
@@ -3430,7 +3445,7 @@ document.addEventListener("click",function(e){
  else if(a==="padd")$("photoInput").click();
  else if(a==="pprev"){photoIdx=(photoIdx-1+photos.length)%photos.length;photoRmArm=false;renderPhotoView();}
  else if(a==="pnext"){photoIdx=(photoIdx+1)%photos.length;photoRmArm=false;renderPhotoView();}
- else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){dropBackup(p.id);photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();if(page===2){slideShown="A";$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";renderSlideMsg();startSlides();}toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
+ else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){dropBackup(p.id);photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();if(page===2){slideShown="A";$("slideA").innerHTML="";$("slideB").innerHTML="";renderSlideMsg();startSlides();}toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
  else if(a==="wedit"){wifiEdit=true;renderWifi();}
  else if(a==="wcancel"){wifiEdit=false;renderWifi();}
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
@@ -3482,14 +3497,24 @@ function renderSlideMsg(){
  $("p2PhotoMsg").innerHTML=none?'<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);pointer-events:none">'+icon("photo",64)+'<div style="font-size:22px;font-weight:600;margin-top:10px">Tap to add photos</div></div>':'';
 }
 // Two layers that cross-fade, so the iPad only ever holds two photos on screen.
-function showSlide(i){
- if(!photos.length){$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";return;}
- slideIdx=((i%photos.length)+photos.length)%photos.length;
- var next=slideShown==="A"?"B":"A";
- $("slide"+next).style.backgroundImage="url("+photos[slideIdx].data+")";
- $("slide"+next).style.opacity="1";$("slide"+slideShown).style.opacity="0";slideShown=next;
+// Soft background: the same photo shrunk to a few pixels and stretched, which blurs it for free (no heavy blur filter).
+var blurCache={},slideSec=lsGet("slide-sec",10),slideFit=lsGet("slide-fit","whole");
+function blurOf(p,cb){
+ if(blurCache[p.id])return cb(blurCache[p.id]);
+ var img=new Image();img.onload=function(){var c=document.createElement("canvas");c.width=16;c.height=Math.max(1,Math.round(16*img.height/img.width));c.getContext("2d").drawImage(img,0,0,c.width,c.height);try{blurCache[p.id]=c.toDataURL("image/jpeg",0.7);}catch(e){blurCache[p.id]="";}cb(blurCache[p.id]);};img.onerror=function(){cb("");};img.src=p.data;
 }
-function startSlides(){stopSlides();if(!photos.length){renderSlideMsg();return;}if(!$("slide"+slideShown).style.backgroundImage)showSlide(slideIdx);slideT=setInterval(function(){if(!view)showSlide(slideIdx+1);},10000);}
+function showSlide(i){
+ if(!photos.length){$("slideA").innerHTML="";$("slideB").innerHTML="";return;}
+ slideIdx=((i%photos.length)+photos.length)%photos.length;
+ var next=slideShown==="A"?"B":"A",p=photos[slideIdx];
+ blurOf(p,function(bl){
+  var el=$("slide"+next);
+  el.innerHTML='<div class="sbg"'+(bl?' style="background-image:url('+bl+')"':'')+'></div><div class="sfg" style="background-image:url('+p.data+')"></div>';
+  el.style.opacity="1";$("slide"+slideShown).style.opacity="0";slideShown=next;
+ });
+}
+function applyFit(){$("p2Photo").className="tile"+(slideFit==="fill"?" fill":"");}
+function startSlides(){stopSlides();applyFit();if(!photos.length){renderSlideMsg();return;}if(!$("slide"+slideShown).innerHTML)showSlide(slideIdx);slideT=setInterval(function(){if(!view)showSlide(slideIdx+1);},slideSec*1000);}
 function stopSlides(){if(slideT){clearInterval(slideT);slideT=0;}}
 // Swipe left or right on the home screen to switch screens.
 (function(){
