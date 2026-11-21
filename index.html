@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.8">
+<meta name="panel-version" content="2026-11-21.9">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -3288,7 +3288,14 @@ function skyMoonSvg(p,size){
  else lit='<path d="M50 5 A45 45 0 0 '+outer+' 50 95 A'+rx.toFixed(2)+' 45 0 0 '+inner+' 50 5z" fill="#F4ECD0"/>';
  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="rgba(255,255,255,.07)"/>'+lit+'</svg>';
 }
+var skyPaused=false;
+function pauseSky(on){
+ skyPaused=on;
+ if(on){skyFx.kind=null;if(skyFx.raf){cancelAnimationFrame(skyFx.raf);skyFx.raf=0;}skyFx.parts=[];var c=$("skyFx");c.width=1;c.height=1;$("skyBody").innerHTML="";skyKey="";}
+ else renderSky();
+}
 function renderSky(){
+ if(skyPaused)return;
  var st=skyNow(),night=st.phase==="night",W=window.innerWidth,H=window.innerHeight;
  var key=st.phase+"|"+st.cover+"|"+st.fx+"|"+W+"x"+H;
  if(key!==skyKey){
@@ -3354,10 +3361,11 @@ function flash(){var f=$("flash");f.style.opacity=".55";setTimeout(function(){f.
 /* ---------- Views, taps, idle return ---------- */
 var view=null,lastTouch=Date.now(),toBedArm=false;
 function openView(name){
+ if(view==="photo"&&name!=="photo")pauseSky(false);
  if(view)$("v-"+view).className="view";
  view=name;removeArm=null;photoRmArm=false;
  if(name==="timer")renderTimerView();
- if(name==="photo"){var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
+ if(name==="photo"){pauseSky(true);var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
  if(name==="count")renderCount();
  if(name==="wifi"){wifiEdit=false;renderWifi();}
  if(name==="fun")renderFun();
@@ -3369,7 +3377,7 @@ function openView(name){
  $("v-"+name).className="view on";var sc=$("v-"+name).querySelector(".vbody, #photoBig");if(sc)sc.scrollTop=0;
  if(name==="draw")setupCanvas();
 }
-function closeView(){if(view)$("v-"+view).className="view";view=null;}
+function closeView(){if(view==="photo")pauseSky(false);if(view)$("v-"+view).className="view";view=null;}
 document.addEventListener("click",function(e){
  var t=e.target;while(t&&t!==document&&!(t.getAttribute&&(t.hasAttribute("data-open")||t.hasAttribute("data-timer")||t.hasAttribute("data-act")||t.hasAttribute("data-back"))))t=t.parentNode;
  if(!t||t===document)return;

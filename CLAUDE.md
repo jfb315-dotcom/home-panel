@@ -35,7 +35,8 @@ Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live pag
 itself (when idle on the home screen) only if that value differs; without a bump it keeps its cached copy.
 It also checks on reopen (visibilitychange/pageshow). "Get latest version" (bottom of Fun; Bedside's Clock look screen) reloads at a
 fresh ?v= address. NEVER tell John to delete and re-add the Home Screen icon: each icon has its own storage, so photos and settings are lost.
-iOS 12 Home Screen apps have a photo-picker bug ("No Photos or Videos"); the fix is to swipe the app away and reopen, then Add photos.
+iOS 12 Home Screen apps have a photo-picker bug ("No Photos or Videos"). It started after the live sky was added (memory on a 1 GB iPad
+is the main suspect), so the sky is fully torn down while the Photos view is open (`pauseSky`). Fallbacks: Files > Browse, or run in Safari.
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
