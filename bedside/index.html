@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b6">
+<meta name="panel-version" content="2026-11-21.b7">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -184,7 +184,8 @@ function renderStyle(){
   '<div class="card"><div class="lbl">Thickness</div><div class="row">'+Object.keys(WEIGHTS).map(function(k){var has=!!FONTS[S.font].w[k];return '<button class="chip fchip'+(k===effW()?" on":"")+'" data-look="weight" data-v="'+k+'" style="font-family:'+FONTS[S.font].f.replace(/'/g,"&#39;")+';font-weight:'+(FONTS[S.font].w[k]||400)+';'+(has?"":"opacity:.3")+'"'+(has?"":" disabled")+'>'+WEIGHTS[k]+'</button>';}).join("")+'</div>'+(Object.keys(FONTS[S.font].w).length<2?'<div class="note">This font comes in one thickness only.</div>':'')+'</div>'+
   '<div class="card"><div class="lbl">Size</div>'+chips(SIZES,"size")+'</div>'+
   '<div class="card"><div class="lbl">Color</div>'+chips(COLORS,"color",function(k){return "color:"+COLORS[k].c;})+'<div class="note">Red is easiest on your eyes in the dark.</div></div>'+
-  '<div class="note center" style="text-align:center">Tap Back to see it full size.</div>';
+  '<div class="note center" style="text-align:center">Tap Back to see it full size.</div>'+
+  '<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><div class="note">Version '+APP_VERSION+' · updates itself, no need to re-add the icon</div><button class="chip" data-act="latest" style="margin:0">Get latest version</button></div></div>';
 }
 function saveS(){lsSet("bedside",S);}
 
@@ -348,6 +349,7 @@ document.addEventListener("click",function(e){
  else if(a==="bedToggle"){S.bedOn=!S.bedOn;saveS();renderSunrise();render();}
  else if(a==="demo"){closeView();demo=new Date();render();}
  else if(a==="toPanel"){location.href="../";}
+ else if(a==="latest")getLatest();
  else if(a==="stop")stopSound();
  else if(a==="glow"){glowI=(glowI+1)%GLOWS.length;lsSet("bed-glow",glowI);showGlow();}
  else if(a==="morning"){demo=null;var n=new Date();if(S.on){doneDay=dayKey(n);lsSet("bed-done",doneDay);}render();}
@@ -377,6 +379,11 @@ window.addEventListener("resize",applyLook);
 render();setInterval(render,5000);setInterval(function(){if(demo)render();},1000);
 loadWx();setInterval(loadWx,30*60000);
 setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
+// Also check whenever the app is reopened or brought back to the front.
+document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(checkUpdate,1500);},false);
+window.addEventListener("pageshow",function(){setTimeout(checkUpdate,1500);},false);
+// A fresh address always gets the newest copy; settings stay because they live on this iPad, not in the page.
+function getLatest(){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);}
 })();
 </script>
 </body>

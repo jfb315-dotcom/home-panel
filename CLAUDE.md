@@ -33,6 +33,9 @@ Idle return: 1 minute; a running timer never closes; trivia in progress, scorebo
 ## Publishing
 Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live page every 15 minutes and reloads
 itself (when idle on the home screen) only if that value differs; without a bump it keeps its cached copy.
+It also checks on reopen (visibilitychange/pageshow). "Get latest version" (bottom of Fun; Bedside's Clock look screen) reloads at a
+fresh ?v= address. NEVER tell John to delete and re-add the Home Screen icon: each icon has its own storage, so photos and settings are lost.
+iOS 12 Home Screen apps have a photo-picker bug ("No Photos or Videos"); the fix is to swipe the app away and reopen, then Add photos.
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
