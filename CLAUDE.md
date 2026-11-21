@@ -59,6 +59,13 @@ photo picker showing "No Photos or Videos" in the Home Screen app. Rolled back a
 frame, manual update button, Bedside button): picker works. Do NOT add visibilitychange/pageshow handlers to the wall panel.
 After any change near the photo flow, have John test Add photos on the iPad.
 
+## Spy HQ (screen 3, `#p3`)
+Third swipe screen, also reached by the green "007" header pill (`toSpy`). `setPage(n)` sets each page's translate inline (3 dots); `spyOn` starts/stops it.
+Radar with tappable drifting blips (`BLIPS`, `placeBlips`, `identify`, sonar sound), mission of the day (`MISSIONS`, `spy-mission`; Accept = 5 s self-destruct with shake and static),
+intel ticker (weather, nearest countdown). Gadgets: Gadget car game (`v-car`, canvas, joystick, boost/oil/smoke/eject, guards with vision cones, best time `spy-best`)
+and Night vision scope (`v-scope`, drawn backyard or the panel photos, night/thermal/x-ray filters, zoom and pan, tap to lock a target, Snap saves a filtered copy to photos).
+No camera by John's choice. Vault cracker, code breaker, laser grid, lie detector show CLASSIFIED (`gsoon`) until Round 2. Fonts: Share Tech Mono, Oswald.
+
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
 over 10/20/30 min, then a "Good morning" screen for 45 min or until tapped), sleep sounds generated with Web Audio

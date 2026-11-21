@@ -6,9 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.22">
+<meta name="panel-version" content="2026-11-21.23">
 <link rel="apple-touch-icon" href="icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
 <style>
 /* Built for iPad mini 2 on iOS 12: no flex gap, no ?. or ??, no inset, no clamp(). */
@@ -33,8 +33,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .page{position:absolute;top:0;left:0;width:100%;height:100%;display:grid;-webkit-transition:-webkit-transform .35s ease;transition:transform .35s ease}
 #p1{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);grid-gap:12px}
 #p2{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr;grid-gap:12px;-webkit-transform:translate3d(105%,0,0);transform:translate3d(105%,0,0)}
-.on2 #p1{-webkit-transform:translate3d(-105%,0,0);transform:translate3d(-105%,0,0)}
-.on2 #p2{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+#p3{-webkit-transform:translate3d(210%,0,0);transform:translate3d(210%,0,0)}
 #p2side{display:flex;flex-direction:column;min-height:0}
 #p2side .tile{flex:1;height:auto;margin-top:12px;flex-direction:column;align-items:flex-start;justify-content:center;padding:12px 18px;min-height:0}
 #p2side #p2Weather{flex-direction:row;align-items:center;justify-content:flex-start}
@@ -147,9 +146,93 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #drawBox{flex:1;margin:0 24px;border-radius:16px;overflow:hidden;background:#fff;min-height:0}
 #drawCanvas{display:block;touch-action:none}
 #drawBar{display:flex;align-items:center;padding:14px 24px 20px;flex:none}
+/* ---- Spy HQ (third screen) ---- */
+.spyfont{font-family:"Share Tech Mono",Menlo,monospace}
+.pill.p007{background:#06140C;border:1.5px solid #39FF88;color:#39FF88;font-family:"Share Tech Mono",Menlo,monospace;font-size:20px;letter-spacing:.08em}
+#p3{grid-template-columns:420px 1fr;grid-template-rows:1fr 38px;grid-gap:12px;color:#7DFFB0;font-family:"Share Tech Mono",Menlo,monospace}
+.spycard{background:rgba(3,10,6,.88);border:1px solid #1E5C3A;border-radius:16px;position:relative;overflow:hidden;min-height:0}
+.spygrid{background-image:linear-gradient(rgba(57,255,136,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(57,255,136,.06) 1px,transparent 1px);background-size:28px 28px}
+.spyhd{display:flex;justify-content:space-between;font-size:14px;letter-spacing:.1em;color:#7DFFB0}
+#radarCard{display:flex;flex-direction:column;align-items:center;padding:12px}
+#radarCard .spyhd{align-self:stretch}
+#radar{position:relative;width:380px;height:380px;margin-top:8px;flex:none}
+#sweep{position:absolute;top:0;left:0;width:380px;height:380px}
+.live #sweep{-webkit-animation:spin 4s linear infinite;animation:spin 4s linear infinite}
+@-webkit-keyframes spin{from{-webkit-transform:rotate(0)}to{-webkit-transform:rotate(360deg)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.blip{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;display:flex;align-items:center;justify-content:center;-webkit-transition:left 2s linear,top 2s linear;transition:left 2s linear,top 2s linear}
+.blip i{display:block;width:14px;height:14px;border-radius:50%;background:#39FF88;box-shadow:0 0 12px #39FF88}
+.blip.amber i{background:#FFB020;box-shadow:0 0 12px #FFB020}
+.blip.red i{background:#FF4D4D;box-shadow:0 0 12px #FF4D4D}
+#blipInfo{margin-top:10px;font-size:15px;text-align:center;min-height:40px;line-height:1.35;color:#E9FFF2}
+#spyR{display:flex;flex-direction:column;min-height:0}
+#mission{padding:14px 18px;flex:none}
+#mission .mt{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:700;font-size:24px;color:#E9FFF2;margin:6px 0 4px;letter-spacing:.03em}
+#mission .md{font-size:16px;line-height:1.4;color:#7DFFB0}
+.sbtn2{height:46px;padding:0 18px;border-radius:10px;font-family:"Share Tech Mono",Menlo,monospace;font-size:16px;margin:10px 10px 0 0}
+.sgo{background:#39FF88;color:#02140A;font-weight:700}
+.sghost{border:1px solid #2BBF6A;background:transparent;color:#7DFFB0}
+#gadgets{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);grid-gap:10px;margin-top:12px;min-height:0}
+.gad{background:rgba(3,10,6,.88);border:1px solid #1E5C3A;border-radius:14px;color:#7DFFB0;font-family:"Share Tech Mono",Menlo,monospace;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.gad svg{margin-bottom:6px}
+.gad.red{border-color:#5C1E1E;color:#FF8A8A}
+.gad .soon{font-size:11px;color:#2BBF6A;margin-top:2px}
+#ticker{grid-column:span 2;background:rgba(3,10,6,.9);border:1px solid #1E5C3A;border-radius:10px;overflow:hidden;position:relative;font-size:15px;white-space:nowrap}
+#tickIn{position:absolute;top:9px;left:0;padding-left:100%}
+.live #tickIn{-webkit-animation:tick linear infinite;animation:tick linear infinite}
+@-webkit-keyframes tick{from{-webkit-transform:translate3d(0,0,0)}to{-webkit-transform:translate3d(-100%,0,0)}}
+@keyframes tick{from{transform:translate3d(0,0,0)}to{transform:translate3d(-100%,0,0)}}
+.boom{-webkit-animation:shake .12s linear 8;animation:shake .12s linear 8}
+@-webkit-keyframes shake{0%{-webkit-transform:translate(0,0)}25%{-webkit-transform:translate(-6px,3px)}50%{-webkit-transform:translate(5px,-4px)}75%{-webkit-transform:translate(-3px,-2px)}100%{-webkit-transform:translate(0,0)}}
+@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-6px,3px)}50%{transform:translate(5px,-4px)}75%{transform:translate(-3px,-2px)}100%{transform:translate(0,0)}}
+#static{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;opacity:0;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.25) 0,rgba(255,255,255,.25) 1px,transparent 1px,transparent 3px);-webkit-transition:opacity .2s;transition:opacity .2s}
+/* Full-screen spy views */
+.spyview{background:#030806;color:#7DFFB0;font-family:"Share Tech Mono",Menlo,monospace}
+.spybar{height:84px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex:none}
+.spyback{height:50px;padding:0 18px;border-radius:10px;border:1px solid #2BBF6A;background:rgba(0,0,0,.6);color:#7DFFB0;font-family:"Share Tech Mono",Menlo,monospace;font-size:18px;margin-right:14px}
+.spyttl{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:700;font-size:26px;letter-spacing:.12em;color:#39FF88}
+#carBox{flex:1;margin:0 24px;position:relative;border:1px solid #1E5C3A;border-radius:14px;overflow:hidden;min-height:0}
+#carCv{position:absolute;top:0;left:0;touch-action:none}
+#joy{position:absolute;left:16px;bottom:16px;width:150px;height:150px;border-radius:50%;border:2px solid #2BBF6A;background:rgba(3,8,6,.7);touch-action:none}
+#knob{position:absolute;left:44px;top:44px;width:62px;height:62px;border-radius:50%;background:#39FF88;box-shadow:0 0 22px rgba(57,255,136,.6);pointer-events:none}
+#carBtns{position:absolute;right:16px;bottom:16px;width:250px}
+#carBtns button{width:120px;height:62px;border-radius:12px;font-family:"Share Tech Mono",Menlo,monospace;font-size:17px;margin:0 0 10px 10px;float:left;text-align:center;padding:0}
+#carBtns button:nth-child(odd){margin-left:0}
+#carMsg{position:absolute;left:0;right:0;top:38%;text-align:center;font-family:Oswald,"Arial Narrow",sans-serif;font-size:44px;font-weight:700;letter-spacing:.08em;color:#E9FFF2;text-shadow:0 0 18px rgba(0,0,0,.9);pointer-events:none}
+#carStat{height:56px;display:flex;align-items:center;padding:0 24px;font-size:16px;flex:none}
+.meter{width:150px;height:12px;border-radius:6px;background:#0F2A1C;margin:0 18px 0 10px;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:6px;background:#39FF88}
+#scope{flex:1;position:relative;overflow:hidden;background:#000;touch-action:none}
+#sceneIn{position:absolute;top:0;left:0;width:100%;height:100%;-webkit-transform-origin:50% 50%;transform-origin:50% 50%}
+#scenePhoto{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center}
+.m-nv #scenePhoto{-webkit-filter:grayscale(1) sepia(1) hue-rotate(70deg) saturate(4) brightness(1.15) contrast(1.15);filter:grayscale(1) sepia(1) hue-rotate(70deg) saturate(4) brightness(1.15) contrast(1.15)}
+.m-th #scenePhoto{-webkit-filter:grayscale(1) sepia(1) saturate(9) hue-rotate(-35deg) contrast(1.35);filter:grayscale(1) sepia(1) saturate(9) hue-rotate(-35deg) contrast(1.35)}
+.m-xr #scenePhoto{-webkit-filter:grayscale(1) invert(1) contrast(1.6) brightness(1.1);filter:grayscale(1) invert(1) contrast(1.6) brightness(1.1)}
+.m-nv .s-sky{fill:#1E4A22}.m-nv .s-gr{fill:#10301A}.m-nv .s-dk{fill:#071807}.m-nv .s-mid{fill:#0B220C}.m-nv .s-warm{fill:#B6F2A8}.m-nv .s-eye{fill:#F2FFE8}
+.m-th .s-sky{fill:#140630}.m-th .s-gr{fill:#24094A}.m-th .s-dk{fill:#300C5E}.m-th .s-mid{fill:#3A1070}.m-th .s-warm{fill:#FF8A1F}.m-th .s-eye{fill:#FFF06A}
+.m-xr .s-sky{fill:#0A0F18}.m-xr .s-gr{fill:#1A2230}.m-xr .s-dk{fill:#5A6A82}.m-xr .s-mid{fill:#3A4658}.m-xr .s-warm{fill:#DCE8F8}.m-xr .s-eye{fill:#0A0F18}
+#scopeMask{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 0,rgba(0,0,0,0) 300px,#000 304px)}
+#scan{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px);-webkit-animation:flick 2.5s steps(2) infinite;animation:flick 2.5s steps(2) infinite}
+@-webkit-keyframes flick{0%{opacity:.8}50%{opacity:1}100%{opacity:.85}}
+@keyframes flick{0%{opacity:.8}50%{opacity:1}100%{opacity:.85}}
+#lock{position:absolute;border:2.5px solid #FF4D4D;width:110px;height:80px;margin:-40px 0 0 -55px;pointer-events:none;display:none}
+#lock span{position:absolute;bottom:100%;left:-2px;white-space:nowrap;color:#FF4D4D;font-size:15px;margin-bottom:4px}
+#scopeHud{position:absolute;top:16px;right:24px;text-align:right;font-size:16px;line-height:1.6;pointer-events:none}
+#scopeBar{position:absolute;left:24px;right:24px;bottom:18px;display:flex;align-items:center;flex-wrap:wrap}
+#scopeBar button{height:54px;padding:0 18px;border-radius:12px;border:1px solid #2BBF6A;background:rgba(0,0,0,.65);color:#7DFFB0;font-family:"Share Tech Mono",Menlo,monospace;font-size:16px;margin:6px 10px 0 0}
+#scopeBar button.on{background:#39FF88;color:#02140A;border-color:#39FF88;font-weight:700}
+
 @media (orientation:portrait){
   .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:1fr;grid-auto-flow:dense}
   .bigtime{font-size:150px}
+  /* Portrait: tighter header pills so the 007 button fits; spy HQ stacks the radar over the mission and gadgets. */
+  .pill{padding:0 14px;margin-left:8px;font-size:16px}
+  #p3{grid-template-columns:1fr;grid-template-rows:auto 1fr 38px}
+  #radarCard{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-orient:horizontal;flex-direction:row}
+  #ticker{grid-column:1}
+  #radarCard .spyhd{position:absolute;left:12px;right:12px;top:10px}
+  #radarCard{position:relative;padding-top:34px}
+  #blipInfo{margin-left:16px;-webkit-box-flex:1;flex:1;text-align:left}
 }
 </style>
 </head>
@@ -163,6 +246,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div class="hright">
       <button class="pill" id="themeBtn" aria-label="Screen color: automatic, day or night"></button>
+      <button class="pill p007" data-act="toSpy" aria-label="Spy HQ">007</button>
       <button class="pill" data-act="toBedside" aria-label="Switch to the bedside clock">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
         Bedside
@@ -200,8 +284,36 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
       <button class="tile" id="p2Word" data-open="fun" aria-label="Word of the day"></button>
     </div>
   </div>
+  <div class="page" id="p3">
+    <div class="spycard spygrid" id="radarCard">
+      <div class="spyhd"><span>RADAR · SECTOR 7</span><span id="contacts" style="color:#FFB020">CONTACTS</span></div>
+      <div id="radar">
+        <svg width="380" height="380" viewBox="0 0 420 420" style="position:absolute;top:0;left:0" aria-hidden="true">
+          <defs><radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#0B2A18"></stop><stop offset="1" stop-color="#03100A"></stop></radialGradient></defs>
+          <circle cx="210" cy="210" r="200" fill="url(#rg)" stroke="#2BBF6A" stroke-width="2"></circle>
+          <g fill="none" stroke="#1E5C3A" stroke-width="1.2"><circle cx="210" cy="210" r="150"></circle><circle cx="210" cy="210" r="100"></circle><circle cx="210" cy="210" r="50"></circle><path d="M10 210h400M210 10v400M69 69l282 282M351 69L69 351"></path></g>
+        </svg>
+        <svg id="sweep" viewBox="0 0 420 420" aria-hidden="true"><path d="M210 210 L210 10 A200 200 0 0 1 351 69 Z" fill="#39FF88" opacity=".22"></path><path d="M210 210 L351 69" stroke="#39FF88" stroke-width="3"></path></svg>
+        <div id="blips"></div>
+      </div>
+      <div id="blipInfo">TAP A BLIP TO IDENTIFY</div>
+    </div>
+    <div id="spyR">
+      <div class="spycard" id="mission"></div>
+      <div id="gadgets">
+        <button class="gad" data-act="gcar"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="1.5" aria-hidden="true"><path d="M5 16l1.5-5h11L19 16"></path><rect x="3" y="16" width="18" height="4" rx="1"></rect><circle cx="7" cy="20" r="1.6"></circle><circle cx="17" cy="20" r="1.6"></circle><path d="M9 8l3-4 3 4"></path></svg>GADGET CAR</button>
+        <button class="gad" data-act="gscope"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="12" r="4"></circle><circle cx="17" cy="12" r="4"></circle><path d="M11 12h2M3 12H1M23 12h-2"></path></svg>NIGHT VISION</button>
+        <button class="gad" data-act="gsoon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="12" cy="12" r="5"></circle><path d="M12 7v2M12 15v2M7 12h2M15 12h2"></path></svg>VAULT CRACKER<span class="soon">CLASSIFIED</span></button>
+        <button class="gad" data-act="gsoon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="1.5" aria-hidden="true"><path d="M4 7h3M9 7h1M12 7h3M4 12h1M7 12h3M12 12h1M15 12h3M4 17h3M9 17h3M14 17h1"></path></svg>CODE BREAKER<span class="soon">CLASSIFIED</span></button>
+        <button class="gad red" data-act="gsoon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FF4D4D" stroke-width="1.5" aria-hidden="true"><path d="M2 5l20 4M2 12l20-3M2 19l20-5"></path></svg>LASER GRID<span class="soon">CLASSIFIED</span></button>
+        <button class="gad" data-act="gsoon"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#39FF88" stroke-width="1.5" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>LIE DETECTOR<span class="soon">CLASSIFIED</span></button>
+      </div>
+    </div>
+    <div id="ticker"><div id="tickIn"></div></div>
+    <div id="static"></div>
   </div>
-  <div id="dots"><i class="on"></i><i></i></div>
+  </div>
+  <div id="dots"><i class="on"></i><i></i><i></i></div>
 </div>
 
 <section class="view" id="v-weather"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Weather</h1></div><div class="vbody" id="wxBody"></div></section>
@@ -216,6 +328,37 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 <section class="view" id="v-dice"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Dice and coin</h1></div><div class="vbody" id="diceBody"></div></section>
 <section class="view" id="v-draw"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Drawing pad</h1></div><div id="drawBox"><canvas id="drawCanvas"></canvas></div><div id="drawBar"></div></section>
 <section class="view" id="v-movie"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Movie night picker</h1></div><div class="vbody" id="movieBody"></div></section>
+<section class="view spyview" id="v-car">
+  <div class="spybar"><div style="display:flex;align-items:center"><button class="spyback" data-back>◂ HQ</button><div class="spyttl">GADGET CAR · REMOTE LINK</div></div><div style="font-size:19px">INTEL <b id="carIntel" style="color:#FFB020">0 / 5</b>&nbsp;&nbsp;&nbsp;TIME <b id="carTime" style="color:#E9FFF2">00:00</b></div></div>
+  <div id="carBox"><canvas id="carCv"></canvas>
+    <div id="joy" aria-label="Steering joystick"><div id="knob"></div></div>
+    <div id="carBtns"><button class="sgo" data-act="cboost" style="border:0">BOOST</button><button class="sghost" data-act="coil" style="background:rgba(3,8,6,.8)">OIL SLICK</button><button class="sghost" data-act="csmoke" style="background:rgba(3,8,6,.8)">SMOKE</button><button data-act="ceject" style="border:1px solid #FF4D4D;background:rgba(40,4,4,.8);color:#FF8A8A">EJECT</button></div>
+    <div id="carMsg"></div>
+  </div>
+  <div id="carStat">SPEED<div class="meter"><i id="spdM" style="width:0"></i></div>FUEL<div class="meter"><i id="fuelM" style="width:100%;background:#FFB020"></i></div><span id="carBest" style="color:#2BBF6A"></span><button class="sbtn2 sghost" data-act="crestart" style="margin:0 0 0 auto">NEW ROUND</button></div>
+</section>
+<section class="view spyview" id="v-scope">
+  <div id="scope">
+    <div id="sceneIn" class="m-nv">
+      <svg id="yard" width="100%" height="100%" viewBox="0 0 1024 768" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect class="s-sky" width="1024" height="768"></rect>
+        <rect class="s-gr" y="520" width="1024" height="248"></rect>
+        <g class="s-dk"><path d="M80 520 V300 l40-60 40 60 V520z"></path><rect x="114" y="420" width="12" height="100"></rect><path d="M820 520 V250 l60-90 60 90 V520z"></path><path d="M380 520 v-120 h150 v120z"></path><path d="M370 400 l85-55 85 55z"></path></g>
+        <g class="s-mid"><rect x="0" y="465" width="1024" height="10"></rect><rect x="200" y="420" width="10" height="120"></rect><rect x="330" y="420" width="10" height="120"></rect><rect x="560" y="420" width="10" height="120"></rect><rect x="690" y="420" width="10" height="120"></rect></g>
+        <g id="cat" transform="translate(520 0)"><path class="s-warm" d="M0 500 q10-40 40-40 q20 0 30 18 l14-14 l2 26 q10 14 0 30 h-80 q-10-10-6-20z"></path><circle class="s-eye" cx="60" cy="482" r="3"></circle><circle class="s-eye" cx="72" cy="482" r="3"></circle></g>
+        <g id="gnome" transform="translate(760 0)"><path class="s-warm" d="M0 540 l14-50 l14 50z" opacity=".75"></path><rect class="s-warm" x="4" y="540" width="20" height="26" opacity=".6"></rect></g>
+      </svg>
+      <div id="scenePhoto" style="display:none"></div>
+    </div>
+    <div id="scan"></div>
+    <div id="scopeMask"></div>
+    <svg width="100%" height="100%" viewBox="0 0 1024 768" preserveAspectRatio="xMidYMid meet" style="position:absolute;top:0;left:0;pointer-events:none" aria-hidden="true"><circle cx="512" cy="384" r="300" fill="none" stroke="#39FF88" stroke-width="2" opacity=".7"></circle><g stroke="#39FF88" stroke-width="1.5" opacity=".85"><path d="M512 84v240M512 444v240M212 384h240M572 384h240"></path><path d="M500 300h24M496 340h32M500 428h24M496 468h32"></path></g></svg>
+    <div id="lock"><span id="lockTxt"></span></div>
+    <div style="position:absolute;top:16px;left:24px;display:flex;align-items:center"><button class="spyback" data-back>◂ HQ</button><div class="spyttl" id="scopeTtl">NIGHT VISION</div></div>
+    <div id="scopeHud"></div>
+    <div id="scopeBar"></div>
+  </div>
+</section>
 <section class="view" id="v-photo"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1 id="photoTitle">Photos</h1></div><div id="photoBig"></div><div class="pbar" id="photoBar"></div></section>
 
 <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
@@ -3610,6 +3753,8 @@ function openView(name){
  if(name==="movie"){movieRmArm=null;renderMovie();}
  $("v-"+name).className="view on";var sc=$("v-"+name).querySelector(".vbody, #photoBig");if(sc)sc.scrollTop=0;
  if(name==="draw")setupCanvas();
+ if(name==="car")startCar();
+ if(name==="scope")startScope();
 }
 function closeView(){if(view)$("v-"+view).className="view";view=null;}
 document.addEventListener("click",function(e){
@@ -3619,6 +3764,7 @@ document.addEventListener("click",function(e){
  if(t.hasAttribute("data-timer")){startTimer(+t.getAttribute("data-timer"));return;}
  if(t.hasAttribute("data-open")){var n=t.getAttribute("data-open");if(n==="photo"&&!photos.length&&db){openView("photo");$("photoInput").click();return;}openView(n);return;}
  var a=t.getAttribute("data-act");
+ if(spyAct(a,t))return;
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
  if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
@@ -3642,7 +3788,7 @@ document.addEventListener("click",function(e){
 },false);
 ["touchstart","mousedown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();},true);});
 // Back to the home screen after 1 minute untouched; a running timer stays; trivia, scoreboard and drawing get 10 minutes.
-setInterval(function(){var lim=((view==="trivia"&&trivia&&trivia.winner==null)||view==="score"||view==="draw")?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
+setInterval(function(){var lim=((view==="trivia"&&trivia&&trivia.winner==null)||view==="score"||view==="draw"||view==="car"||view==="scope")?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
 
 
 /* ---------- Self-update ---------- */
@@ -3663,7 +3809,14 @@ setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
 
 /* ---------- Second screen (swipe left): big photo slideshow ---------- */
 var page=lsGet("panel-page",1),slideIdx=0,slideShown="A",slideT=0,joke2=false;
-function setPage(n){page=n;lsSet("panel-page",n);var h=$("home");h.className=n===2?"on2":"";var d=$("dots").children;d[0].className=n===1?"on":"";d[1].className=n===2?"on":"";if(n===2){stopTile();renderPage2();startSlides();}else{stopSlides();renderPhotoTile();startTile();}}
+function setPage(n){
+ page=n;lsSet("panel-page",n);
+ ["p1","p2","p3"].forEach(function(id,i){var e=$(id),t="translate3d("+((i+1-n)*105)+"%,0,0)";e.style.webkitTransform=t;e.style.transform=t;});
+ var d=$("dots").children;for(var i=0;i<d.length;i++)d[i].className=i+1===n?"on":"";
+ $("p3").className="page"+(n===3?" live":"");
+ if(n===2){stopTile();renderPage2();startSlides();}else if(n===1){stopSlides();renderPhotoTile();startTile();}else{stopSlides();stopTile();}
+ spyOn(n===3);
+}
 function renderPage2(){
  var wx=lsGet("wx",null),html;
  if(wx&&wx.current){var info=wxInfo(wx.current.weather_code,wx.current.is_day),d=wx.daily;
@@ -3712,13 +3865,278 @@ function stopSlides(){if(slideT){clearInterval(slideT);slideT=0;}}
 (function(){
  var sx=0,sy=0,tracking=false;
  function down(x,y){sx=x;sy=y;tracking=true;}
- function up(x,y){if(!tracking||view)return;tracking=false;var dx=x-sx,dy=y-sy;if(Math.abs(dx)>70&&Math.abs(dx)>2*Math.abs(dy)){if(dx<0&&page===1)setPage(2);else if(dx>0&&page===2)setPage(1);}}
+ function up(x,y){if(!tracking||view)return;tracking=false;var dx=x-sx,dy=y-sy;if(Math.abs(dx)>70&&Math.abs(dx)>2*Math.abs(dy)){if(dx<0&&page<3)setPage(page+1);else if(dx>0&&page>1)setPage(page-1);}}
  var pg=$("pager");
  pg.addEventListener("touchstart",function(e){var t=e.touches[0];down(t.clientX,t.clientY);},false);
  pg.addEventListener("touchend",function(e){var t=e.changedTouches[0];up(t.clientX,t.clientY);},false);
  pg.addEventListener("mousedown",function(e){down(e.clientX,e.clientY);},false);
  pg.addEventListener("mouseup",function(e){up(e.clientX,e.clientY);},false);
 })();
+
+/* ---------- Spy HQ (third screen): radar, mission of the day, intel ticker ---------- */
+var BLIPS=[["AGENT M","FRIENDLY · ON STANDBY",""],["UNKNOWN","THREAT LEVEL: PROBABLY A SQUIRREL","amber"],["PIZZA GUY?","THREAT LEVEL: DELICIOUS","red"],["THE DOG","THREAT LEVEL: SNACK THIEF","amber"],["MAIL CARRIER","FRIENDLY · DELIVERING INTEL",""],["NEIGHBOR'S CAT","THREAT LEVEL: SMUG","amber"],["ICE CREAM TRUCK","PRIORITY TARGET · PURSUE","red"],["AGENT J","FRIENDLY · LAST SEEN NEAR FRIDGE",""],["GRANDMA","FRIENDLY · CARRYING COOKIES",""],["ROGUE DRONE","THREAT LEVEL: ANNOYING BUZZ","red"],["SQUIRREL OPERATIVE","THREAT LEVEL: NUTS","amber"],["LAUNDRY MONSTER","THREAT LEVEL: SMELLY","red"]];
+var MISSIONS=[
+ ["OPERATION GOLDEN SPOON","Locate the missing TV remote before 2100 hours. Trust no one. Check the couch cushions."],
+ ["OPERATION SILENT SOCK","Find the partner of one lonely sock. Last seen entering the laundry room."],
+ ["OPERATION COOKIE JAR","Confirm the cookie count. If numbers don't add up, interrogate the nearest sibling."],
+ ["OPERATION CLEAN SWEEP","Clear your room of all enemy clutter in under 10 minutes. Go, go, go."],
+ ["OPERATION DOG WALK","Escort the four-legged agent around the perimeter. Report any squirrel activity."],
+ ["OPERATION HIGH FIVE","Deliver a secret high five to every member of HQ without being seen."],
+ ["OPERATION DISHWASHER","Unload the dishwasher. Classified as boring, rated as heroic."],
+ ["OPERATION COMPLIMENT","Give three people a genuine compliment before sundown. Leave no witness unsmiling."],
+ ["OPERATION HOMEWORK","Complete all assigned intel reports (homework) before screen time."],
+ ["OPERATION SHOES","Locate every pair of shoes by the door and line them up in formation."],
+ ["OPERATION THANK YOU","Find one person who helped you this week and say thanks. Mission critical."],
+ ["OPERATION GARAGE","Sweep the garage for lost basketballs. Recover all assets."],
+ ["OPERATION DINNER INTEL","At dinner, find out one thing nobody knew about each agent at the table."],
+ ["OPERATION LIGHTS OUT","Turn off every light left on in empty rooms. Save the power grid."],
+ ["OPERATION FREE THROW","Make 10 free throws in a row. Report back to HQ with proof."],
+ ["OPERATION BOOKWORM","Read for 20 minutes. Intel says the plot twist is worth it."],
+ ["OPERATION SECRET NOTE","Hide a kind note somewhere a family member will find it tomorrow."],
+ ["OPERATION TRASH RUN","Take out the trash before anyone asks. Extra points for stealth."],
+ ["OPERATION PLANT","Water the plants. They have been sending distress signals."],
+ ["OPERATION SNACK DROP","Prepare a surprise snack for another agent. Do not eat the evidence."],
+ ["OPERATION WATER","Drink four glasses of water today. Hydration is a spy's best gadget."],
+ ["OPERATION GAME NIGHT","Recruit at least two agents for a board game tonight."],
+ ["OPERATION BED","Make your bed so tight a coin could bounce off it."],
+ ["OPERATION LOST TOY","Rescue one item trapped under the couch. Approach with caution."],
+ ["OPERATION JOKE","Make someone laugh using only one joke. Pull from the Fun screen if needed."]
+];
+var spyMis=null,spyMisState="new",spyBlip=[],spyBT=0,spyBoomT=0;
+function spyMission(){
+ var dn=dayNum(new Date()),saved=lsGet("spy-mission",null);
+ if(!saved||saved.day!==dn){saved={day:dn,i:dn%MISSIONS.length,acc:false};lsSet("spy-mission",saved);}
+ return saved;
+}
+function renderMission(msg){
+ var s=spyMission(),m=MISSIONS[s.i];
+ $("mission").innerHTML='<div class="spyhd"><span>MISSION OF THE DAY · TOP SECRET</span><span id="sdText" style="color:#FF4D4D">'+(s.acc?"STATUS: IN PROGRESS":"AWAITING AGENT")+'</span></div>'+
+  (msg?'<div class="mt" style="color:#FF4D4D">'+msg+'</div><div class="md">Just kidding. HQ keeps backups.</div>':'<div class="mt">'+esc(m[0])+'</div><div class="md">'+esc(m[1])+'</div>')+
+  '<div><button class="sbtn2 sgo" data-act="macc" style="border:0">'+(s.acc?"MISSION ACCEPTED":"ACCEPT MISSION")+'</button><button class="sbtn2 sghost" data-act="mnew">NEW MISSION</button></div>';
+}
+function spyBeep(f,d,v){var a=audio();if(!a)return;tone(f,a.currentTime+0.01,d||0.08,v||0.18);}
+function sonar(){var a=audio();if(!a)return;var t=a.currentTime+0.02,o=a.createOscillator(),g=a.createGain();o.type="sine";o.frequency.setValueAtTime(1400,t);o.frequency.exponentialRampToValueAtTime(900,t+0.6);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.3,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+1);}
+function acceptMission(){
+ var s=spyMission();if(s.acc){toast("Mission already in progress");return;}
+ var n=5;s.acc=true;lsSet("spy-mission",s);renderMission();
+ // This message will self-destruct...
+ clearInterval(spyBoomT);
+ spyBoomT=setInterval(function(){
+  var el=$("sdText");if(el)el.textContent="SELF-DESTRUCT 00:0"+n;spyBeep(n?880:220,0.1,0.25);
+  if(n--<=0){clearInterval(spyBoomT);var p=$("p3");p.className="page boom"+(page===3?" live":"");$("static").style.opacity="1";
+   setTimeout(function(){$("static").style.opacity="0";p.className="page"+(page===3?" live":"");renderMission("THIS MESSAGE HAS SELF-DESTRUCTED");},1000);
+   setTimeout(function(){renderMission();},4500);}
+ },1000);
+}
+function newMission(){var s=spyMission(),j;do{j=Math.floor(Math.random()*MISSIONS.length);}while(j===s.i);s.i=j;s.acc=false;lsSet("spy-mission",s);clearInterval(spyBoomT);renderMission();spyBeep(660,0.06);}
+// Blips drift around the radar; tap one to identify it.
+function placeBlips(){
+ if(!spyBlip.length){var pool=BLIPS.slice();for(var k=0;k<4;k++){var i=Math.floor(Math.random()*pool.length);spyBlip.push({b:pool.splice(i,1)[0],a:Math.random()*6.28,r:40+Math.random()*130});}}
+ spyBlip.forEach(function(o){o.a+=(Math.random()-.5)*0.5;o.r=Math.max(30,Math.min(170,o.r+(Math.random()-.5)*30));});
+ var h="";spyBlip.forEach(function(o,i){var x=190+Math.cos(o.a)*o.r,y=190+Math.sin(o.a)*o.r;h+='<button class="blip '+o.b[2]+'" data-act="blip" data-i="'+i+'" style="left:'+x.toFixed(0)+'px;top:'+y.toFixed(0)+'px" aria-label="Radar contact"><i></i></button>';});
+ var c=$("blips");
+ if(c.children.length!==spyBlip.length)c.innerHTML=h;
+ else spyBlip.forEach(function(o,i){var x=190+Math.cos(o.a)*o.r,y=190+Math.sin(o.a)*o.r;c.children[i].style.left=x.toFixed(0)+"px";c.children[i].style.top=y.toFixed(0)+"px";});
+ $("contacts").textContent=spyBlip.length+" CONTACTS";
+}
+function identify(i){
+ var o=spyBlip[i];if(!o)return;sonar();
+ $("blipInfo").innerHTML='IDENTIFIED: <b style="color:'+(o.b[2]==="red"?"#FF8A8A":o.b[2]==="amber"?"#FFB020":"#39FF88")+'">'+o.b[0]+'</b><br>'+o.b[1]+' · '+Math.round(o.r*0.8)+' M';
+ // Swap in a new contact a few seconds later so the radar stays lively.
+ setTimeout(function(){var pool=BLIPS.filter(function(b){return !spyBlip.some(function(x){return x.b===b;});});if(pool.length){spyBlip[i]={b:pool[Math.floor(Math.random()*pool.length)],a:Math.random()*6.28,r:60+Math.random()*110};$("blips").innerHTML="";placeBlips();}},6000);
+}
+function renderTicker(){
+ var wx=lsGet("wx",null),items=["HQ status: all agents accounted for","Cookie supply down 40% · investigating","Dog has been compromised by belly rubs","Code word of the day: "+WORDS[dayNum(new Date())%WORDS.length][0].toUpperCase()];
+ if(wx&&wx.current)items.splice(1,0,"Satellite reports "+Math.round(wx.current.temperature_2m)+"° and "+wxInfo(wx.current.weather_code,wx.current.is_day).t.toLowerCase()+" over HQ");
+ var up=countList.map(function(it){var n=cdNext(it);return {it:it,days:n.days};}).filter(function(x){return x.days>=0;}).sort(function(a,b){return a.days-b.days;});
+ if(up.length)items.push("Operation "+up[0].it.name.toUpperCase()+" in "+up[0].days+" "+daysWord(up[0].days));
+ var txt=items.join("   ·   ");
+ var el=$("tickIn");el.innerHTML='<span style="color:#FFB020">INTEL ▸ </span>'+esc(txt);
+ var dur=Math.max(25,Math.round(txt.length/5))+"s";el.style.webkitAnimationDuration=dur;el.style.animationDuration=dur;
+}
+function spyOn(on){
+ clearInterval(spyBT);
+ if(on){renderMission();placeBlips();renderTicker();spyBT=setInterval(function(){if(page===3&&!view)placeBlips();},2000);}
+}
+
+/* ---------- Gadget car game ---------- */
+var car=null;
+function carNew(){
+ var c=$("carCv"),W=c.clientWidth||c.width,H=c.clientHeight||c.height;
+ var rel=function(a){return [a[0]*W,a[1]*H,a[2]*W,a[3]*H];};
+ car={W:W,H:H,x:0.07*W,y:0.15*H,ang:0,v:0,fuel:100,boostT:0,smokeT:0,ejectT:0,got:0,t0:Date.now(),done:false,lostT:0,
+  walls:[[0.22,0.3,0.12,0.24],[0.52,0.0,0.08,0.34],[0.42,0.66,0.24,0.12],[0.78,0.5,0.1,0.28],[0.06,0.64,0.14,0.1]].map(rel),
+  cases:[[0.4,0.12],[0.92,0.12],[0.3,0.88],[0.7,0.52],[0.95,0.4]].map(function(p){return {x:p[0]*W,y:p[1]*H,got:false};}),
+  guards:[[0.35,0.58,0.72,0.58],[0.66,0.12,0.66,0.44],[0.12,0.86,0.36,0.86]].map(function(g){return {ax:g[0]*W,ay:g[1]*H,bx:g[2]*W,by:g[3]*H,t:Math.random(),dir:1,spin:0};}),
+  oil:[],smoke:[]};
+ $("carMsg").textContent="";updCarHud();
+}
+var joy={x:0,y:0};
+function updCarHud(){
+ if(!car)return;var s=Math.floor(((car.done?car.doneAt:Date.now())-car.t0)/1000);
+ $("carIntel").textContent=car.got+" / "+car.cases.length;$("carTime").textContent=pad(Math.floor(s/60))+":"+pad(s%60);
+ $("spdM").style.width=Math.min(100,Math.abs(car.v)/2.4*100)+"%";$("fuelM").style.width=car.fuel+"%";
+ var best=lsGet("spy-best",0);$("carBest").textContent=best?"  BEST "+pad(Math.floor(best/60))+":"+pad(best%60):"";
+}
+function hitWall(x,y,r){
+ if(x<r||y<r||x>car.W-r||y>car.H-r)return true;
+ for(var i=0;i<car.walls.length;i++){var w=car.walls[i],cx=Math.max(w[0],Math.min(x,w[0]+w[2])),cy=Math.max(w[1],Math.min(y,w[1]+w[3]));if((x-cx)*(x-cx)+(y-cy)*(y-cy)<r*r)return true;}
+ return false;
+}
+function carMsg(t,ms){$("carMsg").textContent=t;clearTimeout(carMsg.t);if(ms)carMsg.t=setTimeout(function(){$("carMsg").textContent="";},ms);}
+function alarm(){var a=audio();if(!a)return;var t=a.currentTime+0.02,o=a.createOscillator(),g=a.createGain();o.type="sawtooth";o.frequency.setValueAtTime(500,t);o.frequency.linearRampToValueAtTime(1000,t+0.25);o.frequency.linearRampToValueAtTime(500,t+0.5);o.frequency.linearRampToValueAtTime(1000,t+0.75);g.gain.value=0.15;o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+0.8);}
+function carStep(dt){
+ var now=Date.now();if(car.done)return;
+ if(car.lostT){if(now>car.lostT){var b=car.t0;carNew();car.t0=b;}return;}
+ var boost=now<car.boostT,max=(boost?2.4:1.4)*car.W/700;
+ if(boost)car.fuel=Math.max(0,car.fuel-dt*0.04);else car.fuel=Math.min(100,car.fuel+dt*0.008);
+ if(car.fuel<=0)car.boostT=0;
+ var mag=Math.min(1,Math.sqrt(joy.x*joy.x+joy.y*joy.y));
+ if(mag>0.15){var target=Math.atan2(joy.y,joy.x),diff=target-car.ang;while(diff>Math.PI)diff-=6.283;while(diff<-Math.PI)diff+=6.283;car.ang+=diff*Math.min(1,dt*0.012);car.v+=(max*mag-car.v)*Math.min(1,dt*0.006);}
+ else car.v*=Math.pow(0.992,dt);
+ if(now<car.ejectT)car.v=0;
+ var nx=car.x+Math.cos(car.ang)*car.v*dt*0.06,ny=car.y+Math.sin(car.ang)*car.v*dt*0.06;
+ if(!hitWall(nx,car.y,16))car.x=nx;else car.v*=0.4;
+ if(!hitWall(car.x,ny,16))car.y=ny;else car.v*=0.4;
+ car.cases.forEach(function(c){if(!c.got&&Math.abs(c.x-car.x)<28&&Math.abs(c.y-car.y)<28){c.got=true;car.got++;spyBeep(1320,0.08,0.25);setTimeout(function(){spyBeep(1760,0.1,0.25);},90);
+  if(car.got===car.cases.length){car.done=true;car.doneAt=now;var s=Math.floor((now-car.t0)/1000),best=lsGet("spy-best",0);if(!best||s<best)lsSet("spy-best",s);carMsg("MISSION COMPLETE · "+pad(Math.floor(s/60))+":"+pad(s%60)+(!best||s<best?" · NEW BEST":""));}}});
+ car.oil=car.oil.filter(function(o){return now<o.t;});car.smoke=car.smoke.filter(function(s){return now<s.t;});
+ var hidden=now<car.smokeT||now<car.ejectT;
+ car.guards.forEach(function(g){
+  if(now<g.spin)return;
+  g.t+=g.dir*dt*0.00012;if(g.t>1){g.t=1;g.dir=-1;}if(g.t<0){g.t=0;g.dir=1;}
+  g.x=g.ax+(g.bx-g.ax)*g.t;g.y=g.ay+(g.by-g.ay)*g.t;g.face=Math.atan2((g.by-g.ay)*g.dir,(g.bx-g.ax)*g.dir);
+  car.oil.forEach(function(o){if(Math.abs(o.x-g.x)<26&&Math.abs(o.y-g.y)<26&&now>g.spin){g.spin=now+3000;carMsg("GUARD SLIPPED!",1200);spyBeep(300,0.2,0.2);}});
+  var dx=car.x-g.x,dy=car.y-g.y,d=Math.sqrt(dx*dx+dy*dy),an=Math.atan2(dy,dx)-g.face;while(an>Math.PI)an-=6.283;while(an<-Math.PI)an+=6.283;
+  if(!hidden&&now>g.spin&&d<car.W*0.16&&Math.abs(an)<0.55){car.lostT=now+1600;alarm();carMsg("SPOTTED! TRY AGAIN");}
+ });
+}
+function carDraw(){
+ var c=$("carCv"),g=c.getContext("2d"),W=car.W,H=car.H,now=Date.now();
+ g.setTransform(c.width/W,0,0,c.height/H,0,0);
+ g.fillStyle="#0A1410";g.fillRect(0,0,W,H);
+ g.strokeStyle="rgba(57,255,136,.07)";g.lineWidth=1;g.beginPath();for(var x=0;x<W;x+=40){g.moveTo(x,0);g.lineTo(x,H);}for(var y=0;y<H;y+=40){g.moveTo(0,y);g.lineTo(W,y);}g.stroke();
+ car.walls.forEach(function(w){g.fillStyle="#12261B";g.fillRect(w[0],w[1],w[2],w[3]);g.strokeStyle="#2BBF6A";g.lineWidth=1.5;g.strokeRect(w[0]+.5,w[1]+.5,w[2]-1,w[3]-1);});
+ car.oil.forEach(function(o){g.fillStyle="rgba(10,10,10,.9)";g.beginPath();g.ellipse?g.ellipse(o.x,o.y,30,14,0,0,6.283):g.arc(o.x,o.y,22,0,6.283);g.fill();});
+ car.cases.forEach(function(k){if(k.got)return;g.fillStyle="#C9A227";g.fillRect(k.x-14,k.y-10,28,20);g.strokeStyle="#C9A227";g.lineWidth=2;g.strokeRect(k.x-5,k.y-15,10,5);});
+ car.guards.forEach(function(q){
+  if(q.x===undefined)return;var spin=now<q.spin;
+  if(!spin){g.fillStyle="rgba(255,77,77,.18)";g.beginPath();g.moveTo(q.x,q.y);g.arc(q.x,q.y,W*0.16,q.face-0.55,q.face+0.55);g.closePath();g.fill();}
+  g.fillStyle=spin?"#FFB020":"#FF4D4D";g.beginPath();g.arc(q.x,q.y,13,0,6.283);g.fill();
+  if(spin){g.strokeStyle="#FFB020";g.beginPath();g.arc(q.x,q.y,20,now/100%6.28,now/100%6.28+4);g.stroke();}
+ });
+ var ej=now<car.ejectT,sc=ej?1+Math.sin((car.ejectT-now)/600*Math.PI)*1.2:1;
+ g.save();g.translate(car.x,car.y);g.rotate(car.ang);g.scale(sc,sc);
+ if(now<car.boostT){g.fillStyle="rgba(255,176,32,.8)";g.beginPath();g.moveTo(-26,-6);g.lineTo(-44-Math.random()*12,0);g.lineTo(-26,6);g.fill();}
+ g.fillStyle="#222";[[-14,-15],[8,-15],[-14,11],[8,11]].forEach(function(p){g.fillRect(p[0],p[1],10,4);});
+ g.fillStyle="#C0C6CE";g.fillRect(-24,-12,48,24);g.fillStyle="#2A3240";g.fillRect(2,-8,14,16);
+ g.fillStyle="rgba(255,243,176,.2)";g.beginPath();g.moveTo(24,-8);g.lineTo(70,-22);g.lineTo(70,22);g.lineTo(24,8);g.fill();
+ g.restore();
+ if(now<car.smokeT){for(var i=0;i<14;i++){g.fillStyle="rgba(200,210,205,.18)";g.beginPath();g.arc(car.x+Math.sin(i*1.7+now/300)*30,car.y+Math.cos(i*2.3+now/400)*30,22,0,6.283);g.fill();}}
+}
+function carLoop(){
+ if(view!=="car"||!car)return;
+ var now=Date.now(),dt=Math.min(50,now-(carLoop.last||now));carLoop.last=now;
+ carStep(dt);carDraw();
+ if(!carLoop.h||now-carLoop.h>250){carLoop.h=now;updCarHud();}
+ requestAnimationFrame(carLoop);
+}
+function startCar(){
+ var box=$("carBox"),c=$("carCv"),r=Math.min(window.devicePixelRatio||1,1.5);
+ c.style.width=box.clientWidth+"px";c.style.height=box.clientHeight+"px";c.width=Math.round(box.clientWidth*r);c.height=Math.round(box.clientHeight*r);
+ carNew();carLoop.last=0;requestAnimationFrame(carLoop);
+ carMsg("GRAB 5 BRIEFCASES · AVOID THE GUARDS",2500);
+}
+(function(){
+ var j=$("joy"),k=$("knob"),R=75;
+ function mv(cx,cy){var b=j.getBoundingClientRect(),dx=cx-(b.left+R),dy=cy-(b.top+R),d=Math.sqrt(dx*dx+dy*dy);if(d>R){dx=dx/d*R;dy=dy/d*R;}joy.x=dx/R;joy.y=dy/R;k.style.left=(44+dx)+"px";k.style.top=(44+dy)+"px";}
+ function end(){joy.x=0;joy.y=0;k.style.left="44px";k.style.top="44px";}
+ j.addEventListener("touchstart",function(e){e.preventDefault();lastTouch=Date.now();var t=e.touches[0];mv(t.clientX,t.clientY);},{passive:false});
+ j.addEventListener("touchmove",function(e){e.preventDefault();lastTouch=Date.now();var t=e.touches[0];mv(t.clientX,t.clientY);},{passive:false});
+ j.addEventListener("touchend",end,false);
+ var md=false;j.addEventListener("mousedown",function(e){md=true;mv(e.clientX,e.clientY);},false);
+ window.addEventListener("mousemove",function(e){if(md)mv(e.clientX,e.clientY);},false);
+ window.addEventListener("mouseup",function(){if(md){md=false;end();}},false);
+})();
+
+/* ---------- Night vision scope ---------- */
+var scope={mode:"nv",src:"yard",pi:0,zoom:1,px:0,py:0};
+var LOCKS=["FELINE · ARMED WITH CLAWS","GARDEN GNOME · SUSPICIOUS","SQUIRREL OPERATIVE","UNKNOWN · PROBABLY A RACCOON","AGENT J · HIDING","SHRUB · DEFINITELY A SHRUB","DAD · SNACK RUN","DOUBLE AGENT TABBY"];
+function renderScope(){
+ var modes=[["nv","NIGHT"],["th","THERMAL"],["xr","X-RAY"]],h="";
+ modes.forEach(function(m){h+='<button class="'+(scope.mode===m[0]?"on":"")+'" data-act="smode" data-v="'+m[0]+'">'+m[1]+'</button>';});
+ h+='<span style="width:18px"></span><button class="'+(scope.src==="yard"?"on":"")+'" data-act="ssrc" data-v="yard">BACKYARD</button><button class="'+(scope.src==="photo"?"on":"")+'" data-act="ssrc" data-v="photo">MY PHOTOS</button>';
+ if(scope.src==="photo"&&photos.length>1)h+='<button data-act="snx">NEXT PHOTO</button>';
+ h+='<span style="flex:1"></span><button data-act="szout" aria-label="Zoom out">−</button><button data-act="szin" aria-label="Zoom in">+</button>';
+ if(scope.src==="photo"&&photos.length)h+='<button data-act="ssnap" style="background:#FF4D4D;color:#1A0202;border-color:#FF4D4D;font-weight:700">SNAP PHOTO</button>';
+ $("scopeBar").innerHTML=h;
+ $("sceneIn").className="m-"+scope.mode;
+ $("scopeTtl").textContent={nv:"NIGHT VISION",th:"THERMAL",xr:"X-RAY"}[scope.mode];
+ var ph=$("scenePhoto");
+ if(scope.src==="photo"&&photos.length){ph.style.display="block";ph.style.backgroundImage="url("+photos[scope.pi%photos.length].data+")";$("yard").style.display="none";}
+ else{ph.style.display="none";$("yard").style.display="block";}
+ applyZoom();
+}
+function applyZoom(){var t="translate("+scope.px+"px,"+scope.py+"px) scale("+scope.zoom+")";$("sceneIn").style.webkitTransform=t;$("sceneIn").style.transform=t;
+ $("scopeHud").innerHTML="RANGE "+(20+Math.random()*30).toFixed(1)+" M<br>ZOOM "+scope.zoom.toFixed(1)+"x<br>BATT ▮▮▮▮▯";}
+var scopeT=0;
+function startScope(){
+ renderScope();clearInterval(scopeT);
+ // The cat wanders the yard now and then.
+ var cx=520;scopeT=setInterval(function(){if(view!=="scope"){clearInterval(scopeT);return;}cx+=(Math.random()-.5)*60;cx=Math.max(200,Math.min(760,cx));$("cat").setAttribute("transform","translate("+cx.toFixed(0)+" 0)");if(Math.random()<0.3)applyZoom();},700);
+}
+(function(){
+ var s=$("scope"),sx=0,sy=0,ox=0,oy=0,moved=false;
+ function down(x,y){sx=x;sy=y;ox=scope.px;oy=scope.py;moved=false;}
+ function move(x,y){if(Math.abs(x-sx)+Math.abs(y-sy)>8)moved=true;if(moved&&scope.zoom>1){scope.px=ox+(x-sx);scope.py=oy+(y-sy);applyZoom();}}
+ function up(x,y){if(!moved){var b=s.getBoundingClientRect(),L=$("lock");L.style.left=(x-b.left)+"px";L.style.top=(y-b.top)+"px";L.style.display="block";$("lockTxt").textContent="TARGET LOCKED · "+LOCKS[Math.floor(Math.random()*LOCKS.length)];spyBeep(1200,0.05,0.2);setTimeout(function(){spyBeep(1600,0.08,0.2);},80);}}
+ s.addEventListener("touchstart",function(e){if(e.target.closest&&e.target.closest("button"))return;var t=e.touches[0];down(t.clientX,t.clientY);},false);
+ s.addEventListener("touchmove",function(e){var t=e.touches[0];move(t.clientX,t.clientY);},false);
+ s.addEventListener("touchend",function(e){if(e.target.closest&&e.target.closest("button"))return;var t=e.changedTouches[0];up(t.clientX,t.clientY);s.dn=Date.now();},false);
+ s.addEventListener("mousedown",function(e){if(e.target.closest&&e.target.closest("button"))return;s.md=true;down(e.clientX,e.clientY);},false);
+ s.addEventListener("mousemove",function(e){if(s.md)move(e.clientX,e.clientY);},false);
+ s.addEventListener("mouseup",function(e){if(!s.md)return;s.md=false;if(s.dn&&Date.now()-s.dn<600)return;up(e.clientX,e.clientY);},false);
+})();
+// Snap: turn the current photo into a night vision / thermal / x-ray picture with crosshairs and save it to the panel photos.
+function snapScope(){
+ if(!db||!photos.length){toast("Pick My photos first");return;}
+ var img=new Image();img.onload=function(){
+  var sc=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+  var g=c.getContext("2d");g.drawImage(img,0,0,c.width,c.height);var d=g.getImageData(0,0,c.width,c.height),p=d.data;
+  for(var i=0;i<p.length;i+=4){var l=0.3*p[i]+0.59*p[i+1]+0.11*p[i+2],r,gg,b;
+   if(scope.mode==="nv"){var n=(Math.random()-.5)*28;r=l*0.25+n*.3;gg=Math.min(255,l*1.15+22+n);b=l*0.25+n*.3;}
+   else if(scope.mode==="th"){var t=l/255;r=Math.min(255,t<.5?t*2*255:255);gg=Math.min(255,t<.4?0:(t-.4)*1.7*255);b=t<.35?140*(1-t/.35)+60*t:Math.max(0,(t-.85)*6*255);}
+   else{var v=255-l;v=Math.max(0,Math.min(255,(v-128)*1.6+128));r=v*0.88;gg=v*0.95;b=Math.min(255,v*1.08);}
+   p[i]=r;p[i+1]=gg;p[i+2]=b;}
+  g.putImageData(d,0,0);
+  var cx=c.width/2,cy=c.height/2,R=Math.min(cx,cy)*0.9;g.strokeStyle="rgba(57,255,136,.9)";g.lineWidth=Math.max(2,c.width/400);
+  g.beginPath();g.arc(cx,cy,R,0,6.283);g.moveTo(cx-R,cy);g.lineTo(cx-R*0.15,cy);g.moveTo(cx+R*0.15,cy);g.lineTo(cx+R,cy);g.moveTo(cx,cy-R);g.lineTo(cx,cy-R*0.15);g.moveTo(cx,cy+R*0.15);g.lineTo(cx,cy+R);g.stroke();
+  g.fillStyle="rgba(57,255,136,.95)";g.font=Math.round(c.width/40)+"px Menlo, monospace";g.fillText({nv:"NIGHT VISION",th:"THERMAL",xr:"X-RAY"}[scope.mode]+" · HQ",c.width*0.04,c.height*0.08);
+  var data=c.toDataURL("image/jpeg",0.85);
+  idbReq("readwrite",function(st){return st.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});tCount=-1;renderPhotoTile();return makeBackup(id,data);}).then(function(){toast("Saved to your photos");spyBeep(1000,0.06);}).catch(function(){toast("Couldn’t save it");});
+ };img.src=photos[scope.pi%photos.length].data;
+}
+function spyAct(a,t){
+ if(a==="toSpy"){if(view)closeView();setPage(3);return true;}
+ if(a==="blip"){identify(+t.getAttribute("data-i"));return true;}
+ if(a==="macc"){acceptMission();return true;}
+ if(a==="mnew"){newMission();return true;}
+ if(a==="gcar"){spyBeep(880,0.06);openView("car");return true;}
+ if(a==="gscope"){spyBeep(880,0.06);openView("scope");return true;}
+ if(a==="gsoon"){spyBeep(220,0.15);toast("CLASSIFIED · coming in Round 2");return true;}
+ if(a==="cboost"){if(car&&car.fuel>15){car.boostT=Date.now()+2000;spyBeep(500,0.15);}else toast("Out of fuel · wait for it to refill");return true;}
+ if(a==="coil"){if(car){if(car.oil.length>=3)car.oil.shift();car.oil.push({x:car.x-Math.cos(car.ang)*30,y:car.y-Math.sin(car.ang)*30,t:Date.now()+10000});spyBeep(180,0.12);}return true;}
+ if(a==="csmoke"){if(car){if(Date.now()<(car.smokeCd||0)){toast("Smoke recharging");return true;}car.smokeT=Date.now()+3000;car.smokeCd=Date.now()+8000;carMsg("SMOKE SCREEN",1000);}return true;}
+ if(a==="ceject"){if(car){car.ejectT=Date.now()+1200;carMsg("EJECT! EJECT!",1200);spyBeep(1400,0.3,0.2);setTimeout(function(){if(car){car.x=0.07*car.W;car.y=0.15*car.H;car.v=0;}},1200);}return true;}
+ if(a==="crestart"){carNew();carMsg("NEW ROUND · GO",1200);return true;}
+ if(a==="smode"){scope.mode=t.getAttribute("data-v");renderScope();spyBeep(700,0.05);return true;}
+ if(a==="ssrc"){var v=t.getAttribute("data-v");if(v==="photo"&&!photos.length){toast("Add some photos first");return true;}scope.src=v;scope.zoom=1;scope.px=scope.py=0;renderScope();return true;}
+ if(a==="snx"){scope.pi++;renderScope();return true;}
+ if(a==="szin"){scope.zoom=Math.min(4,scope.zoom+0.5);applyZoom();return true;}
+ if(a==="szout"){scope.zoom=Math.max(1,scope.zoom-0.5);if(scope.zoom===1)scope.px=scope.py=0;applyZoom();return true;}
+ if(a==="ssnap"){snapScope();return true;}
+ return false;
+}
 
 /* ---------- Start ---------- */
 applyTheme();
