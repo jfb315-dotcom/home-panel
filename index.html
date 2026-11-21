@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.21">
+<meta name="panel-version" content="2026-11-21.22">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -84,6 +84,11 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .deco{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
 .deco svg{position:absolute;display:block}
 .ctext{position:relative;z-index:1}
+.csplit{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column}
+.cseg{flex:1;position:relative;display:flex;align-items:center;padding:0 18px;overflow:hidden;border-top:1px solid rgba(127,127,127,.3);min-height:0}
+.cseg:first-child{border-top:0}
+.cseg .cnum{position:relative;z-index:1;font-weight:800;color:var(--accentTxt);margin-right:12px;line-height:1;flex:none;min-width:1.2em}
+.cseg .clab{position:relative;z-index:1;line-height:1.2;max-width:50%;color:var(--ink)}
 .flt{-webkit-animation:flt 5s ease-in-out infinite alternate;animation:flt 5s ease-in-out infinite alternate}
 @-webkit-keyframes flt{from{margin-top:0}to{margin-top:-6px}}
 @keyframes flt{from{margin-top:0}to{margin-top:-6px}}
@@ -2940,12 +2945,25 @@ function cdNext(it){
 // "turns 21" for birthdays entered with the year they were born.
 function ageText(it,date){return it.born?" · turns "+(date.getFullYear()-it.born):"";}
 function daysWord(n){return n===1?"day":"days";}
+// Several countdowns within 30 days: split the box into stacked slices, each with its own theme.
+var MINIPOS=[[76,10,26,-8],[88,44,22,10],[94,4,16,0],[72,58,16,6]];
+function decoMini(it,h){
+ var th=THEMES[themeFor(it)],k=Math.max(0.5,Math.min(1.2,h/90));
+ return '<div class="deco" aria-hidden="true">'+MINIPOS.map(function(p,i){var sz=Math.round(p[2]*k*1.2);return '<svg viewBox="0 0 24 24" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+sz+'px;height:'+sz+'px;-webkit-transform:rotate('+p[3]+'deg);transform:rotate('+p[3]+'deg)">'+SHAPES[th.s[i]]+'</svg>';}).join("")+'</div>';
+}
+function splitHtml(list,boxH,numPx,labPx){
+ var h=boxH/list.length;
+ return '<div class="csplit">'+list.map(function(x){
+  return '<div class="cseg" style="background-image:'+themeTint(x.it)+'">'+decoMini(x.it,h)+'<div class="cnum" style="font-size:'+numPx+'px">'+(x.days===0?"Today":x.days)+'</div><div class="clab" style="font-size:'+labPx+'px">'+(x.days===0?esc(x.it.name):daysWord(x.days)+" until "+esc(x.it.name))+ageText(x.it,x.date)+'</div></div>';
+ }).join("")+'</div>';
+}
 function renderCount(){
  var items=countList.map(function(it){var n=cdNext(it);return {it:it,date:n.date,days:n.days};}).sort(function(a,b){return a.date-b.date;});
  var up=items.filter(function(x){return x.days>=0;}),el=$("tCount");
  if(!up.length)el.innerHTML='<div class="mr" style="color:var(--accentTxt)">'+icon("gift",48)+'</div><div class="col"><div style="font-size:22px;font-weight:600">Countdown</div><div class="sub">Tap to add one</div></div>';
+ else if(up.length>1&&up[1].days<=30){var soon=up.filter(function(x){return x.days<=30;}).slice(0,3);el.innerHTML=splitHtml(soon,el.clientHeight||200,soon.length===2?44:32,soon.length===2?16:14);}
  else{var f=up[0];el.innerHTML=decoHtml(f.it,el.clientHeight||200)+'<div class="col ctext"><div class="big">'+(f.days===0?"Today!":f.days)+'</div><div class="sub" style="color:var(--ink);font-size:19px;max-width:60%">'+(f.days===0?esc(f.it.name):daysWord(f.days)+" until "+esc(f.it.name))+(f.it.born?'<div style="font-weight:700;margin-top:2px">Turns '+(f.date.getFullYear()-f.it.born)+'</div>':'')+'</div></div>';}
- el.style.backgroundImage=up.length?themeTint(up[0].it):"";
+ el.style.backgroundImage=up.length&&!(up.length>1&&up[1].days<=30)?themeTint(up[0].it):"";el.style.padding=up.length>1&&up[1].days<=30?"0":"";
  var rows=items.map(function(x){return '<div class="crow">'+themeIcon(x.it,40)+'<div class="dd">'+(x.days<0?"Done":x.days===0?"Today":x.days)+'</div><div class="n">'+esc(x.it.name)+'<small>'+fmtDay(x.date)+(x.it.y?"":" · every year")+ageText(x.it,x.date)+(x.days>0?" · "+x.days+" "+daysWord(x.days):"")+'</small></div><button class="btn'+(removeArm===x.it.id?" warn":"")+'" data-act="cdrm" data-id="'+x.it.id+'" style="margin:0">'+(removeArm===x.it.id?"Tap again to remove":"Remove")+'</button></div>';}).join("");
  var y=new Date().getFullYear();
  $("countBody").innerHTML='<div class="card">'+(rows||'<div class="sub">No countdowns yet.</div>')+'</div>'+
@@ -3653,8 +3671,9 @@ function renderPage2(){
  else html='<div class="wxicon" style="margin-right:14px">'+icon("cloud",52)+'</div><div class="sub">Weather loading…</div>';
  if($("p2Weather").innerHTML!==html)$("p2Weather").innerHTML=html;
  var up=countList.map(function(it){var n=cdNext(it);return {it:it,days:n.days,date:n.date};}).filter(function(x){return x.days>=0;}).sort(function(a,b){return a.days-b.days;});
- var ch=up.length?decoHtml(up[0].it,$("p2Count").clientHeight||140)+'<div class="ctext"><div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+ageText(up[0].it,up[0].date)+'</div></div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
- $("p2Count").style.backgroundImage=up.length?themeTint(up[0].it):"";
+ var p2split=up.length>1&&up[1].days<=30;
+ var ch=p2split?splitHtml(up.filter(function(x){return x.days<=30;}).slice(0,2),$("p2Count").clientHeight||140,30,14):up.length?decoHtml(up[0].it,$("p2Count").clientHeight||140)+'<div class="ctext"><div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+ageText(up[0].it,up[0].date)+'</div></div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
+ $("p2Count").style.backgroundImage=up.length&&!p2split?themeTint(up[0].it):"";$("p2Count").style.padding=p2split?"0":"";
  if($("p2Count").innerHTML!==ch)$("p2Count").innerHTML=ch;
  var dn=dayNum(new Date()),v=verseFor(dn),w=WORDS[dn%WORDS.length];
  var vh='<div class="lbl">Verse of the day</div><div id="p2vt" style="font-size:16px;line-height:1.3;margin-top:3px">'+esc(v[0])+'</div><div class="ref" style="font-size:13px;margin-top:2px">'+esc(v[1])+'</div>';

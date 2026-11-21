@@ -43,6 +43,8 @@ else party): SVG decorations on the right side (`decoHtml`, `SHAPES`, `THEMES`) 
 Holidays (`HOLIDAYS`, incl. moving ones via `ruleDate`: nth/last weekday, Easter) are added once to the iPad's list (`cd-seed-hol1`).
 Birthdays use the form's "It's a birthday" box: stored with `born` year, shown as "Turns N". Never hard-code family names or
 birth dates in this public repo; John enters them on the iPad. Themes have 10 decorations each, some floating, plus a ground strip.
+When 2+ countdowns fall within 30 days the box splits into stacked themed slices (`splitHtml`, `decoMini`): up to 3 on screen 1,
+2 on screen 2. Otherwise the single big themed box.
 Drawing pad "Save to photos" adds the drawing to the panel photos (IndexedDB + backup).
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.
 Idle return: 1 minute; a running timer never closes; trivia in progress, scoreboard and drawing pad get 10 minutes.
