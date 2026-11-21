@@ -21,3 +21,7 @@ Keep test scripts out of the repo. John is not a programmer: reply in plain word
 Home grid is full (7 tiles). Extra features live behind the header "Fun" button (trivia, joke or riddle, word of the day).
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.
 Idle return: 1 minute; a running timer never closes; a trivia game in progress gets 10 minutes.
+
+## Publishing
+Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live page every 15 minutes and reloads
+itself (when idle on the home screen) only if that value differs; without a bump it keeps its cached copy.

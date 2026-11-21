@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
+<meta name="panel-version" content="2026-11-21.4">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Home Panel</title>
 <style>
@@ -2533,7 +2534,7 @@ function tickClock(){
  if(dn!==lastDay){lastDay=dn;jokeShown=false;renderVerse();renderCount();renderPhotoTile();renderMoon();}
  applyTheme();
  // Pick up any app updates once a night, unless a timer is going.
- if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.reload();},1000);
+ if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},1000);
 }
 
 /* ---------- Weather (Open-Meteo, no key, town-level location only) ---------- */
@@ -3158,6 +3159,22 @@ document.addEventListener("click",function(e){
 ["touchstart","mousedown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();},true);});
 // Back to the home screen after 1 minute untouched; a running timer stays, and a trivia game gets 10 minutes.
 setInterval(function(){var lim=(view==="trivia"&&trivia&&trivia.winner==null)?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
+
+
+/* ---------- Self-update ---------- */
+// Home Screen apps on iOS 12 keep their old copy, so check the live page and reload when the version changes.
+var APP_VERSION=document.querySelector('meta[name="panel-version"]').getAttribute("content");
+function checkUpdate(){
+ if(!window.fetch)return;
+ fetch(location.pathname+"?check="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():"";}).then(function(t){
+  var m=t.match(/name="panel-version" content="([^"]+)"/);
+  if(!m||m[1]===APP_VERSION)return;
+  // Only when nobody is using it: home screen showing, no timer, no trivia game going.
+  if(view||timer||(trivia&&trivia.winner==null)||Date.now()-lastTouch<60000){setTimeout(checkUpdate,60000);return;}
+  location.replace(location.pathname+"?v="+encodeURIComponent(m[1]));
+ }).catch(function(){});
+}
+setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
 
 /* ---------- Start ---------- */
 applyTheme();
