@@ -33,12 +33,12 @@ Idle return: 1 minute; a running timer never closes; trivia in progress, scorebo
 ## Publishing
 Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live page every 15 minutes and reloads
 itself (when idle on the home screen) only if that value differs; without a bump it keeps its cached copy.
-It also checks on reopen (visibilitychange/pageshow). "Get latest version" (bottom of Fun; Bedside's Clock look screen) reloads at a
-fresh ?v= address. NEVER tell John to delete and re-add the Home Screen icon: each icon has its own storage, so photos and settings are lost.
-iOS 12 Home Screen apps have a photo-picker bug ("No Photos or Videos"). It started after the live sky was added (memory on a 1 GB iPad
-was suspected), so the sky is fully torn down while the Photos view is open (`pauseSky`). That did not fix it, and a fresh icon
-is also empty. "Simple look" (`panel-simple`, bottom of Fun) turns off the web font, sky, see-through tiles and frame for testing.
-Fallbacks: Files > Browse, or run in Safari.
+"Get latest version" (bottom of Fun) reloads at a fresh ?v= address. NEVER tell John to delete and re-add the Home Screen icon:
+each icon has its own storage, so photos and settings are lost.
+PHOTO PICKER LESSON: adding update-on-reopen (visibilitychange/pageshow listeners firing checkUpdate) coincided with the iOS 12
+photo picker showing "No Photos or Videos" in the Home Screen app. Rolled back and re-added features one at a time (sky, font,
+frame, manual update button, Bedside button): picker works. Do NOT add visibilitychange/pageshow handlers to the wall panel.
+After any change near the photo flow, have John test Add photos on the iPad.
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
@@ -50,12 +50,6 @@ digit height measured from the font, because fonts set their colon low; digits u
 Storage: `bedside` (settings incl. font/size/color), `bed-done`, `bed-mins`, `bed-glow`, `bed-wx`.
 Has its own `panel-version` meta and the same self-update; it never reloads during a sunrise or while a sound plays.
 
-## Rollback (Nov 21, 4 PM)
-John asked to roll the wall panel back to commit 85987d5 (before Bedside, live sky, Nunito, frame, Bedside button) to test
-whether the photo picker works again. index.html = 85987d5 with panel-version bumped to 2026-11-21.11. The later version is in
-git history (097b8f7). Re-add later features one at a time, testing the photo picker after each. Bedside app files are unchanged.
-Step 1 (2026-11-21.12): sky + Nunito + see-through tiles (from 697026b) + frame. NOT yet back: Bedside button, update-on-reopen
-and "Get latest version", pauseSky, Simple look. Picker worked on .11; Simple look on .10 still failed, so the Bedside button or
-update-on-reopen (visibilitychange/pageshow + ?v= reloads) are the main suspects.
-Step 1b (2026-11-21.13): manual "Get latest version" button back (bottom of Fun). John added a fresh icon; photo picker WORKED.
-Step 2 (2026-11-21.14): Bedside button back. Update-on-reopen (visibilitychange/pageshow) deliberately left out for good.
+## History
+Nov 21: wall panel rolled back to 85987d5, then rebuilt step by step to 2026-11-21.14 (sky, Nunito, frame, Get latest version,
+Bedside button). Left out for good: update-on-reopen, pauseSky, Simple look (all in git history at 097b8f7 if ever needed).
