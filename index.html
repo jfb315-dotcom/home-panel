@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.19">
+<meta name="panel-version" content="2026-11-21.20">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -81,6 +81,9 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #verseText{font-size:22px;line-height:1.35;margin:8px 0 6px}
 .ref{font-size:16px;color:var(--muted)}
 #tCount .big{color:var(--accentTxt)}
+.deco{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
+.deco svg{position:absolute;display:block}
+.ctext{position:relative;z-index:1}
 #tPhoto{padding:0;background:var(--tile2);background-size:cover;background-position:center;justify-content:center;flex-direction:column;color:var(--muted)}
 .ptag{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.6);color:#fff;font-size:14px;font-weight:600;padding:6px 10px;border-radius:999px}
 .qrbox{background:#fff;border-radius:8px;padding:0;flex:none}
@@ -2781,6 +2784,77 @@ function renderVerse(){
  $("verseBody").innerHTML='<div class="card" style="padding:40px"><div style="font-size:38px;line-height:1.35;font-weight:500">'+esc(v[0])+'</div><div class="ref" style="font-size:22px;margin-top:20px">'+esc(v[1])+' (KJV)</div></div><div class="lbl" style="margin:20px 0 10px">Earlier this week</div>'+prev;
 }
 
+/* ---------- Countdown themes: decorations picked from the countdown's name (or the date) ---------- */
+var SHAPES={
+ tree:'<path d="M12 2l5 7h-3l4 6h-3l4 6H5l4-6H6l4-6H7z" fill="#2E8B57"/><rect x="10.5" y="20.5" width="3" height="3" fill="#7A4A2A"/><circle cx="12" cy="2.6" r="1.7" fill="#FFD447"/>',
+ snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7" stroke="#D8ECFF" stroke-width="1.8" stroke-linecap="round"/>',
+ ornament:'<circle cx="12" cy="14" r="7" fill="#D93B3B"/><rect x="10" y="5" width="4" height="3" fill="#C9A227"/>',
+ heart:'<path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z" fill="#E8457A"/>',
+ egg:'<ellipse cx="12" cy="13" rx="7" ry="9" fill="#9FD3F2"/><path d="M5.5 11h13M5.2 15.5h13.6" stroke="#F7B6D2" stroke-width="2"/>',
+ egg2:'<ellipse cx="12" cy="13" rx="7" ry="9" fill="#F9E07F"/><path d="M5.5 11h13M5.2 15.5h13.6" stroke="#B9E4A8" stroke-width="2"/>',
+ flower:'<g fill="#F7A8C8"><circle cx="12" cy="6" r="4"/><circle cx="18" cy="11" r="4"/><circle cx="15.5" cy="18" r="4"/><circle cx="8.5" cy="18" r="4"/><circle cx="6" cy="11" r="4"/></g><circle cx="12" cy="12.5" r="3" fill="#FFD447"/>',
+ starRed:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#D93B3B"/>',
+ starBlue:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#2F6FDB"/>',
+ starGold:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#F2C230"/>',
+ firework:'<path d="M12 12V2M12 12l7-7M12 12h10M12 12l7 7M12 12v10M12 12l-7 7M12 12H2M12 12L5 5" stroke="#F2C230" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#E8457A"/>',
+ confetti:'<rect x="3" y="4" width="4" height="2" fill="#E8457A" transform="rotate(20 5 5)"/><rect x="14" y="3" width="4" height="2" fill="#2F6FDB" transform="rotate(-30 16 4)"/><rect x="9" y="11" width="4" height="2" fill="#F2C230" transform="rotate(45 11 12)"/><rect x="17" y="15" width="4" height="2" fill="#2E9E57" transform="rotate(10 19 16)"/><rect x="4" y="18" width="4" height="2" fill="#8E44AD" transform="rotate(-15 6 19)"/>',
+ pumpkin:'<ellipse cx="8.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="15.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="12" cy="14" rx="4.5" ry="7.5" fill="#F39A3C"/><rect x="11" y="4" width="2" height="4" fill="#3E7B3A"/>',
+ ghost:'<path d="M6 21V10a6 6 0 0 1 12 0v11l-2-2-2 2-2-2-2 2-2-2z" fill="#F2F2F2"/><circle cx="10" cy="11" r="1.2" fill="#222"/><circle cx="14" cy="11" r="1.2" fill="#222"/>',
+ leaf:'<path d="M12 22C5 18 3 10 12 2c9 8 7 16 0 20z" fill="#D2691E"/><path d="M12 22V8" stroke="#8B3A0E" stroke-width="1.2"/>',
+ leaf2:'<path d="M12 22C5 18 3 10 12 2c9 8 7 16 0 20z" fill="#E0A21B"/><path d="M12 22V8" stroke="#8B5A0E" stroke-width="1.2"/>',
+ balloonR:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#E04848"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
+ balloonB:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#3F7FE0"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
+ balloonY:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#F2C230"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
+ shamrock:'<g fill="#2E9E57"><circle cx="12" cy="7" r="4.2"/><circle cx="7.5" cy="13" r="4.2"/><circle cx="16.5" cy="13" r="4.2"/></g><path d="M12 13c0 4 1 7 3 9" stroke="#2E7D4F" stroke-width="1.8" fill="none"/>',
+ ball:'<circle cx="12" cy="12" r="9.5" fill="#E8762B"/><path d="M2.5 12h19M12 2.5v19M5.3 5.3c3 3 3 10.4 0 13.4M18.7 5.3c-3 3-3 10.4 0 13.4" stroke="#5A2A10" stroke-width="1.2" fill="none"/>',
+ fish:'<path d="M2 12c4-6 11-6 15 0-4 6-11 6-15 0zM17 12l5-4.5v9z" fill="#4FA3D9"/><circle cx="6.5" cy="11" r="1.1" fill="#123"/>',
+ sun:'<circle cx="12" cy="12" r="5" fill="#F7C531"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" stroke="#F7C531" stroke-width="2" stroke-linecap="round"/>',
+ cap:'<path d="M2 9l10-5 10 5-10 5z" fill="#2A2F3A"/><path d="M6 11v4c3 2.5 9 2.5 12 0v-4l-6 3z" fill="#3A4150"/><path d="M20 9.5v6" stroke="#F2C230" stroke-width="1.5"/>'
+};
+var THEMES={
+ xmas:{t:"30,130,70",s:["tree","snow","ornament","tree","snow","ornament"]},
+ newyear:{t:"200,160,40",s:["firework","starGold","confetti","firework","starGold","confetti"]},
+ valentine:{t:"230,70,120",s:["heart","heart","heart","heart","heart","heart"]},
+ easter:{t:"160,200,240",s:["egg","flower","egg2","flower","egg","egg2"]},
+ stpat:{t:"46,158,87",s:["shamrock","shamrock","shamrock","shamrock","shamrock","shamrock"]},
+ usa:{t:"47,111,219",s:["starRed","firework","starBlue","starRed","starBlue","firework"]},
+ halloween:{t:"229,122,31",s:["pumpkin","ghost","pumpkin","ghost","pumpkin","ghost"]},
+ thanks:{t:"210,105,30",s:["leaf","leaf2","pumpkin","leaf2","leaf","leaf"]},
+ birthday:{t:"232,69,122",s:["balloonR","balloonB","confetti","balloonY","balloonR","confetti"]},
+ love:{t:"232,69,122",s:["heart","flower","heart","heart","flower","heart"]},
+ ball:{t:"232,118,43",s:["ball","ball","ball","ball","ball","ball"]},
+ fish:{t:"79,163,217",s:["fish","fish","fish","fish","fish","fish"]},
+ beach:{t:"247,197,49",s:["sun","fish","sun","fish","sun","fish"]},
+ grad:{t:"60,70,90",s:["cap","starGold","confetti","cap","starGold","confetti"]},
+ party:{t:"142,68,173",s:["confetti","starGold","confetti","balloonB","starGold","confetti"]}
+};
+function themeFor(it){
+ var n=(it.name||"").toLowerCase(),m=it.m,d=it.d;
+ if(/christmas|xmas|santa/.test(n)||(m===12&&d===25))return "xmas";
+ if(/new year/.test(n)||(m===1&&d===1)||(m===12&&d===31))return "newyear";
+ if(/valentine/.test(n)||(m===2&&d===14))return "valentine";
+ if(/easter|resurrection/.test(n))return "easter";
+ if(/patrick/.test(n)||(m===3&&d===17))return "stpat";
+ if(/july|4th|fourth|independence|memorial|labor day|veteran|flag/.test(n)||(m===7&&d===4))return "usa";
+ if(/halloween|trick or treat/.test(n)||(m===10&&d===31))return "halloween";
+ if(/thanksgiving|turkey|fall|autumn/.test(n))return "thanks";
+ if(/birthday|bday|b-day|turns \d/.test(n))return "birthday";
+ if(/anniversary|wedding|mother|father|mom|dad/.test(n))return "love";
+ if(/basketball|game|season|tournament|playoff|opener|practice|football|baseball|soccer/.test(n))return "ball";
+ if(/fish|lake|bass/.test(n))return "fish";
+ if(/vacation|beach|trip|cruise|disney|summer|pool/.test(n))return "beach";
+ if(/graduat/.test(n))return "grad";
+ return "party";
+}
+// Decorations sit on the right side of the box so the number and words stay readable.
+var DPOS=[[74,8,30,-12],[88,44,22,14],[66,64,34,6],[54,6,18,18],[86,80,20,-18],[58,36,16,0]];
+function decoHtml(it,h){
+ var th=THEMES[themeFor(it)],k=Math.max(0.6,Math.min(1.5,h/200));
+ return '<div class="deco" aria-hidden="true">'+DPOS.map(function(p,i){var sz=Math.round(p[2]*k*1.25);return '<svg viewBox="0 0 24 24" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+sz+'px;height:'+sz+'px;-webkit-transform:rotate('+p[3]+'deg);transform:rotate('+p[3]+'deg)">'+SHAPES[th.s[i]]+'</svg>';}).join("")+'</div>';
+}
+function themeTint(it){var t=THEMES[themeFor(it)].t;return "linear-gradient(135deg,rgba("+t+",.05),rgba("+t+",.28))";}
+function themeIcon(it,size){return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" aria-hidden="true" style="flex:none;margin-right:14px">'+SHAPES[THEMES[themeFor(it)].s[0]]+'</svg>';}
+
 /* ---------- Countdowns ---------- */
 var countList=lsGet("cd-list",null)||[{id:1,name:"Christmas",m:12,d:25,y:null},{id:2,name:"New Year's Day",m:1,d:1,y:null}];
 var removeArm=null;
@@ -2795,8 +2869,9 @@ function renderCount(){
  var items=countList.map(function(it){var n=cdNext(it);return {it:it,date:n.date,days:n.days};}).sort(function(a,b){return a.date-b.date;});
  var up=items.filter(function(x){return x.days>=0;}),el=$("tCount");
  if(!up.length)el.innerHTML='<div class="mr" style="color:var(--accentTxt)">'+icon("gift",48)+'</div><div class="col"><div style="font-size:22px;font-weight:600">Countdown</div><div class="sub">Tap to add one</div></div>';
- else{var f=up[0];el.innerHTML='<div class="col"><div class="big">'+(f.days===0?"Today!":f.days)+'</div><div class="sub" style="color:var(--ink);font-size:19px">'+(f.days===0?esc(f.it.name):daysWord(f.days)+" until "+esc(f.it.name))+'</div></div>';}
- var rows=items.map(function(x){return '<div class="crow"><div class="dd">'+(x.days<0?"Done":x.days===0?"Today":x.days)+'</div><div class="n">'+esc(x.it.name)+'<small>'+fmtDay(x.date)+(x.it.y?"":" · every year")+(x.days>0?" · "+x.days+" "+daysWord(x.days):"")+'</small></div><button class="btn'+(removeArm===x.it.id?" warn":"")+'" data-act="cdrm" data-id="'+x.it.id+'" style="margin:0">'+(removeArm===x.it.id?"Tap again to remove":"Remove")+'</button></div>';}).join("");
+ else{var f=up[0];el.innerHTML=decoHtml(f.it,el.clientHeight||200)+'<div class="col ctext"><div class="big">'+(f.days===0?"Today!":f.days)+'</div><div class="sub" style="color:var(--ink);font-size:19px;max-width:60%">'+(f.days===0?esc(f.it.name):daysWord(f.days)+" until "+esc(f.it.name))+'</div></div>';}
+ el.style.backgroundImage=up.length?themeTint(up[0].it):"";
+ var rows=items.map(function(x){return '<div class="crow">'+themeIcon(x.it,40)+'<div class="dd">'+(x.days<0?"Done":x.days===0?"Today":x.days)+'</div><div class="n">'+esc(x.it.name)+'<small>'+fmtDay(x.date)+(x.it.y?"":" · every year")+(x.days>0?" · "+x.days+" "+daysWord(x.days):"")+'</small></div><button class="btn'+(removeArm===x.it.id?" warn":"")+'" data-act="cdrm" data-id="'+x.it.id+'" style="margin:0">'+(removeArm===x.it.id?"Tap again to remove":"Remove")+'</button></div>';}).join("");
  var y=new Date().getFullYear();
  $("countBody").innerHTML='<div class="card">'+(rows||'<div class="sub">No countdowns yet.</div>')+'</div>'+
   '<div class="card"><div class="lbl" style="margin-bottom:14px">Add a countdown</div><label class="field"><span>What’s it for?</span><input id="cdName" type="text" placeholder="Basketball season opener" autocomplete="off"></label><label class="field"><span>Date</span><input id="cdDate" type="date" min="'+y+'-01-01"></label><label class="row" style="font-size:20px;margin-bottom:18px"><input id="cdYearly" type="checkbox" style="width:28px;height:28px;margin:0 12px 0 0">Every year (birthdays, holidays)</label><button class="btn pri" data-act="cdadd">Add countdown</button></div>';
@@ -3276,8 +3351,8 @@ function diceAct(a,t){
 var draw={color:"#1A1206",size:8,ready:false};
 var PENS=["#1A1206","#D93B3B","#2F6FDB","#2E9E57","#E2A417","#8E44AD"];
 function renderDrawBar(){
- $("drawBar").innerHTML=PENS.map(function(c){return '<button data-act="pen" data-c="'+c+'" aria-label="Color" style="width:56px;height:56px;border-radius:50%;background:'+c+';border:2px solid var(--line);box-sizing:border-box;margin-right:12px;box-shadow:'+(draw.color===c?'0 0 0 4px var(--ink)':'none')+'"></button>';}).join("")+
-  '<button class="btn" data-act="psize" style="margin:0 12px 0 8px">'+(draw.size>10?"Thin pen":"Thick pen")+'</button><button class="btn" data-act="perase" style="margin:0 12px 0 0">'+(draw.color==="#FFFFFF"?"Eraser on":"Eraser")+'</button><button class="btn warn" data-act="pclear" style="margin:0">Clear</button>';
+ $("drawBar").innerHTML=PENS.map(function(c){return '<button data-act="pen" data-c="'+c+'" aria-label="Color" style="width:52px;height:52px;border-radius:50%;background:'+c+';border:2px solid var(--line);box-sizing:border-box;margin-right:10px;box-shadow:'+(draw.color===c?'0 0 0 4px var(--ink)':'none')+'"></button>';}).join("")+
+  '<button class="btn" data-act="psize" style="margin:0 12px 0 8px">'+(draw.size>10?"Thin pen":"Thick pen")+'</button><button class="btn" data-act="perase" style="margin:0 12px 0 0">'+(draw.color==="#FFFFFF"?"Eraser on":"Eraser")+'</button><button class="btn warn" data-act="pclear" style="margin:0 12px 0 0">Clear</button><button class="btn pri" data-act="psave" style="margin:0">Save to photos</button>';
 }
 function setupCanvas(){
  var c=$("drawCanvas"),box=c.parentNode,r=window.devicePixelRatio||1,w=box.clientWidth,h=box.clientHeight;
@@ -3296,11 +3371,20 @@ function setupCanvas(){
  c.addEventListener("touchstart",start,{passive:false});c.addEventListener("touchmove",move,{passive:false});c.addEventListener("touchend",end,false);
  c.addEventListener("mousedown",start,false);c.addEventListener("mousemove",move,false);window.addEventListener("mouseup",end,false);
 })();
+// Adds the drawing to the panel's photos (with a backup copy), so it shows in the slideshows.
+function saveDrawing(){
+ if(!db){toast("Photos can’t be saved on this iPad");return;}
+ var src=$("drawCanvas"),sc=Math.min(1,1280/Math.max(src.width,src.height)),c=document.createElement("canvas");
+ c.width=Math.round(src.width*sc);c.height=Math.round(src.height*sc);var g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(src,0,0,c.width,c.height);
+ var data=c.toDataURL("image/jpeg",0.88);
+ idbReq("readwrite",function(st){return st.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});tCount=-1;renderPhotoTile();if(page===1)startTile();return makeBackup(id,data);}).then(function(){toast("Saved to your photos");}).catch(function(){toast("Couldn’t save the drawing");});
+}
 function drawAct(a,t){
  if(a==="pen")draw.color=t.getAttribute("data-c");
  else if(a==="psize")draw.size=draw.size>10?8:22;
  else if(a==="perase")draw.color="#FFFFFF";
  else if(a==="pclear"){draw.ready=false;setupCanvas();}
+ else if(a==="psave"){saveDrawing();return true;}
  else return false;
  renderDrawBar();return true;
 }
@@ -3493,7 +3577,8 @@ function renderPage2(){
  else html='<div class="wxicon" style="margin-right:14px">'+icon("cloud",52)+'</div><div class="sub">Weather loading…</div>';
  if($("p2Weather").innerHTML!==html)$("p2Weather").innerHTML=html;
  var up=countList.map(function(it){var n=cdNext(it);return {it:it,days:n.days};}).filter(function(x){return x.days>=0;}).sort(function(a,b){return a.days-b.days;});
- var ch=up.length?'<div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+'</div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
+ var ch=up.length?decoHtml(up[0].it,$("p2Count").clientHeight||140)+'<div class="ctext"><div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+'</div></div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
+ $("p2Count").style.backgroundImage=up.length?themeTint(up[0].it):"";
  if($("p2Count").innerHTML!==ch)$("p2Count").innerHTML=ch;
  var dn=dayNum(new Date()),v=verseFor(dn),w=WORDS[dn%WORDS.length];
  var vh='<div class="lbl">Verse of the day</div><div id="p2vt" style="font-size:16px;line-height:1.3;margin-top:3px">'+esc(v[0])+'</div><div class="ref" style="font-size:13px;margin-top:2px">'+esc(v[1])+'</div>';

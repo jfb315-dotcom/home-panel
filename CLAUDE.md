@@ -37,6 +37,10 @@ both set on the Photos view, saved as `slide-sec` and `slide-fit`; no arrows; ta
 Screen 1 photo tile (`tPhoto`) also cycles all photos (`showTile`, same `slide-sec`/`slide-fit`); only the visible screen's slideshow runs.
 Screen 1 home grid is full (7 tiles; Word of the day replaced the Guest Wi-Fi tile). Extra features live behind the header "Fun" button:
 trivia, scoreboard, dice and coin, drawing pad, movie night picker, guest Wi-Fi, joke or riddle, word of the day.
+Countdown tiles (both screens) get a theme from the countdown's name or date (`themeFor`: Christmas, New Year, Valentine's, Easter,
+St. Patrick's, July 4/flag holidays, Halloween, Thanksgiving, birthday, anniversary/parents, sports, fishing, vacation, graduation,
+else party): SVG decorations on the right side (`decoHtml`, `SHAPES`, `THEMES`) plus a tint; the countdown list shows a theme icon.
+Drawing pad "Save to photos" adds the drawing to the panel photos (IndexedDB + backup).
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.
 Idle return: 1 minute; a running timer never closes; trivia in progress, scoreboard and drawing pad get 10 minutes.
 
