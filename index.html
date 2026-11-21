@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.18">
+<meta name="panel-version" content="2026-11-21.19">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -2847,11 +2847,23 @@ function idbOpen(){return new Promise(function(res,rej){if(!window.indexedDB)ret
 function idbReq(mode,fn){return new Promise(function(res,rej){var tx=db.transaction("photos",mode),q=fn(tx.objectStore("photos"));tx.oncomplete=function(){res(q&&q.result);};tx.onerror=function(){rej(tx.error);};});}
 function idbAll(){return new Promise(function(res,rej){var out=[],tx=db.transaction("photos","readonly"),c=tx.objectStore("photos").openCursor();c.onsuccess=function(e){var cur=e.target.result;if(cur){out.push(cur.value);cur.continue();}else res(out);};c.onerror=function(){rej(c.error);};});}
 function todayPhoto(){return photos.length?photos[((dayNum(new Date())%photos.length)+photos.length)%photos.length]:null;}
+// Main-screen photo tile: cycles through all photos with the same timing and look as the big slideshow.
+var tIdx=0,tShown="A",tT=0,tCount=-1;
 function renderPhotoTile(){
- var el=$("tPhoto"),p=todayPhoto();
- if(p){el.style.backgroundImage="url("+p.data+")";el.innerHTML='<div class="ptag">Photo of the day</div>';}
- else{el.style.backgroundImage="";el.innerHTML=icon("photo",52)+'<div style="font-size:18px;margin-top:10px;font-weight:600">Photo of the day</div><div style="font-size:16px;margin-top:4px">Tap to add photos</div>';}
+ var el=$("tPhoto");el.style.backgroundImage="";
+ if(!photos.length){tCount=0;el.innerHTML=icon("photo",52)+'<div style="font-size:18px;margin-top:10px;font-weight:600">Photos</div><div style="font-size:16px;margin-top:4px">Tap to add photos</div>';return;}
+ if(tCount!==photos.length||!$("tSlideA")){tCount=photos.length;tShown="A";el.innerHTML='<div class="slide" id="tSlideA"></div><div class="slide" id="tSlideB" style="opacity:0"></div><div class="ptag" style="z-index:2">Photos</div>';if(tIdx>=photos.length)tIdx=0;showTile(tIdx);}
 }
+function showTile(i){
+ if(!photos.length||!$("tSlideA"))return;
+ tIdx=((i%photos.length)+photos.length)%photos.length;
+ var next=tShown==="A"?"B":"A",p=photos[tIdx];
+ blurOf(p,function(bl){var e=$("tSlide"+next);if(!e)return;
+  e.innerHTML='<div class="sbg"'+(bl?' style="background-image:url('+bl+')"':'')+'></div><div class="sfg" style="background-image:url('+p.data+')"></div>';
+  e.style.opacity="1";$("tSlide"+tShown).style.opacity="0";tShown=next;});
+}
+function startTile(){stopTile();applyFit();if(photos.length>1)tT=setInterval(function(){if(!view&&page===1)showTile(tIdx+1);},slideSec*1000);}
+function stopTile(){if(tT){clearInterval(tT);tT=0;}}
 // Slideshow settings for the big photo on the second screen.
 function slideSettings(){
  var secs=[[5,"5 sec"],[10,"10 sec"],[20,"20 sec"],[30,"30 sec"],[60,"1 min"],[300,"5 min"]];
@@ -2894,7 +2906,7 @@ $("photoInput").addEventListener("change",function(){
  // One at a time so the iPad's small memory isn't swamped.
  var chain=Promise.resolve();
  files.forEach(function(f){chain=chain.then(function(){return shrink(f);}).then(function(data){if(!data)return;return idbReq("readwrite",function(s){return s.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});added++;return makeBackup(id,data);});});});
- chain.then(function(){self.value="";renderPhotoTile();if(page===2){renderSlideMsg();startSlides();}photoIdx=photos.length-added;renderPhotoView();toast("Added "+added+" photo"+(added===1?"":"s"));})
+ chain.then(function(){self.value="";renderPhotoTile();if(page===2){renderSlideMsg();startSlides();}else startTile();photoIdx=photos.length-added;renderPhotoView();toast("Added "+added+" photo"+(added===1?"":"s"));})
  .catch(function(){self.value="";renderPhotoTile();renderPhotoView();toast("Some photos didn’t save. The iPad may be full.");});
 });
 
@@ -3409,7 +3421,7 @@ function openView(name){
  if(view)$("v-"+view).className="view";
  view=name;removeArm=null;photoRmArm=false;
  if(name==="timer")renderTimerView();
- if(name==="photo"){var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
+ if(name==="photo"){photoIdx=page===1?tIdx:slideIdx;renderPhotoView();}
  if(name==="count")renderCount();
  if(name==="wifi"){wifiEdit=false;renderWifi();}
  if(name==="fun")renderFun();
@@ -3432,7 +3444,7 @@ document.addEventListener("click",function(e){
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
  if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
- if(a==="ssec"){slideSec=+t.getAttribute("data-v");lsSet("slide-sec",slideSec);renderPhotoView();if(page===2)startSlides();toast("Changes every "+(slideSec<60?slideSec+" seconds":slideSec/60+" minute"+(slideSec>60?"s":"")));return;}
+ if(a==="ssec"){slideSec=+t.getAttribute("data-v");lsSet("slide-sec",slideSec);renderPhotoView();if(page===2)startSlides();else startTile();toast("Changes every "+(slideSec<60?slideSec+" seconds":slideSec/60+" minute"+(slideSec>60?"s":"")));return;}
  if(a==="sfit"){slideFit=t.getAttribute("data-v");lsSet("slide-fit",slideFit);applyFit();renderPhotoView();return;}
  if(a==="p2photo"){if(!photos.length&&db){openView("photo");$("photoInput").click();return;}openView("photo");photoIdx=slideIdx;renderPhotoView();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
@@ -3473,7 +3485,7 @@ setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
 
 /* ---------- Second screen (swipe left): big photo slideshow ---------- */
 var page=lsGet("panel-page",1),slideIdx=0,slideShown="A",slideT=0,joke2=false;
-function setPage(n){page=n;lsSet("panel-page",n);var h=$("home");h.className=n===2?"on2":"";var d=$("dots").children;d[0].className=n===1?"on":"";d[1].className=n===2?"on":"";if(n===2){renderPage2();startSlides();}else stopSlides();}
+function setPage(n){page=n;lsSet("panel-page",n);var h=$("home");h.className=n===2?"on2":"";var d=$("dots").children;d[0].className=n===1?"on":"";d[1].className=n===2?"on":"";if(n===2){stopTile();renderPage2();startSlides();}else{stopSlides();renderPhotoTile();startTile();}}
 function renderPage2(){
  var wx=lsGet("wx",null),html;
  if(wx&&wx.current){var info=wxInfo(wx.current.weather_code,wx.current.is_day),d=wx.daily;
@@ -3513,7 +3525,7 @@ function showSlide(i){
   el.style.opacity="1";$("slide"+slideShown).style.opacity="0";slideShown=next;
  });
 }
-function applyFit(){$("p2Photo").className="tile"+(slideFit==="fill"?" fill":"");}
+function applyFit(){var f=slideFit==="fill"?" fill":"";$("p2Photo").className="tile"+f;$("tPhoto").className="tile"+f;}
 function startSlides(){stopSlides();applyFit();if(!photos.length){renderSlideMsg();return;}if(!$("slide"+slideShown).innerHTML)showSlide(slideIdx);slideT=setInterval(function(){if(!view)showSlide(slideIdx+1);},slideSec*1000);}
 function stopSlides(){if(slideT){clearInterval(slideT);slideT=0;}}
 // Swipe left or right on the home screen to switch screens.
