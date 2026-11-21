@@ -17,6 +17,11 @@ live only in the iPad's browser. Never put Wi-Fi passwords, family photos or hom
 Serve over localhost, test at 1024x768 and 768x1024 in headless Chromium with the weather URL mocked.
 Keep test scripts out of the repo. John is not a programmer: reply in plain words about what he'll see.
 
+## Look
+Font: Nunito (Google Fonts; falls back to the system font offline). Behind the tiles is a live sky (`renderSky`): gradient by
+day/dawn/dusk/night, sun or real-phase moon crossing the header strip, stars, drifting CSS clouds, rain/snow on a 30fps canvas
+(paused while a view is open), fog bands, storm flashes. Tiles and pills are translucent (`--tileA`); header text is white with a shadow.
+
 ## Layout
 Home grid is full (7 tiles; Word of the day replaced the Guest Wi-Fi tile). Extra features live behind the header "Fun" button:
 trivia, scoreboard, dice and coin, drawing pad, movie night picker, guest Wi-Fi, joke or riddle, word of the day.
@@ -31,5 +36,7 @@ itself (when idle on the home screen) only if that value differs; without a bump
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
 over 10/20/30 min, then a "Good morning" screen for 45 min or until tapped), sleep sounds generated with Web Audio
 (white/pink/brown/rain/ocean/fan, sleep timer with 1-minute fade), night light, bedtime reminder, today/tomorrow weather.
-No alarm sound by John's choice. Storage: `bedside` (settings), `bed-done`, `bed-mins`, `bed-glow`, `bed-wx`.
+No alarm sound by John's choice. Clock look (font Thin/Rounded/Bold/Classic/Digital, size, color) is in the "Clock" button; fonts load
+from Google Fonts on demand and the clock shrinks to fit the width. Weather (now + today/tomorrow) sits across the top.
+Storage: `bedside` (settings incl. font/size/color), `bed-done`, `bed-mins`, `bed-glow`, `bed-wx`.
 Has its own `panel-version` meta and the same self-update; it never reloads during a sunrise or while a sound plays.
