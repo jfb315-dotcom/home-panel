@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b2">
+<meta name="panel-version" content="2026-11-21.b3">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -117,17 +117,38 @@ Array.prototype.forEach.call(document.querySelectorAll("button"),function(b){b.i
 /* ---------- Settings ---------- */
 var S=lsGet("bedside",null)||{on:false,h:6,m:30,days:[1,2,3,4,5],len:20,bedOn:false,bh:22,bm:0,vol:0.6};
 if(!S.font){S.font="thin";S.size="m";S.color="amber";}
+if(!S.weight)S.weight=(S.font==="thin"||S.font==="rounded")?"l":"r";
 /* ---------- Clock look: font, size, color ---------- */
-var FONTS={thin:{n:"Thin",f:"-apple-system,'Helvetica Neue',sans-serif",w:300,g:""},rounded:{n:"Rounded",f:"Nunito,sans-serif",w:300,g:"Nunito:wght@300"},bold:{n:"Bold",f:"Oswald,sans-serif",w:400,g:"Oswald:wght@400"},classic:{n:"Classic",f:"Lora,serif",w:400,g:"Lora:wght@400"},digital:{n:"Digital",f:"'Share Tech Mono',monospace",w:400,g:"Share+Tech+Mono"}};
+// w: Google weights for Light/Regular/Bold (missing = that font has only one weight).
+var FONTS={
+ thin:{n:"Simple",f:"-apple-system,'Helvetica Neue',sans-serif",w:{l:200,r:400,b:700},g:""},
+ rounded:{n:"Rounded",f:"Nunito,sans-serif",w:{l:300,r:400,b:800},g:"Nunito"},
+ soft:{n:"Soft",f:"Quicksand,sans-serif",w:{l:300,r:500,b:700},g:"Quicksand"},
+ modern:{n:"Modern",f:"Montserrat,sans-serif",w:{l:300,r:400,b:700},g:"Montserrat"},
+ geo:{n:"Geometric",f:"Poppins,sans-serif",w:{l:300,r:400,b:700},g:"Poppins"},
+ bold:{n:"Condensed",f:"Oswald,sans-serif",w:{l:300,r:400,b:700},g:"Oswald"},
+ tall:{n:"Tall",f:"'Bebas Neue',sans-serif",w:{r:400},g:"Bebas+Neue"},
+ classic:{n:"Classic",f:"Lora,serif",w:{r:400,b:700},g:"Lora"},
+ elegant:{n:"Elegant",f:"'Playfair Display',serif",w:{r:400,b:800},g:"Playfair+Display"},
+ type:{n:"Typewriter",f:"'Courier Prime',monospace",w:{r:400,b:700},g:"Courier+Prime"},
+ digital:{n:"Digital",f:"'Share Tech Mono',monospace",w:{r:400},g:"Share+Tech+Mono"},
+ space:{n:"Space",f:"Orbitron,sans-serif",w:{r:400,b:800},g:"Orbitron"},
+ retro:{n:"Retro",f:"Righteous,sans-serif",w:{r:400},g:"Righteous"},
+ bubbly:{n:"Bubbly",f:"Comfortaa,sans-serif",w:{l:300,r:400,b:700},g:"Comfortaa"},
+ hand:{n:"Handwritten",f:"Caveat,cursive",w:{r:400,b:700},g:"Caveat"}
+};
+var WEIGHTS={l:"Light",r:"Regular",b:"Bold"};
+function effW(){var w=FONTS[S.font].w;return w[S.weight]?S.weight:(w.r?"r":Object.keys(w)[0]);}
+function fontWeight(F){var w=F.w;return w[S.weight]||w.r||w.l||w.b;}
 var SIZES={s:{n:"Small",px:170},m:{n:"Medium",px:230},l:{n:"Large",px:290},xl:{n:"Huge",px:350}};
 var COLORS={amber:{n:"Amber",c:"#FF9F43",b:"rgba(255,159,67,.35)"},red:{n:"Red",c:"#FF5A46",b:"rgba(255,90,70,.35)"},white:{n:"Soft white",c:"#DCD6C8",b:"rgba(220,214,200,.3)"},blue:{n:"Blue",c:"#7FB2FF",b:"rgba(127,178,255,.35)"},green:{n:"Green",c:"#6BD68A",b:"rgba(107,214,138,.32)"}};
 var fontsLoaded={};
-function loadFont(k){var g=FONTS[k].g;if(!g||fontsLoaded[k])return;fontsLoaded[k]=1;var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+g+"&display=swap";l.onload=function(){[300,1000,2500].forEach(function(ms){setTimeout(applyLook,ms);});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(applyLook);};document.head.appendChild(l);}
+function loadFont(k){var F=FONTS[k],g=F.g;if(!g||fontsLoaded[k])return;fontsLoaded[k]=1;var ws=[],key;for(key in F.w)if(ws.indexOf(F.w[key])<0)ws.push(F.w[key]);ws.sort(function(a,b){return a-b;});var l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+g+(ws.length>1||ws[0]!==400?":wght@"+ws.join(";"):"")+"&display=swap";l.onload=function(){[300,1000,2500].forEach(function(ms){setTimeout(applyLook,ms);});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(applyLook);};document.head.appendChild(l);}
 function applyLook(){
  var F=FONTS[S.font]||FONTS.thin,C=COLORS[S.color]||COLORS.amber,px=(SIZES[S.size]||SIZES.m).px,c=$("clock");
  loadFont(S.font);
  document.body.style.setProperty("--c",C.c);document.body.style.setProperty("--cb",C.b);
- c.style.fontFamily=F.f;c.style.fontWeight=F.w;c.style.letterSpacing=S.font==="digital"?"0":"-.03em";
+ c.style.fontFamily=F.f;c.style.fontWeight=fontWeight(F);c.style.letterSpacing=S.font==="digital"?"0":"-.03em";
  // Shrink to fit the screen width (the Huge size on a long time like 12:59 would run off the edge).
  if(window.innerHeight>window.innerWidth)px=Math.round(px*0.75);
  var sm=c.getElementsByTagName("small")[0],size=function(){c.style.fontSize=px+"px";if(sm)sm.style.fontSize=Math.round(px/5)+"px";};
@@ -136,7 +157,8 @@ function applyLook(){
 function renderStyle(){
  Object.keys(FONTS).forEach(loadFont);
  var chips=function(obj,key,extra){return '<div class="row">'+Object.keys(obj).map(function(k){return '<button class="chip fchip'+(S[key]===k?" on":"")+'" data-look="'+key+'" data-v="'+k+'" style="'+(extra&&!(key==="color"&&S[key]===k)?extra(k):"")+'">'+obj[k].n+'</button>';}).join("")+'</div>';};
- $("styleBody").innerHTML='<div class="card"><div class="lbl">Font</div>'+chips(FONTS,"font",function(k){return "font-family:"+FONTS[k].f.replace(/'/g,"&#39;");})+'</div>'+
+ $("styleBody").innerHTML='<div class="card"><div class="lbl">Font</div>'+chips(FONTS,"font",function(k){return "font-family:"+FONTS[k].f.replace(/'/g,"&#39;")+";font-weight:"+(FONTS[k].w.r||400);})+'</div>'+
+  '<div class="card"><div class="lbl">Thickness</div><div class="row">'+Object.keys(WEIGHTS).map(function(k){var has=!!FONTS[S.font].w[k];return '<button class="chip fchip'+(k===effW()?" on":"")+'" data-look="weight" data-v="'+k+'" style="font-family:'+FONTS[S.font].f.replace(/'/g,"&#39;")+';font-weight:'+(FONTS[S.font].w[k]||400)+';'+(has?"":"opacity:.3")+'"'+(has?"":" disabled")+'>'+WEIGHTS[k]+'</button>';}).join("")+'</div>'+(Object.keys(FONTS[S.font].w).length<2?'<div class="note">This font comes in one thickness only.</div>':'')+'</div>'+
   '<div class="card"><div class="lbl">Size</div>'+chips(SIZES,"size")+'</div>'+
   '<div class="card"><div class="lbl">Color</div>'+chips(COLORS,"color",function(k){return "color:"+COLORS[k].c;})+'<div class="note">Red is easiest on your eyes in the dark.</div></div>'+
   '<div class="note center" style="text-align:center">Tap Back to see it full size.</div>';

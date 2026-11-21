@@ -36,7 +36,7 @@ itself (when idle on the home screen) only if that value differs; without a bump
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
 over 10/20/30 min, then a "Good morning" screen for 45 min or until tapped), sleep sounds generated with Web Audio
 (white/pink/brown/rain/ocean/fan, sleep timer with 1-minute fade), night light, bedtime reminder, today/tomorrow weather.
-No alarm sound by John's choice. Clock look (font Thin/Rounded/Bold/Classic/Digital, size, color) is in the "Clock" button; fonts load
+No alarm sound by John's choice. Clock look (15 fonts in `FONTS`, each with the weights it has; a separate Light/Regular/Bold choice `S.weight`; size; color) is in the "Clock" button; fonts load
 from Google Fonts on demand and the clock shrinks to fit the width. Weather (now + today/tomorrow) sits across the top.
 Storage: `bedside` (settings incl. font/size/color), `bed-done`, `bed-mins`, `bed-glow`, `bed-wx`.
 Has its own `panel-version` meta and the same self-update; it never reloads during a sunrise or while a sound plays.
