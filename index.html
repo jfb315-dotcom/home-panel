@@ -2857,8 +2857,8 @@ document.addEventListener("click",function(e){
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
 },false);
 ["touchstart","mousedown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();},true);});
-// Back to the home screen after 2 minutes untouched, unless a timer is on screen.
-setInterval(function(){if(view&&Date.now()-lastTouch>120000&&!(view==="timer"&&timer))closeView();},5000);
+// Back to the home screen after 1 minute untouched, unless a timer is on screen.
+setInterval(function(){if(view&&Date.now()-lastTouch>60000&&!(view==="timer"&&timer))closeView();},5000);
 
 /* ---------- Start ---------- */
 applyTheme();
