@@ -21,6 +21,8 @@ Keep test scripts out of the repo. John is not a programmer: reply in plain word
 Font: Nunito (Google Fonts; falls back to the system font offline). Behind the tiles is a live sky (`renderSky`): gradient by
 day/dawn/dusk/night, sun or real-phase moon crossing the header strip, stars, drifting CSS clouds, rain/snow on a 30fps canvas
 (paused while a view is open), fog bands, storm flashes. Tiles and pills are translucent (`--tileA`); header text is white with a shadow.
+Both apps draw a black rounded-corner frame (`#frame`, box-shadow ring) so they look like an app screen.
+Header "Bedside" pill goes to bedside/ (blocked while a timer runs; asks twice during trivia); Bedside's "Panel" button goes back.
 
 ## Layout
 Home grid is full (7 tiles; Word of the day replaced the Guest Wi-Fi tile). Extra features live behind the header "Fun" button:

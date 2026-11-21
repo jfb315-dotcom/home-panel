@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b4">
+<meta name="panel-version" content="2026-11-21.b5">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -30,7 +30,7 @@ button:active{opacity:.6}
 #line{font-size:24px;margin-top:18px;text-align:center;opacity:.85}
 #nudge{font-size:30px;margin-top:14px;font-weight:600;display:none}
 #bar{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center}
-.bb{height:64px;padding:0 26px;margin:0 8px;border-radius:999px;border:1px solid var(--cb);font-size:20px;display:flex;align-items:center}
+.bb{height:64px;padding:0 22px;margin:0 6px;border-radius:999px;border:1px solid var(--cb);font-size:20px;display:flex;align-items:center}
 .bb svg{margin-right:8px}
 .dim #clock,.dim #line,.dim #bar{opacity:.3}
 #clock,#line,#bar{-webkit-transition:opacity 2s;transition:opacity 2s}
@@ -59,6 +59,7 @@ input[type=range]{width:100%;height:44px}
 #morning .g{font-size:44px;font-weight:600;margin-top:10px}
 #morning .w{font-size:26px;margin-top:12px}
 #morning .h{font-size:20px;margin-top:40px;opacity:.7}
+#frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #toast{position:fixed;left:50%;bottom:120px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#111;color:var(--c);font-size:22px;padding:14px 26px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap;border:1px solid var(--cb)}
 #toast.on{opacity:1}
 @media (orientation:portrait){#clock{font-size:170px}#clock small{font-size:36px}}
@@ -76,6 +77,7 @@ input[type=range]{width:100%;height:44px}
     <button class="bb" data-open="sounds">WAVEICON Sounds</button>
     <button class="bb" data-open="light">BULBICON Night light</button>
     <button class="bb" data-open="style">AAICON Clock</button>
+    <button class="bb" data-act="toPanel">GRIDICON Panel</button>
   </div>
 </div>
 
@@ -86,6 +88,7 @@ input[type=range]{width:100%;height:44px}
 
 <div id="morning" role="button" data-act="morning"><div class="t" id="mClock"></div><div class="g">Good morning</div><div class="w" id="mWx"></div><div class="h">Tap anywhere to turn off</div></div>
 <div id="toast"></div>
+<div id="frame"></div>
 
 <script>
 (function(){
@@ -104,6 +107,7 @@ var IC={sun:'<circle cx="12" cy="14" r="4"/><path d="M12 4v2M4.9 7.9l1.4 1.4M19.
  wave:'<path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0M2 17c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/>',
  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
  back:'<path d="M15 5l-7 7 7 7"/>',
+ grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
  aa:'<path d="M3 19l5-14 5 14M5 14h6M15 19v-6a3 3 0 0 1 6 0v6M15 16h6"/>',
  cloud:'<path d="M7 19h10a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6 1.5A3.8 3.8 0 0 0 7 19z"/>',
  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
@@ -114,7 +118,7 @@ var IC={sun:'<circle cx="12" cy="14" r="4"/><path d="M12 4v2M4.9 7.9l1.4 1.4M19.
  fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s2 5-2 7M14 12c4 0 7 1 7 4s-5 2-7-2M12 14c0 4-1 7-4 7s-2-5 2-7M10 12c-4 0-7-1-7-4s5-2 7 2"/>',
  noise:'<path d="M3 12h2l2-6 3 12 3-9 2 6 2-3h4"/>'};
 function icon(n,s,sw){return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>';}
-Array.prototype.forEach.call(document.querySelectorAll("button"),function(b){b.innerHTML=b.innerHTML.replace("BACKICON",icon("back",26,2.4)).replace("SUNICON",icon("sun",24)).replace("WAVEICON",icon("wave",24)).replace("BULBICON",icon("bulb",24)).replace("AAICON",icon("aa",24));});
+Array.prototype.forEach.call(document.querySelectorAll("button"),function(b){b.innerHTML=b.innerHTML.replace("BACKICON",icon("back",26,2.4)).replace("SUNICON",icon("sun",24)).replace("WAVEICON",icon("wave",24)).replace("BULBICON",icon("bulb",24)).replace("AAICON",icon("aa",24)).replace("GRIDICON",icon("grid",24));});
 
 /* ---------- Settings ---------- */
 var S=lsGet("bedside",null)||{on:false,h:6,m:30,days:[1,2,3,4,5],len:20,bedOn:false,bh:22,bm:0,vol:0.6};
@@ -341,6 +345,7 @@ document.addEventListener("click",function(e){
  if(a==="sunToggle"){S.on=!S.on;saveS();renderSunrise();render();toast(S.on?"Sunrise on for "+fmtTime(S.h,S.m):"Sunrise off");}
  else if(a==="bedToggle"){S.bedOn=!S.bedOn;saveS();renderSunrise();render();}
  else if(a==="demo"){closeView();demo=new Date();render();}
+ else if(a==="toPanel"){location.href="../";}
  else if(a==="stop")stopSound();
  else if(a==="glow"){glowI=(glowI+1)%GLOWS.length;lsSet("bed-glow",glowI);showGlow();}
  else if(a==="morning"){demo=null;var n=new Date();if(S.on){doneDay=dayKey(n);lsSet("bed-done",doneDay);}render();}

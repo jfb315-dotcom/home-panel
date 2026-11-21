@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.6">
+<meta name="panel-version" content="2026-11-21.7">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -19,7 +19,7 @@ button,input,select{font:inherit;color:inherit}
 button{border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;-webkit-appearance:none;border-radius:0}
 button:active{opacity:.7}
 svg{display:block}
-#home{position:fixed;z-index:1;top:0;left:0;right:0;bottom:0;padding:28px 24px 24px;display:flex;flex-direction:column;box-sizing:border-box}
+#home{position:fixed;z-index:1;top:0;left:0;right:0;bottom:0;padding:36px 26px 26px;display:flex;flex-direction:column;box-sizing:border-box}
 header{display:flex;align-items:flex-end;justify-content:space-between;height:72px;margin-bottom:14px;flex:none}
 .clock{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);font-size:62px;font-weight:700;line-height:1;letter-spacing:-.02em}
 .clock small{font-size:24px;font-weight:700;margin-left:6px;letter-spacing:0;color:rgba(255,255,255,.85)}
@@ -100,6 +100,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #photoBig{flex:1;background-size:contain;background-repeat:no-repeat;background-position:center;margin:0 24px}
 .pbar{display:flex;align-items:center;justify-content:center;padding:12px 24px 20px;flex:none}
 .pbar .btn{background:#222;color:#fff;margin:0 6px}
+#frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #toast{position:fixed;left:50%;bottom:40px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#000;color:#fff;font-size:22px;font-weight:600;padding:16px 28px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:.9}
 .ring{color:var(--accentTxt)}
@@ -128,6 +129,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div class="hright">
       <button class="pill" id="themeBtn" aria-label="Screen color: automatic, day or night"></button>
+      <button class="pill" data-act="toBedside" aria-label="Switch to the bedside clock">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+        Bedside
+      </button>
       <button class="pill" data-open="fun" aria-label="Fun: trivia, joke and word of the day">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01" stroke-width="3"></path></svg>
         Fun
@@ -169,6 +174,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 
 <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
 <div id="toast"></div>
+<div id="frame"></div>
 
 <script>
 //---------------------------------------------------------------------
@@ -3345,7 +3351,7 @@ function fxFrame(ts){
 function flash(){var f=$("flash");f.style.opacity=".55";setTimeout(function(){f.style.opacity="0";},90);setTimeout(function(){f.style.opacity=".35";},200);setTimeout(function(){f.style.opacity="0";},290);}
 
 /* ---------- Views, taps, idle return ---------- */
-var view=null,lastTouch=Date.now();
+var view=null,lastTouch=Date.now(),toBedArm=false;
 function openView(name){
  if(view)$("v-"+view).className="view";
  view=name;removeArm=null;photoRmArm=false;
@@ -3370,6 +3376,7 @@ document.addEventListener("click",function(e){
  if(t.hasAttribute("data-timer")){startTimer(+t.getAttribute("data-timer"));return;}
  if(t.hasAttribute("data-open")){var n=t.getAttribute("data-open");if(n==="photo"&&!photos.length&&db){openView("photo");$("photoInput").click();return;}openView(n);return;}
  var a=t.getAttribute("data-act");
+ if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
