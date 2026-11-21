@@ -57,3 +57,4 @@ git history (097b8f7). Re-add later features one at a time, testing the photo pi
 Step 1 (2026-11-21.12): sky + Nunito + see-through tiles (from 697026b) + frame. NOT yet back: Bedside button, update-on-reopen
 and "Get latest version", pauseSky, Simple look. Picker worked on .11; Simple look on .10 still failed, so the Bedside button or
 update-on-reopen (visibilitychange/pageshow + ?v= reloads) are the main suspects.
+Step 1b (2026-11-21.13): manual "Get latest version" button back (bottom of Fun). John added a fresh icon at this point (no photos yet).
