@@ -88,6 +88,9 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #toast{position:fixed;left:50%;bottom:40px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#000;color:#fff;font-size:22px;font-weight:600;padding:16px 28px;border-radius:999px;z-index:50;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none;white-space:nowrap}
 #toast.on{opacity:.9}
 .ring{color:var(--accentTxt)}
+.buzz{flex:1;height:180px;border-radius:22px;color:#fff;font-size:36px;font-weight:800;text-align:center;-webkit-touch-callout:none}
+.hb.btn{margin:0 0 0 10px}
+.fcard{text-align:left}
 @media (orientation:portrait){
   .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:1fr;grid-auto-flow:dense}
   .bigtime{font-size:150px}
@@ -103,6 +106,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div class="hright">
       <button class="pill" id="themeBtn" aria-label="Screen color: automatic, day or night"></button>
+      <button class="pill" data-open="fun" aria-label="Fun: trivia, joke and word of the day">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01" stroke-width="3"></path></svg>
+        Fun
+      </button>
       <button class="pill gag" id="gagBtn" aria-label="Gag button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 14a4.5 4.5 0 0 0 8 0z"></path><path d="M9 9.5h.01M15 9.5h.01"></path></svg>
         Don't press
@@ -130,6 +137,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 <section class="view" id="v-count"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Countdowns</h1></div><div class="vbody" id="countBody"></div></section>
 <section class="view" id="v-moon"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Moon and stars</h1></div><div class="vbody" id="moonBody"></div></section>
 <section class="view" id="v-wifi"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Guest Wi-Fi</h1></div><div class="vbody" id="wifiBody"></div></section>
+<section class="view" id="v-fun"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Fun</h1></div><div class="vbody" id="funBody"></div></section>
+<section class="view" id="v-trivia"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Trivia night</h1><button class="btn" data-act="qnew" style="margin:0 0 0 auto">New game</button></div><div class="vbody" id="triviaBody"></div></section>
 <section class="view" id="v-photo"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1 id="photoTitle">Photos</h1></div><div id="photoBig"></div><div class="pbar" id="photoBar"></div></section>
 
 <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
@@ -2521,7 +2530,7 @@ function tickClock(){
  $("clock").innerHTML=((h%12)||12)+":"+pad(d.getMinutes())+"<small>"+(h<12?"AM":"PM")+"</small>";
  $("hdate").textContent=DAYS[d.getDay()]+", "+MONTHS[d.getMonth()]+" "+d.getDate();
  var dn=dayNum(d);
- if(dn!==lastDay){lastDay=dn;renderVerse();renderCount();renderPhotoTile();renderMoon();}
+ if(dn!==lastDay){lastDay=dn;jokeShown=false;renderVerse();renderCount();renderPhotoTile();renderMoon();}
  applyTheme();
  // Pick up any app updates once a night, unless a timer is going.
  if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.reload();},1000);
@@ -2824,6 +2833,292 @@ function renderWifi(){
  else b.innerHTML='<div class="card"><div class="sub" style="margin:0 0 18px;font-size:19px">Use your guest network, not your main one. This stays on this iPad; it isn’t uploaded anywhere.</div><label class="field"><span>Network name</span><input id="wSsid" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" value="'+esc(wifi?wifi.ssid:"")+'"></label><label class="field"><span>Password</span><input id="wPass" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" value="'+esc(wifi?wifi.pass:"")+'"></label><label class="field"><span>Security</span><select id="wSec"><option value="WPA">WPA / WPA2 / WPA3 (most networks)</option><option value="nopass"'+(wifi&&wifi.sec==="nopass"?" selected":"")+'>None (open network)</option></select></label><button class="btn pri" data-act="wsave">Save</button>'+(wifi&&wifi.ssid?'<button class="btn" data-act="wcancel">Cancel</button>':'')+'</div>';
 }
 
+/* ---------- Fun: trivia night, joke or riddle, word of the day ---------- */
+var JOKES=[
+["Why don't skeletons fight each other?","They don't have the guts."],
+["What do you call a fish with no eyes?","A fsh."],
+["Why did the scarecrow win an award?","He was outstanding in his field."],
+["What has keys but can't open locks?","A piano."],
+["What gets wetter the more it dries?","A towel."],
+["What has a neck but no head?","A bottle."],
+["Why did the math book look sad?","It had too many problems."],
+["What do you call a bear with no teeth?","A gummy bear."],
+["What has hands but can't clap?","A clock."],
+["What can you catch but not throw?","A cold."],
+["Why can't a bicycle stand up by itself?","It's two tired."],
+["What has to be broken before you can use it?","An egg."],
+["What did the ocean say to the beach?","Nothing. It just waved."],
+["What's full of holes but still holds water?","A sponge."],
+["Why did the golfer bring two pairs of pants?","In case he got a hole in one."],
+["What goes up but never comes down?","Your age."],
+["What do you call cheese that isn't yours?","Nacho cheese."],
+["I'm tall when I'm young and short when I'm old. What am I?","A candle."],
+["Why are basketball players messy eaters?","They're always dribbling."],
+["What has one eye but can't see?","A needle."],
+["How do you plan a party in outer space?","You planet."],
+["Some months have 31 days and some have 30. How many have 28?","All of them."],
+["Why did the cookie go to the doctor?","It felt crummy."],
+["What can travel around the world while staying in a corner?","A stamp."],
+["What do you call a sleeping bull?","A bulldozer."],
+["The more you take, the more you leave behind. What are they?","Footsteps."],
+["Why don't eggs tell jokes?","They'd crack each other up."],
+["What has lots of teeth but can't bite?","A comb."],
+["What did one wall say to the other wall?","I'll meet you at the corner."],
+["Why was the fish so easy to weigh?","It had its own scales."],
+["What building has the most stories?","A library."],
+["How does a penguin build its house?","Igloos it together."],
+["What has a head and a tail but no body?","A coin."],
+["Why did the kid bring a ladder to school?","He wanted to go to high school."],
+["What runs but never walks?","A river."],
+["What do you call a dinosaur that crashed its car?","Tyrannosaurus wrecks."],
+["What can you hold in your right hand but never in your left?","Your left hand."],
+["Why did the banana go to the doctor?","It wasn't peeling well."],
+["What has words but never speaks?","A book."],
+["What do you call a pig that knows karate?","A pork chop."],
+["Forward I'm heavy, backward I'm not. What am I?","A ton."],
+["Why did the coach go to the bank?","To get his quarterback."],
+["What has legs but can't walk?","A table."],
+["What's orange and sounds like a parrot?","A carrot."],
+["What lets you look right through a wall?","A window."],
+["Why did the student eat his homework?","The teacher said it was a piece of cake."],
+["What belongs to you, but other people use it more than you do?","Your name."],
+["What do you call a fake noodle?","An impasta."],
+["What kind of tree fits in your hand?","A palm tree."],
+["What did the fisherman say to the magician?","Pick a cod, any cod."]
+];
+var WORDS=[
+["Ebullient","adjective","Cheerful and full of energy.","The team was ebullient after the buzzer-beater."],
+["Gregarious","adjective","Loves being around other people.","Our gregarious neighbor knows everyone on the street."],
+["Meticulous","adjective","Very careful about every small detail.","She kept meticulous notes for the science fair."],
+["Resilient","adjective","Able to bounce back after something hard.","The resilient team came back from ten points down."],
+["Candid","adjective","Honest and direct.","Thanks for your candid answer."],
+["Diligent","adjective","Hardworking and careful.","A diligent student checks her work twice."],
+["Benevolent","adjective","Kind and generous.","The benevolent coach bought pizza for the whole team."],
+["Tenacious","adjective","Doesn't give up easily.","The tenacious defender stayed on him all game."],
+["Serendipity","noun","A happy accident; finding something good you weren't looking for.","Finding twenty dollars in my old coat was pure serendipity."],
+["Ubiquitous","adjective","Found everywhere.","Phones are ubiquitous at ball games now."],
+["Frugal","adjective","Careful not to waste money.","He's frugal and packs his lunch every day."],
+["Jubilant","adjective","Very happy, especially after a win.","The crowd was jubilant when the final buzzer sounded."],
+["Ponder","verb","To think carefully about something.","She pondered the riddle all through dinner."],
+["Eloquent","adjective","Speaking or writing clearly and well.","He gave an eloquent speech at the banquet."],
+["Inquisitive","adjective","Curious; loves asking questions.","The inquisitive kid asked how the clock worked."],
+["Lethargic","adjective","Tired and slow; low on energy.","I felt lethargic after the big Thanksgiving meal."],
+["Zealous","adjective","Very eager and enthusiastic.","The zealous fans showed up two hours early."],
+["Mundane","adjective","Ordinary and everyday; a bit boring.","Folding laundry is a mundane chore."],
+["Ominous","adjective","Giving the feeling that something bad is coming.","Ominous clouds rolled in before the storm."],
+["Pristine","adjective","Clean and like new.","His new sneakers were pristine until the first rain."],
+["Vivid","adjective","Bright and clear; easy to picture.","She told a vivid story about the fishing trip."],
+["Gratitude","noun","The feeling of being thankful.","We showed our gratitude with a handwritten note."],
+["Humble","adjective","Modest; doesn't brag.","The humble star thanked his teammates first."],
+["Persevere","verb","To keep going even when it's hard.","You have to persevere to finish a long race."],
+["Camaraderie","noun","Friendship and trust within a group or team.","The camaraderie on this team is the best part of the season."],
+["Conundrum","noun","A confusing problem that's hard to solve.","Choosing between pizza and tacos is a real conundrum."],
+["Dexterity","noun","Skill and quickness with the hands.","Tying fishing knots takes dexterity."],
+["Exuberant","adjective","Full of excitement and energy.","The exuberant puppy jumped on everyone."],
+["Futile","adjective","Useless; having no chance of working.","Trying to stay dry in that rain was futile."],
+["Hapless","adjective","Unlucky.","The hapless batter fouled off five pitches, then struck out."],
+["Impeccable","adjective","Perfect, with no mistakes.","Her free-throw form is impeccable."],
+["Laconic","adjective","Using very few words.","His laconic reply was just, \"Yep.\""],
+["Nonchalant","adjective","Calm and relaxed; not worried.","He was nonchalant even with the game on the line."],
+["Procrastinate","verb","To put off doing something.","Don't procrastinate on your book report."],
+["Quintessential","adjective","The perfect example of something.","Sweet tea is the quintessential Southern drink."],
+["Reluctant","adjective","Not wanting to do something.","The reluctant kid finally got in the cold pool."],
+["Spontaneous","adjective","Done without planning.","We took a spontaneous trip to the lake."],
+["Tranquil","adjective","Calm and peaceful.","The lake was tranquil at sunrise."],
+["Vigilant","adjective","Watchful and alert.","The goalie stayed vigilant the whole game."],
+["Whimsical","adjective","Playful and a little odd, in a fun way.","The bakery had a whimsical cake shaped like a frog."],
+["Amiable","adjective","Friendly and pleasant.","The amiable waiter remembered our order."],
+["Boisterous","adjective","Loud and full of energy.","The boisterous crowd shook the gym."],
+["Cacophony","noun","A harsh mix of loud noises.","Band practice started with a cacophony of tuning."],
+["Discern","verb","To notice something or tell the difference.","Can you discern the twins apart?"],
+["Integrity","noun","Doing what's right, even when no one is watching.","Returning the lost wallet showed real integrity."]
+];
+// [category, question, [choices], index of correct choice]
+var TRIVIA=[
+["Science","What planet is known as the Red Planet?",["Venus","Mars","Jupiter","Saturn"],1],
+["Animals","How many legs does a spider have?",["6","8","10","12"],1],
+["Science","What is the largest planet in our solar system?",["Saturn","Neptune","Jupiter","Earth"],2],
+["Science","What gas do plants take in from the air?",["Oxygen","Carbon dioxide","Nitrogen","Helium"],1],
+["Science","At what temperature does water freeze, in Fahrenheit?",["0°","32°","50°","100°"],1],
+["Geography","How many continents are there?",["5","6","7","8"],2],
+["Geography","What is the largest ocean on Earth?",["Atlantic","Indian","Arctic","Pacific"],3],
+["Animals","What is the largest animal on Earth?",["African elephant","Blue whale","Giraffe","Great white shark"],1],
+["Science","What is the hardest natural substance?",["Gold","Iron","Diamond","Quartz"],2],
+["General","How many days are in a leap year?",["364","365","366","367"],2],
+["Science","Which planet is closest to the sun?",["Venus","Earth","Mercury","Mars"],2],
+["Science","How many bones are in an adult human body?",["106","206","306","406"],1],
+["Animals","What is the tallest animal?",["Elephant","Giraffe","Camel","Moose"],1],
+["General","What bird is the national symbol of the United States?",["Robin","Bald eagle","Cardinal","Turkey"],1],
+["General","What color do you get when you mix blue and yellow?",["Purple","Orange","Green","Brown"],2],
+["General","How many sides does a hexagon have?",["5","6","7","8"],1],
+["Animals","What is the fastest land animal?",["Lion","Cheetah","Horse","Greyhound"],1],
+["Science","What is the closest star to Earth?",["The North Star","The Sun","Sirius","Alpha Centauri"],1],
+["General","Which instrument usually has 88 keys?",["Guitar","Piano","Trumpet","Violin"],1],
+["Science","Which organ pumps blood through the body?",["Lungs","Heart","Liver","Brain"],1],
+["Animals","What is a baby kangaroo called?",["Cub","Joey","Kit","Calf"],1],
+["Science","At sea level, water boils at what temperature in Fahrenheit?",["100°","180°","212°","250°"],2],
+["Animals","How many hearts does an octopus have?",["1","2","3","4"],2],
+["Science","Which planet is famous for its big rings?",["Mars","Saturn","Mercury","Venus"],1],
+["Animals","What do caterpillars turn into?",["Beetles","Butterflies or moths","Bees","Spiders"],1],
+["Food","What is the main ingredient in guacamole?",["Avocado","Tomato","Green pepper","Onion"],0],
+["Animals","What kind of animal is a Komodo dragon?",["Lizard","Snake","Crocodile","Bird"],0],
+["Tennessee","What is the capital of Tennessee?",["Memphis","Nashville","Knoxville","Chattanooga"],1],
+["Geography","What is the capital of the United States?",["New York City","Washington, D.C.","Philadelphia","Boston"],1],
+["Geography","How many states are in the United States?",["48","49","50","52"],2],
+["Tennessee","Which state is nicknamed the Volunteer State?",["Kentucky","Tennessee","Texas","Georgia"],1],
+["Tennessee","Which mountains run along the Tennessee and North Carolina border?",["Rocky Mountains","Great Smoky Mountains","Ozarks","Sierra Nevada"],1],
+["Geography","In which country is the Eiffel Tower?",["Italy","France","Spain","Germany"],1],
+["Geography","What is the largest US state by area?",["Texas","California","Alaska","Montana"],2],
+["Geography","What is the smallest US state by area?",["Delaware","Rhode Island","Connecticut","Vermont"],1],
+["Geography","Which city is nicknamed the Big Apple?",["Chicago","Los Angeles","New York City","Boston"],2],
+["Geography","What is the capital of Canada?",["Toronto","Vancouver","Ottawa","Montreal"],2],
+["Geography","Which US state is made up entirely of islands?",["Florida","Hawaii","Alaska","Maine"],1],
+["Tennessee","Graceland, Elvis Presley's home, is in which Tennessee city?",["Nashville","Memphis","Knoxville","Jackson"],1],
+["Tennessee","Which river runs through downtown Chattanooga?",["Cumberland River","Tennessee River","Ohio River","Hiwassee River"],1],
+["Geography","What is the largest country in the world by area?",["Canada","China","Russia","United States"],2],
+["History","The Statue of Liberty was a gift from which country?",["England","France","Spain","Italy"],1],
+["Geography","Which ocean is on the east coast of the United States?",["Pacific","Atlantic","Indian","Arctic"],1],
+["Geography","How many Great Lakes are there?",["3","4","5","6"],2],
+["Geography","What is the capital of Georgia?",["Savannah","Atlanta","Macon","Augusta"],1],
+["History","Who was the first President of the United States?",["Abraham Lincoln","George Washington","Thomas Jefferson","John Adams"],1],
+["History","In what year was the Declaration of Independence adopted?",["1676","1776","1812","1865"],1],
+["History","Who was President during the Civil War?",["Ulysses S. Grant","Abraham Lincoln","Andrew Jackson","James Madison"],1],
+["History","Whose face is on the one-dollar bill?",["Abraham Lincoln","George Washington","Benjamin Franklin","Thomas Jefferson"],1],
+["History","Who flew the first powered airplane in 1903?",["The Wright brothers","Charles Lindbergh","Amelia Earhart","Henry Ford"],0],
+["History","Who was the first person to walk on the moon?",["Buzz Aldrin","Neil Armstrong","John Glenn","Yuri Gagarin"],1],
+["History","In what year did astronauts first walk on the moon?",["1959","1969","1979","1989"],1],
+["History","Whose face is on the penny?",["George Washington","Thomas Jefferson","Abraham Lincoln","Theodore Roosevelt"],2],
+["Tennessee","Andrew Jackson, James K. Polk and which other president came from Tennessee?",["Andrew Johnson","Abraham Lincoln","Ulysses S. Grant","Harry Truman"],0],
+["History","Which ship sank in 1912 after hitting an iceberg?",["Lusitania","Titanic","Mayflower","Britannic"],1],
+["History","Which ship brought the Pilgrims to America in 1620?",["Santa Maria","Mayflower","Titanic","Endeavour"],1],
+["History","Whose face is on the five-dollar bill?",["George Washington","Abraham Lincoln","Alexander Hamilton","Andrew Jackson"],1],
+["Sports","How many points is a basket from behind the three-point line?",["1","2","3","4"],2],
+["Sports","How many players from one team are on a basketball court at a time?",["4","5","6","7"],1],
+["Sports","How many points is a free throw worth?",["1","2","3","0"],0],
+["Sports","How many players from one team are on the field on defense in baseball?",["7","8","9","10"],2],
+["Sports","How many points is a touchdown worth, before the extra point?",["3","6","7","8"],1],
+["Sports","How many strikes make an out in baseball?",["2","3","4","5"],1],
+["Sports","How many holes are on a standard golf course?",["9","12","18","20"],2],
+["Sports","In basketball, what's it called when a player moves their feet without dribbling?",["Foul","Traveling","Goaltending","Charging"],1],
+["Sports","How many minutes long is each quarter of an NBA game?",["8","10","12","15"],2],
+["Sports","What sport is played at Wimbledon?",["Golf","Tennis","Cricket","Polo"],1],
+["Sports","How many periods are in a pro hockey game?",["2","3","4","5"],1],
+["Sports","How high off the floor is a regulation basketball rim?",["8 feet","9 feet","10 feet","12 feet"],2],
+["Sports","In tennis, what is a score of zero called?",["Nil","Love","Zip","Duck"],1],
+["Sports","How many yards is a football field from goal line to goal line?",["50","80","100","120"],2],
+["Sports","In golf, what is one stroke under par on a hole called?",["Bogey","Birdie","Eagle","Ace"],1],
+["Sports","How many players from one team are on a soccer field at a time?",["9","10","11","12"],2],
+["Sports","What is it called when one hockey player scores three goals in a game?",["Hat trick","Triple play","Grand slam","Turkey"],0],
+["Sports","In bowling, what are three strikes in a row called?",["Spare","Turkey","Split","Hat trick"],1],
+["Bible","Who built the ark?",["Moses","Noah","Abraham","David"],1],
+["Bible","Who defeated Goliath?",["Saul","David","Samson","Joshua"],1],
+["Bible","How many disciples did Jesus choose?",["7","10","12","40"],2],
+["Bible","What is the first book of the Bible?",["Exodus","Genesis","Matthew","Psalms"],1],
+["Bible","In what town was Jesus born?",["Nazareth","Bethlehem","Jerusalem","Capernaum"],1],
+["Bible","Who was swallowed by a great fish?",["Jonah","Peter","Elijah","Paul"],0],
+["Bible","Who led the Israelites out of Egypt?",["Moses","Aaron","Joseph","Joshua"],0],
+["Bible","How many books are in the Protestant Bible?",["39","27","66","73"],2],
+["Bible","Who was thrown into the lions' den?",["Daniel","Joseph","Elijah","Samuel"],0],
+["Bible","At the wedding in Cana, what did Jesus turn water into?",["Milk","Wine","Oil","Juice"],1],
+["Bible","Whose great strength was tied to his long hair?",["Samson","Goliath","David","Gideon"],0],
+["Bible","For how many days and nights did it rain during the flood?",["7","12","40","100"],2],
+["Bible","Who denied knowing Jesus three times?",["Judas","Peter","John","Thomas"],1],
+["Bible","What is the last book of the Bible?",["Revelation","Jude","Malachi","Acts"],0],
+["Bible","Who was given a coat of many colors?",["Jacob","Joseph","Benjamin","Isaac"],1],
+["Food","What fruit is dried to make raisins?",["Plums","Grapes","Cherries","Figs"],1],
+["Food","What are french fries made from?",["Corn","Potatoes","Rice","Wheat"],1],
+["Food","What vegetable is a pickle made from?",["Zucchini","Cucumber","Squash","Pepper"],1],
+["Food","Pizza first became famous in which country?",["France","Italy","Greece","United States"],1],
+["Animals","What do fish use to breathe underwater?",["Lungs","Gills","Fins","Scales"],1],
+["Animals","Which animal is called the King of the Jungle?",["Tiger","Lion","Gorilla","Elephant"],1],
+["Animals","What is a group of wolves called?",["Herd","Pack","Flock","School"],1],
+["Animals","What is a group of fish called?",["Herd","Pack","School","Gaggle"],2],
+["Science","How many colors are in a rainbow?",["5","6","7","8"],2],
+["Science","What is the longest bone in the human body?",["Skull","Thigh bone (femur)","Spine","Rib"],1],
+["Animals","Which bird can fly backward?",["Eagle","Hummingbird","Owl","Robin"],1],
+["Animals","What is the only mammal that can truly fly?",["Flying squirrel","Bat","Sugar glider","Penguin"],1],
+["Science","How many teeth does an adult usually have, counting wisdom teeth?",["28","30","32","36"],2],
+["Fishing","A nightcrawler used for fishing bait is what kind of animal?",["Minnow","Worm","Cricket","Grub"],1],
+["Science","What does a meteorologist study?",["Rocks","Weather","Stars","Oceans"],1],
+["Science","What is the center of an atom called?",["Shell","Nucleus","Molecule","Orbit"],1],
+["Science","What is the largest organ of the human body?",["Heart","Liver","Skin","Brain"],2],
+["Animals","How many legs does an insect have?",["4","6","8","10"],1],
+["General","How many pieces does each player start with in chess?",["12","16","20","24"],1]
+];
+var TEAMS=[{n:"Red",c:"#D93B3B"},{n:"Blue",c:"#2F6FDB"},{n:"Green",c:"#2E9E57"},{n:"Gold",c:"#E2A417"}];
+var trivia=null; // {teams, scores, order, pos, state, buzzed, locked, target, winner}
+var jokeShown=false;
+
+function renderFun(){
+ var dn=dayNum(new Date()),j=JOKES[dn%JOKES.length],w=WORDS[dn%WORDS.length];
+ $("funBody").innerHTML=
+  '<button class="card fcard" data-open="trivia" style="display:block;width:100%;background:var(--accent);color:var(--onaccent)"><div style="font-size:34px;font-weight:700">Trivia night</div><div style="font-size:20px;margin-top:6px">2 to 4 teams with buzzers. First to 10 wins.'+(trivia&&!trivia.winner?' Tap to keep playing.':'')+'</div></button>'+
+  '<button class="card fcard" data-act="joke" style="display:block;width:100%"><div class="lbl">Joke or riddle of the day</div><div style="font-size:28px;font-weight:600;margin-top:10px;line-height:1.3">'+esc(j[0])+'</div><div style="font-size:26px;margin-top:14px;color:var(--accentTxt);font-weight:600">'+(jokeShown?esc(j[1]):"Tap for the answer")+'</div></button>'+
+  '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:40px;font-weight:700;margin-top:8px">'+esc(w[0])+' <span style="font-size:20px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:24px;margin-top:8px">'+esc(w[2])+'</div><div style="font-size:20px;color:var(--muted);margin-top:10px">“'+esc(w[3])+'”</div></div>';
+}
+
+function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var k=n-1;k>0;k--){var r=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[r];a[r]=t;}return a;}
+// Questions already asked are skipped across games until the whole list has been used.
+function nextQuestion(){
+ var used=lsGet("trivia-used",[]);
+ if(used.length>=TRIVIA.length)used=[];
+ var left=[];for(var i=0;i<TRIVIA.length;i++)if(used.indexOf(i)<0)left.push(i);
+ var q=left[Math.floor(Math.random()*left.length)];used.push(q);lsSet("trivia-used",used);
+ trivia.q=q;trivia.order=shuffled(4);trivia.state="open";trivia.buzzed=-1;trivia.locked=[];
+}
+function startTrivia(n){trivia={teams:n,scores:[0,0,0,0].slice(0,n),target:10,winner:null};nextQuestion();renderTrivia();}
+function buzzSound(i){var a=audio();if(!a)return;var t=a.currentTime+0.01,f=[330,440,523,659][i];tone(f,t,0.35,0.3);tone(f*1.5,t+0.05,0.3,0.15);}
+function buzz(i){
+ if(!trivia||trivia.state!=="open"||i>=trivia.teams||trivia.locked.indexOf(i)>=0)return;
+ trivia.state="buzzed";trivia.buzzed=i;buzzSound(i);renderTrivia();
+}
+function renderTrivia(){
+ var b=$("triviaBody");
+ if(!trivia){
+  b.innerHTML='<div class="card center" style="padding:40px"><div style="font-size:34px;font-weight:700">How many teams?</div><div class="sub" style="font-size:20px;margin:8px 0 28px">Each team gets a big buzzer button. First to buzz answers out loud.</div>'+
+   [2,3,4].map(function(n){return '<button class="btn pri" data-act="qstart" data-n="'+n+'" style="font-size:30px;height:100px;padding:0 50px">'+n+' teams</button>';}).join("")+'</div>';
+  return;
+ }
+ var t=trivia,Q=TRIVIA[t.q];
+ var scores='<div class="row" style="margin-bottom:12px">'+t.scores.map(function(s,i){return '<div style="flex:1;margin-left:'+(i?10:0)+'px;border-radius:14px;background:'+TEAMS[i].c+';color:#fff;padding:8px 14px;font-size:20px;font-weight:700;display:flex;justify-content:space-between'+(t.buzzed===i?';box-shadow:0 0 0 4px var(--ink)':'')+'"><span>'+TEAMS[i].n+'</span><span>'+s+'</span></div>';}).join("")+'</div>';
+ if(t.winner!=null){
+  b.innerHTML=scores+'<div class="card center" style="padding:50px"><div style="font-size:64px;font-weight:800;color:'+TEAMS[t.winner].c+'">'+TEAMS[t.winner].n+' wins!</div><div style="margin-top:30px"><button class="btn pri" data-act="qnew" style="font-size:26px;height:84px">New game</button></div></div>';
+  return;
+ }
+ var reveal=t.state==="revealed";
+ var choices=t.order.map(function(ci,k){var right=ci===Q[3];return '<div style="border-radius:14px;padding:12px 16px;font-size:24px;font-weight:600;background:'+(reveal&&right?'#2E9E57':'var(--tile2)')+';color:'+(reveal&&right?'#fff':'var(--ink)')+'"><span style="opacity:.7;margin-right:10px">'+"ABCD"[k]+'</span>'+esc(Q[2][ci])+'</div>';}).join("");
+ var status,host;
+ if(t.state==="open"){status=t.locked.length?"Buzzers open for the other teams":"Buzz in!";host='<button class="btn" data-act="qreveal">Show answer</button><button class="btn" data-act="qskip">Skip</button>';}
+ else if(t.state==="buzzed"){status='<span style="color:'+TEAMS[t.buzzed].c+'">'+TEAMS[t.buzzed].n+'</span> buzzed in! Say your answer.';host='<button class="btn pri" data-act="qright" style="background:#2E9E57;color:#fff">Right +1</button><button class="btn warn" data-act="qwrong">Wrong</button>';}
+ else {status="Answer: "+esc(Q[2][Q[3]]);host='<button class="btn pri" data-act="qnext">Next question</button>';}
+ var buzzers='<div class="row" style="margin-top:12px">'+t.scores.map(function(s,i){var off=t.state!=="open"||t.locked.indexOf(i)>=0;return '<button class="buzz" data-buzz="'+i+'" style="background:'+TEAMS[i].c+';opacity:'+(off?0.35:1)+';margin-left:'+(i?12:0)+'px">'+TEAMS[i].n+'</button>';}).join("")+'</div>';
+ b.innerHTML=scores+
+  '<div class="card" style="padding:18px 22px;margin-bottom:10px"><div class="lbl">'+esc(Q[0])+' · first to '+t.target+'</div><div style="font-size:30px;font-weight:700;line-height:1.25;margin:8px 0 14px">'+esc(Q[1])+'</div><div style="display:grid;grid-template-columns:repeat(2,1fr);grid-gap:10px">'+choices+'</div></div>'+
+  '<div class="row" style="justify-content:space-between"><div style="font-size:24px;font-weight:700">'+status+'</div><div>'+host.replace(/class="btn/g,'class="hb btn')+'</div></div>'+buzzers;
+}
+function triviaAct(a,t){
+ var tr=trivia;
+ if(a==="qstart"){startTrivia(+t.getAttribute("data-n"));return true;}
+ if(!tr)return a.charAt(0)==="q";
+ if(a==="qright"&&tr.state==="buzzed"){tr.scores[tr.buzzed]++;tr.state="revealed";if(tr.scores[tr.buzzed]>=tr.target)tr.winner=tr.buzzed;}
+ else if(a==="qwrong"&&tr.state==="buzzed"){tr.locked.push(tr.buzzed);tr.buzzed=-1;tr.state=tr.locked.length>=tr.teams?"revealed":"open";}
+ else if(a==="qreveal"){tr.state="revealed";tr.buzzed=-1;}
+ else if(a==="qskip"||a==="qnext")nextQuestion();
+ else if(a==="qnew")trivia=null;
+ else if(a==="qquit")trivia=null;
+ else return false;
+ renderTrivia();return true;
+}
+// Buzzers react on touch-down (faster than a tap, and several fingers can hit at once; the first one wins).
+function onBuzz(e){
+ var t=e.target;while(t&&t!==document&&!(t.getAttribute&&t.hasAttribute("data-buzz")))t=t.parentNode;
+ if(!t||t===document)return;
+ if(e.type==="touchstart"){e.preventDefault();onBuzz.touch=Date.now();}else if(onBuzz.touch&&Date.now()-onBuzz.touch<800)return;
+ lastTouch=Date.now();buzz(+t.getAttribute("data-buzz"));
+}
+document.addEventListener("touchstart",onBuzz,{passive:false});
+document.addEventListener("mousedown",onBuzz,false);
+
 /* ---------- Views, taps, idle return ---------- */
 var view=null,lastTouch=Date.now();
 function openView(name){
@@ -2833,6 +3128,8 @@ function openView(name){
  if(name==="photo"){var t=todayPhoto();photoIdx=t?photos.indexOf(t):0;renderPhotoView();}
  if(name==="count")renderCount();
  if(name==="wifi"){wifiEdit=false;renderWifi();}
+ if(name==="fun")renderFun();
+ if(name==="trivia")renderTrivia();
  $("v-"+name).className="view on";$("v-"+name).querySelector(".vbody, #photoBig").scrollTop=0;
 }
 function closeView(){if(view)$("v-"+view).className="view";view=null;}
@@ -2843,6 +3140,8 @@ document.addEventListener("click",function(e){
  if(t.hasAttribute("data-timer")){startTimer(+t.getAttribute("data-timer"));return;}
  if(t.hasAttribute("data-open")){var n=t.getAttribute("data-open");if(n==="photo"&&!photos.length&&db){openView("photo");$("photoInput").click();return;}openView(n);return;}
  var a=t.getAttribute("data-act");
+ if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
+ if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(a==="tpause"&&timer){if(timer.paused){timer.end=Date.now()+timer.left;timer.paused=false;}else{timer.left=timeLeft();timer.paused=true;}tickTimer();}
  else if(a==="tadd"&&timer){if(timer.paused)timer.left+=60000;else timer.end+=60000;tickTimer();}
  else if(a==="tcancel"||a==="tstop"){timer=null;closeView();renderTimerTile();}
@@ -2857,8 +3156,8 @@ document.addEventListener("click",function(e){
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
 },false);
 ["touchstart","mousedown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();},true);});
-// Back to the home screen after 1 minute untouched, unless a timer is on screen.
-setInterval(function(){if(view&&Date.now()-lastTouch>60000&&!(view==="timer"&&timer))closeView();},5000);
+// Back to the home screen after 1 minute untouched; a running timer stays, and a trivia game gets 10 minutes.
+setInterval(function(){var lim=(view==="trivia"&&trivia&&trivia.winner==null)?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
 
 /* ---------- Start ---------- */
 applyTheme();
