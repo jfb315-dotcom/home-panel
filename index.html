@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.13">
+<meta name="panel-version" content="2026-11-21.14">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -129,6 +129,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div class="hright">
       <button class="pill" id="themeBtn" aria-label="Screen color: automatic, day or night"></button>
+      <button class="pill" data-act="toBedside" aria-label="Switch to the bedside clock">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+        Bedside
+      </button>
       <button class="pill" data-open="fun" aria-label="Fun: trivia, joke and word of the day">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01" stroke-width="3"></path></svg>
         Fun
@@ -3348,7 +3352,7 @@ function fxFrame(ts){
 function flash(){var f=$("flash");f.style.opacity=".55";setTimeout(function(){f.style.opacity="0";},90);setTimeout(function(){f.style.opacity=".35";},200);setTimeout(function(){f.style.opacity="0";},290);}
 
 /* ---------- Views, taps, idle return ---------- */
-var view=null,lastTouch=Date.now();
+var view=null,lastTouch=Date.now(),toBedArm=false;
 function openView(name){
  if(view)$("v-"+view).className="view";
  view=name;removeArm=null;photoRmArm=false;
@@ -3374,6 +3378,7 @@ document.addEventListener("click",function(e){
  if(t.hasAttribute("data-open")){var n=t.getAttribute("data-open");if(n==="photo"&&!photos.length&&db){openView("photo");$("photoInput").click();return;}openView(n);return;}
  var a=t.getAttribute("data-act");
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
+ if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
  if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
