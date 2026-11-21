@@ -15,7 +15,7 @@ Every photo also gets a 720px backup in localStorage (`photo-bk-<id>`); `loadPho
 from backups if the store comes back empty, and shows backups if it won't open. John kept the same icon and still lost photos.
 
 ## Privacy
-Photos (IndexedDB), guest Wi-Fi (`wifi`), countdowns (`cd-list`), used trivia questions (`trivia-used`), scoreboard (`scoreboard`), movie list (`movie-list`), theme (`panel-theme`) and the weather cache (`wx`)
+Photos (IndexedDB), guest Wi-Fi (`wifi`), countdowns (`cd-list`, incl. family birthdays), used trivia questions (`trivia-used`), scoreboard (`scoreboard`), movie list (`movie-list`), theme (`panel-theme`) and the weather cache (`wx`)
 live only in the iPad's browser. Never put Wi-Fi passwords, family photos or home addresses in the repo; the repo is public.
 
 ## Testing
@@ -40,6 +40,9 @@ trivia, scoreboard, dice and coin, drawing pad, movie night picker, guest Wi-Fi,
 Countdown tiles (both screens) get a theme from the countdown's name or date (`themeFor`: Christmas, New Year, Valentine's, Easter,
 St. Patrick's, July 4/flag holidays, Halloween, Thanksgiving, birthday, anniversary/parents, sports, fishing, vacation, graduation,
 else party): SVG decorations on the right side (`decoHtml`, `SHAPES`, `THEMES`) plus a tint; the countdown list shows a theme icon.
+Holidays (`HOLIDAYS`, incl. moving ones via `ruleDate`: nth/last weekday, Easter) are added once to the iPad's list (`cd-seed-hol1`).
+Birthdays use the form's "It's a birthday" box: stored with `born` year, shown as "Turns N". Never hard-code family names or
+birth dates in this public repo; John enters them on the iPad. Themes have 10 decorations each, some floating, plus a ground strip.
 Drawing pad "Save to photos" adds the drawing to the panel photos (IndexedDB + backup).
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.
 Idle return: 1 minute; a running timer never closes; trivia in progress, scoreboard and drawing pad get 10 minutes.

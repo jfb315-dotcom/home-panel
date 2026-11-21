@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.20">
+<meta name="panel-version" content="2026-11-21.21">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -84,6 +84,9 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .deco{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
 .deco svg{position:absolute;display:block}
 .ctext{position:relative;z-index:1}
+.flt{-webkit-animation:flt 5s ease-in-out infinite alternate;animation:flt 5s ease-in-out infinite alternate}
+@-webkit-keyframes flt{from{margin-top:0}to{margin-top:-6px}}
+@keyframes flt{from{margin-top:0}to{margin-top:-6px}}
 #tPhoto{padding:0;background:var(--tile2);background-size:cover;background-position:center;justify-content:center;flex-direction:column;color:var(--muted)}
 .ptag{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.6);color:#fff;font-size:14px;font-weight:600;padding:6px 10px;border-radius:999px}
 .qrbox{background:#fff;border-radius:8px;padding:0;flex:none}
@@ -2786,102 +2789,175 @@ function renderVerse(){
 
 /* ---------- Countdown themes: decorations picked from the countdown's name (or the date) ---------- */
 var SHAPES={
- tree:'<path d="M12 2l5 7h-3l4 6h-3l4 6H5l4-6H6l4-6H7z" fill="#2E8B57"/><rect x="10.5" y="20.5" width="3" height="3" fill="#7A4A2A"/><circle cx="12" cy="2.6" r="1.7" fill="#FFD447"/>',
+ tree:'<path d="M12 2l5 7h-3l4 6h-3l4 6H5l4-6H6l4-6H7z" fill="#2E8B57"/><rect x="10.5" y="20.5" width="3" height="3" fill="#7A4A2A"/><circle cx="12" cy="2.6" r="1.7" fill="#FFD447"/><circle cx="10" cy="11" r=".9" fill="#E04848"/><circle cx="14" cy="16" r=".9" fill="#3F7FE0"/><circle cx="9" cy="17" r=".9" fill="#F2C230"/>',
  snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7" stroke="#D8ECFF" stroke-width="1.8" stroke-linecap="round"/>',
- ornament:'<circle cx="12" cy="14" r="7" fill="#D93B3B"/><rect x="10" y="5" width="4" height="3" fill="#C9A227"/>',
+ ornament:'<circle cx="12" cy="14" r="7" fill="#D93B3B"/><path d="M5.5 13h13" stroke="#F2C230" stroke-width="1.4"/><rect x="10" y="5" width="4" height="3" fill="#C9A227"/>',
+ cane:'<path d="M14 22V8a3 3 0 0 0-6 0" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M14 22V8a3 3 0 0 0-6 0" stroke="#D93B3B" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-dasharray="2 2"/>',
+ gift:'<rect x="4" y="9" width="16" height="12" rx="1" fill="#2F6FDB"/><rect x="3" y="7" width="18" height="4" rx="1" fill="#3F7FE0"/><path d="M12 7v14" stroke="#F2C230" stroke-width="2.4"/><path d="M12 7c-2-4-6-4-6-2s4 2 6 2zM12 7c2-4 6-4 6-2s-4 2-6 2z" fill="#F2C230"/>',
+ snowman:'<circle cx="12" cy="16.5" r="5.5" fill="#F4F8FF"/><circle cx="12" cy="8" r="4" fill="#F4F8FF"/><path d="M8.5 5h7M9.5 5V1.8h5V5" fill="#2A2F3A" stroke="#2A2F3A" stroke-width="1.2"/><circle cx="10.6" cy="7.5" r=".6" fill="#222"/><circle cx="13.4" cy="7.5" r=".6" fill="#222"/><path d="M12 8.6l2.6.8-2.6.6z" fill="#F08A24"/><path d="M8 11.6h8" stroke="#D93B3B" stroke-width="1.6"/>',
+ bell:'<path d="M6 17c1-2 1-4 1-7a5 5 0 0 1 10 0c0 3 0 5 1 7z" fill="#F2C230"/><circle cx="12" cy="19" r="2" fill="#C9A227"/><path d="M10 4.5c1-1 3-1 4 0" stroke="#2E8B57" stroke-width="1.6" fill="none"/>',
  heart:'<path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z" fill="#E8457A"/>',
+ heartL:'<path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z" fill="#F7A8C8"/>',
+ envelope:'<rect x="3" y="6" width="18" height="13" rx="1.5" fill="#FBE3EC"/><path d="M3.5 7l8.5 7 8.5-7" stroke="#E8457A" stroke-width="1.4" fill="none"/><path d="M12 15.5s-2.4-1.6-2.4-3.2a1.3 1.3 0 0 1 2.4-.8 1.3 1.3 0 0 1 2.4.8c0 1.6-2.4 3.2-2.4 3.2z" fill="#E8457A"/>',
  egg:'<ellipse cx="12" cy="13" rx="7" ry="9" fill="#9FD3F2"/><path d="M5.5 11h13M5.2 15.5h13.6" stroke="#F7B6D2" stroke-width="2"/>',
- egg2:'<ellipse cx="12" cy="13" rx="7" ry="9" fill="#F9E07F"/><path d="M5.5 11h13M5.2 15.5h13.6" stroke="#B9E4A8" stroke-width="2"/>',
+ egg2:'<ellipse cx="12" cy="13" rx="7" ry="9" fill="#F9E07F"/><path d="M5.3 12l2.2-2 2.2 2 2.3-2 2.2 2 2.2-2 2.2 2" stroke="#B9E4A8" stroke-width="1.6" fill="none"/>',
+ bunny:'<ellipse cx="9" cy="5.5" rx="1.8" ry="4.5" fill="#F4EEE8"/><ellipse cx="15" cy="5.5" rx="1.8" ry="4.5" fill="#F4EEE8"/><ellipse cx="9" cy="5.5" rx=".8" ry="3" fill="#F7B6D2"/><ellipse cx="15" cy="5.5" rx=".8" ry="3" fill="#F7B6D2"/><circle cx="12" cy="12" r="5" fill="#F4EEE8"/><ellipse cx="12" cy="20" rx="6" ry="3.6" fill="#F4EEE8"/><circle cx="10.3" cy="11.3" r=".7" fill="#333"/><circle cx="13.7" cy="11.3" r=".7" fill="#333"/><circle cx="12" cy="13.2" r=".8" fill="#F08AA8"/>',
+ cross:'<path d="M10.5 2h3v6h6v3h-6v11h-3V11h-6V8h6z" fill="#C9A227"/>',
  flower:'<g fill="#F7A8C8"><circle cx="12" cy="6" r="4"/><circle cx="18" cy="11" r="4"/><circle cx="15.5" cy="18" r="4"/><circle cx="8.5" cy="18" r="4"/><circle cx="6" cy="11" r="4"/></g><circle cx="12" cy="12.5" r="3" fill="#FFD447"/>',
+ flower2:'<g fill="#B99CF2"><circle cx="12" cy="6" r="4"/><circle cx="18" cy="11" r="4"/><circle cx="15.5" cy="18" r="4"/><circle cx="8.5" cy="18" r="4"/><circle cx="6" cy="11" r="4"/></g><circle cx="12" cy="12.5" r="3" fill="#FFF3B0"/>',
+ tulip:'<path d="M12 22V12" stroke="#2E9E57" stroke-width="1.8"/><path d="M12 18c-3-1-5-3-5-5 2 0 4 1 5 3z" fill="#2E9E57"/><path d="M7 4l2.5 3L12 3l2.5 4L17 4v6a5 5 0 0 1-10 0z" fill="#E8457A"/>',
  starRed:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#D93B3B"/>',
  starBlue:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#2F6FDB"/>',
  starGold:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#F2C230"/>',
+ starWhite:'<path d="M12 2l3 7 7 .6-5.3 4.7L18.5 22 12 18l-6.5 4 1.8-7.7L2 9.6 9 9z" fill="#F4F6FA"/>',
+ flag:'<path d="M4 3v19" stroke="#8A8F99" stroke-width="1.4"/><rect x="5" y="4" width="16" height="10" fill="#fff"/><g fill="#D93B3B"><rect x="5" y="4" width="16" height="1.4"/><rect x="5" y="6.9" width="16" height="1.4"/><rect x="5" y="9.8" width="16" height="1.4"/><rect x="5" y="12.6" width="16" height="1.4"/></g><rect x="5" y="4" width="7" height="5.7" fill="#2F4FA8"/>',
  firework:'<path d="M12 12V2M12 12l7-7M12 12h10M12 12l7 7M12 12v10M12 12l-7 7M12 12H2M12 12L5 5" stroke="#F2C230" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#E8457A"/>',
+ firework2:'<path d="M12 12V3M12 12l6.4-6.4M12 12h9M12 12l6.4 6.4M12 12v9M12 12l-6.4 6.4M12 12H3M12 12L5.6 5.6" stroke="#4FB3FF" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2 1.6"/><circle cx="12" cy="12" r="1.8" fill="#fff"/>',
+ glass:'<path d="M8 3h8l-1 7a3 3 0 0 1-6 0z" fill="#F7E08A"/><path d="M12 13v7M8.5 21h7" stroke="#C9C9C9" stroke-width="1.6"/><circle cx="11" cy="6" r=".7" fill="#fff"/><circle cx="13" cy="8" r=".6" fill="#fff"/>',
  confetti:'<rect x="3" y="4" width="4" height="2" fill="#E8457A" transform="rotate(20 5 5)"/><rect x="14" y="3" width="4" height="2" fill="#2F6FDB" transform="rotate(-30 16 4)"/><rect x="9" y="11" width="4" height="2" fill="#F2C230" transform="rotate(45 11 12)"/><rect x="17" y="15" width="4" height="2" fill="#2E9E57" transform="rotate(10 19 16)"/><rect x="4" y="18" width="4" height="2" fill="#8E44AD" transform="rotate(-15 6 19)"/>',
  pumpkin:'<ellipse cx="8.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="15.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="12" cy="14" rx="4.5" ry="7.5" fill="#F39A3C"/><rect x="11" y="4" width="2" height="4" fill="#3E7B3A"/>',
+ jack:'<ellipse cx="8.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="15.5" cy="14" rx="5" ry="7" fill="#E57A1F"/><ellipse cx="12" cy="14" rx="4.5" ry="7.5" fill="#F39A3C"/><rect x="11" y="4" width="2" height="4" fill="#3E7B3A"/><path d="M8 12l2-2 1 2zM16 12l-2-2-1 2zM8 16c2 2 6 2 8 0l-1.5.6-1-.8-1.5.8-1.5-.8-1 .8z" fill="#3A2200"/>',
  ghost:'<path d="M6 21V10a6 6 0 0 1 12 0v11l-2-2-2 2-2-2-2 2-2-2z" fill="#F2F2F2"/><circle cx="10" cy="11" r="1.2" fill="#222"/><circle cx="14" cy="11" r="1.2" fill="#222"/>',
+ bat:'<path d="M12 9c-1-2-3-3-5-3 0 2-2 3-5 3 2 1 3 4 3 6 2-1 4-1 5 1l2-2 2 2c1-2 3-2 5-1 0-2 1-5 3-6-3 0-5-1-5-3-2 0-4 1-5 3z" fill="#3B2A55"/>',
+ candy:'<path d="M12 3l7 17H5z" fill="#F7F2E8"/><path d="M8.3 11h7.4l-1.5-3.6H9.8z" fill="#F39A3C"/><path d="M6.4 16.4h11.2L19 20H5z" fill="#F2C230"/>',
+ spider:'<circle cx="12" cy="13" r="3.5" fill="#222"/><path d="M12 2v7.5M5 9l4 3M19 9l-4 3M4 14h4.5M20 14h-4.5M5 19l4-3M19 19l-4-3" stroke="#222" stroke-width="1.2" fill="none"/>',
+ moonO:'<circle cx="12" cy="12" r="9" fill="#F6D58A"/><circle cx="9" cy="10" r="1.4" fill="#E8C070"/><circle cx="14.5" cy="14" r="2" fill="#E8C070"/>',
  leaf:'<path d="M12 22C5 18 3 10 12 2c9 8 7 16 0 20z" fill="#D2691E"/><path d="M12 22V8" stroke="#8B3A0E" stroke-width="1.2"/>',
  leaf2:'<path d="M12 22C5 18 3 10 12 2c9 8 7 16 0 20z" fill="#E0A21B"/><path d="M12 22V8" stroke="#8B5A0E" stroke-width="1.2"/>',
- balloonR:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#E04848"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
- balloonB:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#3F7FE0"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
- balloonY:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#F2C230"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/>',
+ leaf3:'<path d="M12 22C5 18 3 10 12 2c9 8 7 16 0 20z" fill="#B5442A"/><path d="M12 22V8" stroke="#6E2210" stroke-width="1.2"/>',
+ turkey:'<g fill="#C0582A"><circle cx="12" cy="6" r="4"/><circle cx="6.5" cy="8.5" r="3.6"/><circle cx="17.5" cy="8.5" r="3.6"/></g><g fill="#E0A21B"><circle cx="9" cy="5" r="2.4"/><circle cx="15" cy="5" r="2.4"/></g><ellipse cx="12" cy="15" rx="5" ry="6" fill="#7A4A2A"/><circle cx="12" cy="10" r="2.8" fill="#8B5A3A"/><path d="M12 10.5l1.5.8-1.5.6z" fill="#F2C230"/><path d="M11.4 12c0 1 .6 1.6 1.2 1" stroke="#D93B3B" stroke-width=".9" fill="none"/>',
+ corn:'<ellipse cx="12" cy="11" rx="3.6" ry="7.5" fill="#F2C230"/><path d="M9 9h6M8.6 12h6.8M9 15h6M12 4v14" stroke="#D9A21B" stroke-width=".8"/><path d="M12 22c-4-2-6-6-5-10 2 3 4 5 5 10zM12 22c4-2 6-6 5-10-2 3-4 5-5 10z" fill="#6FA34A"/>',
+ pie:'<path d="M2 15h20l-2 5H4z" fill="#C9884A"/><path d="M3 15c1-5 17-5 18 0z" fill="#E08A3A"/><path d="M6 13.5c2-1 10-1 12 0" stroke="#F2C784" stroke-width="1" fill="none"/>',
+ balloonR:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#E04848"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.2" ry="2" fill="#fff" opacity=".45"/>',
+ balloonB:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#3F7FE0"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.2" ry="2" fill="#fff" opacity=".45"/>',
+ balloonY:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#F2C230"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.2" ry="2" fill="#fff" opacity=".45"/>',
+ balloonG:'<ellipse cx="12" cy="9" rx="6" ry="7.5" fill="#2E9E57"/><path d="M12 16.5c-1 2 1 3.5 0 6" stroke="#AAA" stroke-width="1" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.2" ry="2" fill="#fff" opacity=".45"/>',
+ cake:'<rect x="4" y="12" width="16" height="9" rx="1.5" fill="#F7B6D2"/><path d="M4 15c2 1.5 4-1.5 6 0s4-1.5 6 0 4-1.5 4 0" stroke="#fff" stroke-width="1.6" fill="none"/><rect x="7" y="7" width="1.6" height="5" fill="#9FD3F2"/><rect x="11.2" y="7" width="1.6" height="5" fill="#F9E07F"/><rect x="15.4" y="7" width="1.6" height="5" fill="#B9E4A8"/><g fill="#F7A21B"><ellipse cx="7.8" cy="5.6" rx=".9" ry="1.4"/><ellipse cx="12" cy="5.6" rx=".9" ry="1.4"/><ellipse cx="16.2" cy="5.6" rx=".9" ry="1.4"/></g>',
+ hat:'<path d="M12 2L5 21h14z" fill="#8E44AD"/><path d="M8.5 12h7M7 16.5h10" stroke="#F2C230" stroke-width="1.6"/><circle cx="12" cy="2.5" r="2" fill="#E8457A"/>',
  shamrock:'<g fill="#2E9E57"><circle cx="12" cy="7" r="4.2"/><circle cx="7.5" cy="13" r="4.2"/><circle cx="16.5" cy="13" r="4.2"/></g><path d="M12 13c0 4 1 7 3 9" stroke="#2E7D4F" stroke-width="1.8" fill="none"/>',
+ pot:'<ellipse cx="12" cy="10" rx="7" ry="2.4" fill="#F2C230"/><circle cx="9" cy="9" r="1.4" fill="#F7D84A"/><circle cx="14" cy="9.2" r="1.4" fill="#F7D84A"/><path d="M4.5 11c0 6 3 10 7.5 10s7.5-4 7.5-10z" fill="#2A2A2A"/><rect x="3.5" y="10" width="17" height="2" rx="1" fill="#3A3A3A"/>',
+ rainbow:'<path d="M2 20a10 10 0 0 1 20 0" stroke="#E04848" stroke-width="2" fill="none"/><path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="#F2C230" stroke-width="2" fill="none"/><path d="M6.8 20a5.2 5.2 0 0 1 10.4 0" stroke="#2E9E57" stroke-width="2" fill="none"/><path d="M9.2 20a2.8 2.8 0 0 1 5.6 0" stroke="#3F7FE0" stroke-width="2" fill="none"/>',
  ball:'<circle cx="12" cy="12" r="9.5" fill="#E8762B"/><path d="M2.5 12h19M12 2.5v19M5.3 5.3c3 3 3 10.4 0 13.4M18.7 5.3c-3 3-3 10.4 0 13.4" stroke="#5A2A10" stroke-width="1.2" fill="none"/>',
+ hoop:'<rect x="3" y="2" width="18" height="11" rx="1" fill="#F4F6FA" stroke="#8A8F99" stroke-width="1"/><rect x="8.5" y="6" width="7" height="5" fill="none" stroke="#D93B3B" stroke-width="1.2"/><path d="M7 13h10" stroke="#E8762B" stroke-width="2"/><path d="M8 13l1.5 8M16 13l-1.5 8M10 13l.8 8M14 13l-.8 8M8.6 17h6.8" stroke="#ddd" stroke-width=".8"/>',
+ trophy:'<path d="M7 3h10v5a5 5 0 0 1-10 0z" fill="#F2C230"/><path d="M7 5H4c0 3 1.5 4.5 3.5 4.6M17 5h3c0 3-1.5 4.5-3.5 4.6" stroke="#F2C230" stroke-width="1.6" fill="none"/><rect x="10.5" y="13" width="3" height="4" fill="#D9A21B"/><rect x="7.5" y="17" width="9" height="3.5" rx="1" fill="#7A4A2A"/>',
  fish:'<path d="M2 12c4-6 11-6 15 0-4 6-11 6-15 0zM17 12l5-4.5v9z" fill="#4FA3D9"/><circle cx="6.5" cy="11" r="1.1" fill="#123"/>',
+ fish2:'<path d="M2 12c4-6 11-6 15 0-4 6-11 6-15 0zM17 12l5-4.5v9z" fill="#6E9E3A"/><path d="M5 12h10" stroke="#3E6A1E" stroke-width="1" stroke-dasharray="1.5 1.5"/><circle cx="6.5" cy="11" r="1.1" fill="#123"/>',
+ bobber:'<path d="M12 1v5" stroke="#999" stroke-width="1"/><circle cx="12" cy="12" r="6" fill="#fff"/><path d="M6 12a6 6 0 0 1 12 0z" fill="#D93B3B"/><path d="M12 18v5" stroke="#999" stroke-width="1"/>',
+ hook:'<path d="M12 2v13a4 4 0 0 1-8 0v-2l2 1" stroke="#9AA3AF" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="2.5" r="1.4" fill="none" stroke="#9AA3AF" stroke-width="1.2"/>',
  sun:'<circle cx="12" cy="12" r="5" fill="#F7C531"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" stroke="#F7C531" stroke-width="2" stroke-linecap="round"/>',
- cap:'<path d="M2 9l10-5 10 5-10 5z" fill="#2A2F3A"/><path d="M6 11v4c3 2.5 9 2.5 12 0v-4l-6 3z" fill="#3A4150"/><path d="M20 9.5v6" stroke="#F2C230" stroke-width="1.5"/>'
+ palm:'<path d="M12 22c0-5 .5-9 1.5-12" stroke="#8B5A2B" stroke-width="2" fill="none"/><path d="M13.5 10C10 6 6 6 3 8c3-.3 6 .5 10.5 2zM13.5 10c2-4 6-6 9-5-3 .7-5.5 2.5-9 5zM13.5 10c-1-4-4-7-7-7 2.5 1.5 4.5 3.5 7 7zM13.5 10c3-2 7-1.5 9 1-3-.8-5.5-1.2-9-1z" fill="#2E9E57"/>',
+ umbrella:'<path d="M2 12a10 10 0 0 1 20 0z" fill="#E04848"/><path d="M7 12a5 10 0 0 1 10 0" fill="#F4F6FA"/><path d="M12 12v9" stroke="#8A8F99" stroke-width="1.4"/>',
+ cap:'<path d="M2 9l10-5 10 5-10 5z" fill="#2A2F3A"/><path d="M6 11v4c3 2.5 9 2.5 12 0v-4l-6 3z" fill="#3A4150"/><path d="M20 9.5v6" stroke="#F2C230" stroke-width="1.5"/>',
+ diploma:'<rect x="3" y="8" width="18" height="8" rx="4" fill="#F7F0DC"/><path d="M12 8v8" stroke="#D93B3B" stroke-width="2.2"/><circle cx="12" cy="18" r="2" fill="#D93B3B"/>',
+ tie:'<path d="M10 3h4l-1 3 3 12-4 4-4-4 3-12z" fill="#2F4FA8"/><path d="M10.6 9l3.2 2M10.2 13l3.6 2" stroke="#F2C230" stroke-width="1"/>',
+ dove:'<path d="M3 12c3-1 6 0 8 2 1-4 4-7 8-7-1 2-2 3-4 4 3 0 5 1 6 3-3 0-5 1-7 3-3 3-8 3-11-5z" fill="#F4F6FA"/><circle cx="17" cy="8.5" r=".6" fill="#333"/>'
 };
+// t: tint color; s: ten decorations; g: optional ground scene along the bottom.
 var THEMES={
- xmas:{t:"30,130,70",s:["tree","snow","ornament","tree","snow","ornament"]},
- newyear:{t:"200,160,40",s:["firework","starGold","confetti","firework","starGold","confetti"]},
- valentine:{t:"230,70,120",s:["heart","heart","heart","heart","heart","heart"]},
- easter:{t:"160,200,240",s:["egg","flower","egg2","flower","egg","egg2"]},
- stpat:{t:"46,158,87",s:["shamrock","shamrock","shamrock","shamrock","shamrock","shamrock"]},
- usa:{t:"47,111,219",s:["starRed","firework","starBlue","starRed","starBlue","firework"]},
- halloween:{t:"229,122,31",s:["pumpkin","ghost","pumpkin","ghost","pumpkin","ghost"]},
- thanks:{t:"210,105,30",s:["leaf","leaf2","pumpkin","leaf2","leaf","leaf"]},
- birthday:{t:"232,69,122",s:["balloonR","balloonB","confetti","balloonY","balloonR","confetti"]},
- love:{t:"232,69,122",s:["heart","flower","heart","heart","flower","heart"]},
- ball:{t:"232,118,43",s:["ball","ball","ball","ball","ball","ball"]},
- fish:{t:"79,163,217",s:["fish","fish","fish","fish","fish","fish"]},
- beach:{t:"247,197,49",s:["sun","fish","sun","fish","sun","fish"]},
- grad:{t:"60,70,90",s:["cap","starGold","confetti","cap","starGold","confetti"]},
- party:{t:"142,68,173",s:["confetti","starGold","confetti","balloonB","starGold","confetti"]}
+ xmas:{t:"30,130,70",g:"#F4F8FF",s:["tree","snow","ornament","gift","cane","snowman","bell","snow","tree","starGold"]},
+ newyear:{t:"200,160,40",s:["firework","glass","firework2","starGold","confetti","firework","glass","starGold","confetti","firework2"]},
+ valentine:{t:"230,70,120",s:["heart","envelope","heartL","heart","flower","heartL","heart","heart","heartL","envelope"]},
+ easter:{t:"160,200,240",g:"#8FCB6B",s:["bunny","egg","tulip","egg2","cross","flower","egg","flower2","egg2","tulip"]},
+ stpat:{t:"46,158,87",g:"#5FB35A",s:["rainbow","shamrock","pot","shamrock","starGold","shamrock","shamrock","pot","shamrock","shamrock"]},
+ usa:{t:"47,111,219",s:["flag","firework","starRed","starBlue","firework2","starWhite","starRed","flag","starBlue","firework"]},
+ mlk:{t:"90,110,170",s:["dove","starGold","dove","starWhite","starGold","dove","starWhite","starGold","dove","starWhite"]},
+ halloween:{t:"229,122,31",g:"#3B2A55",s:["moonO","jack","bat","ghost","candy","spider","pumpkin","bat","candy","ghost"]},
+ thanks:{t:"210,105,30",g:"#B9783A",s:["turkey","leaf","corn","leaf2","pie","leaf3","pumpkin","leaf","leaf2","leaf3"]},
+ birthday:{t:"232,69,122",s:["cake","balloonR","balloonB","hat","confetti","balloonY","gift","balloonG","confetti","starGold"]},
+ mom:{t:"232,69,122",g:"#8FCB6B",s:["tulip","heart","flower","flower2","heartL","tulip","flower","heart","flower2","tulip"]},
+ dad:{t:"47,79,168",s:["tie","trophy","fish","starGold","tie","bobber","starBlue","fish","trophy","starGold"]},
+ love:{t:"232,69,122",s:["heart","flower","heartL","envelope","heart","flower2","heartL","heart","flower","heartL"]},
+ ball:{t:"232,118,43",s:["hoop","ball","trophy","ball","starGold","ball","ball","trophy","ball","starGold"]},
+ fish:{t:"79,163,217",g:"#4FA3D9",s:["fish","bobber","fish2","hook","fish","sun","fish2","bobber","fish","hook"]},
+ beach:{t:"247,197,49",g:"#F2D48A",s:["sun","palm","umbrella","fish","palm","starGold","sun","fish","umbrella","palm"]},
+ grad:{t:"60,70,90",s:["cap","diploma","starGold","confetti","cap","starGold","diploma","confetti","starGold","cap"]},
+ party:{t:"142,68,173",s:["confetti","starGold","balloonB","confetti","gift","balloonR","starGold","confetti","balloonY","starGold"]}
 };
 function themeFor(it){
  var n=(it.name||"").toLowerCase(),m=it.m,d=it.d;
- if(/christmas|xmas|santa/.test(n)||(m===12&&d===25))return "xmas";
+ if(it.born)return "birthday";
+ if(/christmas|xmas|santa/.test(n)||(m===12&&(d===25||d===24)))return "xmas";
  if(/new year/.test(n)||(m===1&&d===1)||(m===12&&d===31))return "newyear";
  if(/valentine/.test(n)||(m===2&&d===14))return "valentine";
- if(/easter|resurrection/.test(n))return "easter";
+ if(/easter|resurrection|good friday/.test(n))return "easter";
  if(/patrick/.test(n)||(m===3&&d===17))return "stpat";
- if(/july|4th|fourth|independence|memorial|labor day|veteran|flag/.test(n)||(m===7&&d===4))return "usa";
+ if(/martin luther|mlk/.test(n))return "mlk";
+ if(/july|4th|fourth|independence|memorial|labor day|veteran|flag|president/.test(n)||(m===7&&d===4))return "usa";
  if(/halloween|trick or treat/.test(n)||(m===10&&d===31))return "halloween";
  if(/thanksgiving|turkey|fall|autumn/.test(n))return "thanks";
  if(/birthday|bday|b-day|turns \d/.test(n))return "birthday";
- if(/anniversary|wedding|mother|father|mom|dad/.test(n))return "love";
- if(/basketball|game|season|tournament|playoff|opener|practice|football|baseball|soccer/.test(n))return "ball";
+ if(/mother|mom|mum/.test(n))return "mom";
+ if(/father|dad/.test(n))return "dad";
+ if(/anniversary|wedding/.test(n))return "love";
+ if(/basketball|game|season|tournament|playoff|opener|practice|football|baseball|soccer|state/.test(n))return "ball";
  if(/fish|lake|bass/.test(n))return "fish";
  if(/vacation|beach|trip|cruise|disney|summer|pool/.test(n))return "beach";
  if(/graduat/.test(n))return "grad";
  return "party";
 }
-// Decorations sit on the right side of the box so the number and words stay readable.
-var DPOS=[[74,8,30,-12],[88,44,22,14],[66,64,34,6],[54,6,18,18],[86,80,20,-18],[58,36,16,0]];
+// Ten spots on the right side of the box, so the number and words on the left stay readable.
+var DPOS=[[72,6,30,-10,1],[88,30,22,12,0],[64,50,32,4,0],[54,4,18,16,1],[86,70,24,-14,0],[56,28,16,0,1],[78,48,18,8,0],[94,8,14,-20,1],[70,78,20,10,0],[48,68,14,-6,1]];
 function decoHtml(it,h){
  var th=THEMES[themeFor(it)],k=Math.max(0.6,Math.min(1.5,h/200));
- return '<div class="deco" aria-hidden="true">'+DPOS.map(function(p,i){var sz=Math.round(p[2]*k*1.25);return '<svg viewBox="0 0 24 24" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+sz+'px;height:'+sz+'px;-webkit-transform:rotate('+p[3]+'deg);transform:rotate('+p[3]+'deg)">'+SHAPES[th.s[i]]+'</svg>';}).join("")+'</div>';
+ var g=th.g?'<svg viewBox="0 0 100 20" preserveAspectRatio="none" style="left:0;bottom:0;width:100%;height:'+Math.round(16*k)+'%"><path d="M0 12C15 4 30 4 45 10S75 16 100 6V20H0z" fill="'+th.g+'" opacity=".55"/></svg>':'';
+ return '<div class="deco" aria-hidden="true">'+g+DPOS.map(function(p,i){var sz=Math.round(p[2]*k*1.3);return '<svg viewBox="0 0 24 24" class="'+(p[4]?'flt':'')+'" style="left:'+p[0]+'%;top:'+p[1]+'%;width:'+sz+'px;height:'+sz+'px;-webkit-transform:rotate('+p[3]+'deg);transform:rotate('+p[3]+'deg);'+(p[4]?'-webkit-animation-delay:-'+i+'s;animation-delay:-'+i+'s':'')+'">'+SHAPES[th.s[i]]+'</svg>';}).join("")+'</div>';
 }
-function themeTint(it){var t=THEMES[themeFor(it)].t;return "linear-gradient(135deg,rgba("+t+",.05),rgba("+t+",.28))";}
+function themeTint(it){var t=THEMES[themeFor(it)].t;return "linear-gradient(135deg,rgba("+t+",.06),rgba("+t+",.32))";}
 function themeIcon(it,size){return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" aria-hidden="true" style="flex:none;margin-right:14px">'+SHAPES[THEMES[themeFor(it)].s[0]]+'</svg>';}
+
+/* ---------- Holiday list: fixed dates and moving ones (nth weekday, last weekday, Easter) ---------- */
+function easterDate(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da);}
+function ruleDate(it,y){
+ if(it.rule==="easter")return easterDate(y);
+ if(it.rule==="nth"){var f=new Date(y,it.m-1,1),off=(it.w-f.getDay()+7)%7;return new Date(y,it.m-1,1+off+7*(it.n-1));}
+ if(it.rule==="last"){var l=new Date(y,it.m,0),back=(l.getDay()-it.w+7)%7;return new Date(y,it.m-1,l.getDate()-back);}
+ return new Date(y,it.m-1,it.d);
+}
+var HOLIDAYS=[
+ {name:"New Year's Day",m:1,d:1},{name:"Martin Luther King Jr. Day",rule:"nth",n:3,w:1,m:1},{name:"Valentine's Day",m:2,d:14},
+ {name:"Presidents' Day",rule:"nth",n:3,w:1,m:2},{name:"St. Patrick's Day",m:3,d:17},{name:"Easter",rule:"easter",m:4},
+ {name:"Mother's Day",rule:"nth",n:2,w:0,m:5},{name:"Memorial Day",rule:"last",w:1,m:5},{name:"Father's Day",rule:"nth",n:3,w:0,m:6},
+ {name:"Independence Day",m:7,d:4},{name:"Labor Day",rule:"nth",n:1,w:1,m:9},{name:"Halloween",m:10,d:31},
+ {name:"Veterans Day",m:11,d:11},{name:"Thanksgiving",rule:"nth",n:4,w:4,m:11},{name:"Christmas Eve",m:12,d:24},
+ {name:"Christmas",m:12,d:25},{name:"New Year's Eve",m:12,d:31}
+];
 
 /* ---------- Countdowns ---------- */
 var countList=lsGet("cd-list",null)||[{id:1,name:"Christmas",m:12,d:25,y:null},{id:2,name:"New Year's Day",m:1,d:1,y:null}];
+// Add the holidays once (keeps anything already on the list, skips ones with the same name).
+if(!lsGet("cd-seed-hol1",false)){
+ var haveN={};countList.forEach(function(x){haveN[x.name.toLowerCase()]=1;});
+ HOLIDAYS.forEach(function(h,i){if(!haveN[h.name.toLowerCase()]){var it={id:Date.now()+i,name:h.name,m:h.m,d:h.d||1,y:null};if(h.rule){it.rule=h.rule;it.n=h.n;it.w=h.w;}countList.push(it);}});
+ lsSet("cd-list",countList);lsSet("cd-seed-hol1",true);
+}
 var removeArm=null;
 function cdNext(it){
- var now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
- var d=new Date(it.y||now.getFullYear(),it.m-1,it.d);
- if(!it.y&&d<today)d=new Date(now.getFullYear()+1,it.m-1,it.d);
+ var now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),Y=now.getFullYear();
+ var d=it.y?new Date(it.y,it.m-1,it.d):ruleDate(it,Y);
+ if(!it.y&&d<today)d=ruleDate(it,Y+1);
  return {date:d,days:Math.round((d-today)/864e5)};
 }
+// "turns 21" for birthdays entered with the year they were born.
+function ageText(it,date){return it.born?" · turns "+(date.getFullYear()-it.born):"";}
 function daysWord(n){return n===1?"day":"days";}
 function renderCount(){
  var items=countList.map(function(it){var n=cdNext(it);return {it:it,date:n.date,days:n.days};}).sort(function(a,b){return a.date-b.date;});
  var up=items.filter(function(x){return x.days>=0;}),el=$("tCount");
  if(!up.length)el.innerHTML='<div class="mr" style="color:var(--accentTxt)">'+icon("gift",48)+'</div><div class="col"><div style="font-size:22px;font-weight:600">Countdown</div><div class="sub">Tap to add one</div></div>';
- else{var f=up[0];el.innerHTML=decoHtml(f.it,el.clientHeight||200)+'<div class="col ctext"><div class="big">'+(f.days===0?"Today!":f.days)+'</div><div class="sub" style="color:var(--ink);font-size:19px;max-width:60%">'+(f.days===0?esc(f.it.name):daysWord(f.days)+" until "+esc(f.it.name))+'</div></div>';}
+ else{var f=up[0];el.innerHTML=decoHtml(f.it,el.clientHeight||200)+'<div class="col ctext"><div class="big">'+(f.days===0?"Today!":f.days)+'</div><div class="sub" style="color:var(--ink);font-size:19px;max-width:60%">'+(f.days===0?esc(f.it.name):daysWord(f.days)+" until "+esc(f.it.name))+(f.it.born?'<div style="font-weight:700;margin-top:2px">Turns '+(f.date.getFullYear()-f.it.born)+'</div>':'')+'</div></div>';}
  el.style.backgroundImage=up.length?themeTint(up[0].it):"";
- var rows=items.map(function(x){return '<div class="crow">'+themeIcon(x.it,40)+'<div class="dd">'+(x.days<0?"Done":x.days===0?"Today":x.days)+'</div><div class="n">'+esc(x.it.name)+'<small>'+fmtDay(x.date)+(x.it.y?"":" · every year")+(x.days>0?" · "+x.days+" "+daysWord(x.days):"")+'</small></div><button class="btn'+(removeArm===x.it.id?" warn":"")+'" data-act="cdrm" data-id="'+x.it.id+'" style="margin:0">'+(removeArm===x.it.id?"Tap again to remove":"Remove")+'</button></div>';}).join("");
+ var rows=items.map(function(x){return '<div class="crow">'+themeIcon(x.it,40)+'<div class="dd">'+(x.days<0?"Done":x.days===0?"Today":x.days)+'</div><div class="n">'+esc(x.it.name)+'<small>'+fmtDay(x.date)+(x.it.y?"":" · every year")+ageText(x.it,x.date)+(x.days>0?" · "+x.days+" "+daysWord(x.days):"")+'</small></div><button class="btn'+(removeArm===x.it.id?" warn":"")+'" data-act="cdrm" data-id="'+x.it.id+'" style="margin:0">'+(removeArm===x.it.id?"Tap again to remove":"Remove")+'</button></div>';}).join("");
  var y=new Date().getFullYear();
  $("countBody").innerHTML='<div class="card">'+(rows||'<div class="sub">No countdowns yet.</div>')+'</div>'+
-  '<div class="card"><div class="lbl" style="margin-bottom:14px">Add a countdown</div><label class="field"><span>What’s it for?</span><input id="cdName" type="text" placeholder="Basketball season opener" autocomplete="off"></label><label class="field"><span>Date</span><input id="cdDate" type="date" min="'+y+'-01-01"></label><label class="row" style="font-size:20px;margin-bottom:18px"><input id="cdYearly" type="checkbox" style="width:28px;height:28px;margin:0 12px 0 0">Every year (birthdays, holidays)</label><button class="btn pri" data-act="cdadd">Add countdown</button></div>';
+  '<div class="card"><div class="lbl" style="margin-bottom:14px">Add a countdown</div><label class="field"><span>What’s it for?</span><input id="cdName" type="text" placeholder="Basketball season opener" autocomplete="off"></label><label class="field"><span>Date</span><input id="cdDate" type="date"></label><label class="row" style="font-size:20px;margin-bottom:18px"><input id="cdYearly" type="checkbox" style="width:28px;height:28px;margin:0 12px 0 0">Every year (holidays)</label><label class="row" style="font-size:20px;margin-bottom:18px"><input id="cdBorn" type="checkbox" style="width:28px;height:28px;margin:0 12px 0 0">It’s a birthday: pick their birth date and it shows their age</label><button class="btn pri" data-act="cdadd">Add countdown</button></div>';
 }
 function addCount(){
  var name=($("cdName").value||"").trim(),dv=$("cdDate").value;
  if(!name){toast("Type a name first");return;}
  if(!/^\d{4}-\d{2}-\d{2}$/.test(dv)){toast("Pick a date");return;}
  var p=dv.split("-");
- countList.push({id:Date.now(),name:name.slice(0,40),m:+p[1],d:+p[2],y:$("cdYearly").checked?null:+p[0]});
+ var born=$("cdBorn").checked;
+ countList.push(born?{id:Date.now(),name:name.slice(0,40),m:+p[1],d:+p[2],y:null,born:+p[0]}:{id:Date.now(),name:name.slice(0,40),m:+p[1],d:+p[2],y:$("cdYearly").checked?null:+p[0]});
  lsSet("cd-list",countList);renderCount();toast("Countdown added");
 }
 
@@ -3576,8 +3652,8 @@ function renderPage2(){
   html='<div class="wxicon" style="margin-right:14px;flex:none">'+icon(info.k,52)+'</div><div class="col"><div style="font-size:40px;font-weight:700;line-height:1">'+Math.round(wx.current.temperature_2m)+'°</div><div style="font-size:15px;color:var(--muted);margin-top:4px">'+info.t+' · '+Math.round(d.temperature_2m_max[0])+'°/'+Math.round(d.temperature_2m_min[0])+'°'+(d.precipitation_probability_max[0]>=20?' · '+d.precipitation_probability_max[0]+'% rain':'')+'</div></div>';}
  else html='<div class="wxicon" style="margin-right:14px">'+icon("cloud",52)+'</div><div class="sub">Weather loading…</div>';
  if($("p2Weather").innerHTML!==html)$("p2Weather").innerHTML=html;
- var up=countList.map(function(it){var n=cdNext(it);return {it:it,days:n.days};}).filter(function(x){return x.days>=0;}).sort(function(a,b){return a.days-b.days;});
- var ch=up.length?decoHtml(up[0].it,$("p2Count").clientHeight||140)+'<div class="ctext"><div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+'</div></div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
+ var up=countList.map(function(it){var n=cdNext(it);return {it:it,days:n.days,date:n.date};}).filter(function(x){return x.days>=0;}).sort(function(a,b){return a.days-b.days;});
+ var ch=up.length?decoHtml(up[0].it,$("p2Count").clientHeight||140)+'<div class="ctext"><div class="lbl">Countdown</div><div style="font-size:40px;font-weight:800;line-height:1.1;color:var(--accentTxt)">'+(up[0].days===0?"Today!":up[0].days)+'</div><div style="font-size:15px">'+(up[0].days===0?esc(up[0].it.name):daysWord(up[0].days)+" until "+esc(up[0].it.name))+ageText(up[0].it,up[0].date)+'</div></div>':'<div class="lbl">Countdown</div><div class="sub" style="font-size:16px">Tap to add one</div>';
  $("p2Count").style.backgroundImage=up.length?themeTint(up[0].it):"";
  if($("p2Count").innerHTML!==ch)$("p2Count").innerHTML=ch;
  var dn=dayNum(new Date()),v=verseFor(dn),w=WORDS[dn%WORDS.length];
