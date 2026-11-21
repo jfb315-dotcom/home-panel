@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.15">
+<meta name="panel-version" content="2026-11-21.16">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -2853,6 +2853,17 @@ function renderPhotoView(){
  $("photoTitle").textContent="Photo "+(photoIdx+1)+" of "+photos.length;
  bar.innerHTML='<button class="btn" data-act="pprev">Previous</button><button class="btn" data-act="pnext">Next</button><button class="btn pri" data-act="padd">Add photos</button><button class="btn'+(photoRmArm?' warn':'')+'" data-act="prm">'+(photoRmArm?"Tap again to remove":"Remove this one")+'</button>';
 }
+/* Backup: a smaller copy of every photo also goes in localStorage (iOS 12 can drop or lock up IndexedDB in Home Screen apps). */
+function bkKey(id){return "photo-bk-"+id;}
+function makeBackup(id,data){
+ return new Promise(function(res){var img=new Image();img.onload=function(){
+  var max=720,sc=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");
+  c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  try{localStorage.setItem(bkKey(id),c.toDataURL("image/jpeg",0.6));}catch(e){} // full: newest photos just go without a backup
+  res();};img.onerror=function(){res();};img.src=data;});
+}
+function backupIds(){var ids=[];try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("photo-bk-")===0)ids.push(k.slice(9));}}catch(e){}return ids;}
+function dropBackup(id){try{localStorage.removeItem(bkKey(id));}catch(e){}}
 function shrink(file){
  return new Promise(function(res){
   var fr=new FileReader();
@@ -2869,7 +2880,7 @@ $("photoInput").addEventListener("change",function(){
  toast("Adding "+files.length+" photo"+(files.length>1?"s":"")+"…");
  // One at a time so the iPad's small memory isn't swamped.
  var chain=Promise.resolve();
- files.forEach(function(f){chain=chain.then(function(){return shrink(f);}).then(function(data){if(!data)return;return idbReq("readwrite",function(s){return s.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});added++;});});});
+ files.forEach(function(f){chain=chain.then(function(){return shrink(f);}).then(function(data){if(!data)return;return idbReq("readwrite",function(s){return s.add({data:data,added:Date.now()});}).then(function(id){photos.push({id:id,data:data});added++;return makeBackup(id,data);});});});
  chain.then(function(){self.value="";renderPhotoTile();if(page===2){renderSlideMsg();startSlides();}photoIdx=photos.length-added;renderPhotoView();toast("Added "+added+" photo"+(added===1?"":"s"));})
  .catch(function(){self.value="";renderPhotoTile();renderPhotoView();toast("Some photos didn’t save. The iPad may be full.");});
 });
@@ -3421,7 +3432,7 @@ document.addEventListener("click",function(e){
  else if(a==="padd")$("photoInput").click();
  else if(a==="pprev"){photoIdx=(photoIdx-1+photos.length)%photos.length;photoRmArm=false;renderPhotoView();}
  else if(a==="pnext"){photoIdx=(photoIdx+1)%photos.length;photoRmArm=false;renderPhotoView();}
- else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();if(page===2){slideShown="A";$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";renderSlideMsg();startSlides();}toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
+ else if(a==="prm"){if(photoRmArm){var p=photos[photoIdx];idbReq("readwrite",function(s){return s["delete"](p.id);}).then(function(){dropBackup(p.id);photos.splice(photoIdx,1);photoRmArm=false;renderPhotoView();renderPhotoTile();if(page===2){slideShown="A";$("slideA").style.backgroundImage="";$("slideB").style.backgroundImage="";renderSlideMsg();startSlides();}toast("Photo removed");});}else{photoRmArm=true;renderPhotoView();}}
  else if(a==="wedit"){wifiEdit=true;renderWifi();}
  else if(a==="wcancel"){wifiEdit=false;renderWifi();}
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
@@ -3501,7 +3512,29 @@ renderWeather();renderTimerTile();renderWifi();
 tickClock();setInterval(tickClock,10000);
 setInterval(tickTimer,250);
 loadWeather();setInterval(loadWeather,15*60000);
-idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){photos=all.map(function(r){return {id:r.id,data:r.data};});renderPhotoTile();setPage(page);}).catch(function(){renderPhotoTile();setPage(page);});
+// Open the photo store; retry, then fall back to the backup copies if iOS lost or locked the store.
+function loadPhotos(tries){
+ idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){
+  photos=all.map(function(r){return {id:r.id,data:r.data};});
+  var bk=backupIds();
+  if(!photos.length&&bk.length){
+   // The store came back empty but backups exist: put the backups back in.
+   var chain=Promise.resolve();
+   bk.forEach(function(oldId){var data;try{data=localStorage.getItem(bkKey(oldId));}catch(e){}if(!data)return;
+    chain=chain.then(function(){return idbReq("readwrite",function(s){return s.add({data:data,added:Date.now()});});}).then(function(id){photos.push({id:id,data:data});dropBackup(oldId);try{localStorage.setItem(bkKey(id),data);}catch(e){}});});
+   return chain.then(function(){if(photos.length)toast("Restored "+photos.length+" photos");});
+  }
+  // Older photos added before backups existed: make their backups now, one at a time.
+  var have={};bk.forEach(function(k){have[k]=1;});
+  var c2=Promise.resolve();photos.forEach(function(p){if(!have[p.id])c2=c2.then(function(){return makeBackup(p.id,p.data);});});
+ }).then(function(){renderPhotoTile();setPage(page);}).catch(function(){
+  if(tries<3){setTimeout(function(){loadPhotos(tries+1);},1500);return;}
+  // Store won't open: show the backups so the photos aren't gone, and let a reload fix the store next time.
+  photos=backupIds().map(function(k){var d=null;try{d=localStorage.getItem(bkKey(k));}catch(e){}return {id:+k,data:d};}).filter(function(p){return p.data;});
+  renderPhotoTile();setPage(page);
+ });
+}
+loadPhotos(0);
 setInterval(function(){if(page===2)renderPage2();},10000);
 window.addEventListener("resize",function(){skyKey="";renderSky();fitText($("verseText"),22,14);renderWordTile();});
 })();

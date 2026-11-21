@@ -9,6 +9,11 @@ No build step, no framework. The QR library (qrcode-generator, MIT) is pasted in
 - Parse Open-Meteo times by hand (`parseLocal`); Safari 12 misreads offset-less ISO strings.
 - Sound only plays after a tap; the touchend listener wakes the audio context. The side switch can mute it.
 
+## Photo storage
+Photos live in IndexedDB, which iOS 12 can drop or fail to reopen in Home Screen apps (WebKit bugs 197050, 200078).
+Every photo also gets a 720px backup in localStorage (`photo-bk-<id>`); `loadPhotos` retries the store 3 times, restores
+from backups if the store comes back empty, and shows backups if it won't open. John kept the same icon and still lost photos.
+
 ## Privacy
 Photos (IndexedDB), guest Wi-Fi (`wifi`), countdowns (`cd-list`), used trivia questions (`trivia-used`), scoreboard (`scoreboard`), movie list (`movie-list`), theme (`panel-theme`) and the weather cache (`wx`)
 live only in the iPad's browser. Never put Wi-Fi passwords, family photos or home addresses in the repo; the repo is public.
