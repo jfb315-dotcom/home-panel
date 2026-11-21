@@ -10,7 +10,7 @@ No build step, no framework. The QR library (qrcode-generator, MIT) is pasted in
 - Sound only plays after a tap; the touchend listener wakes the audio context. The side switch can mute it.
 
 ## Privacy
-Photos (IndexedDB), guest Wi-Fi (`wifi`), countdowns (`cd-list`), used trivia questions (`trivia-used`), theme (`panel-theme`) and the weather cache (`wx`)
+Photos (IndexedDB), guest Wi-Fi (`wifi`), countdowns (`cd-list`), used trivia questions (`trivia-used`), scoreboard (`scoreboard`), movie list (`movie-list`), theme (`panel-theme`) and the weather cache (`wx`)
 live only in the iPad's browser. Never put Wi-Fi passwords, family photos or home addresses in the repo; the repo is public.
 
 ## Testing
@@ -18,9 +18,10 @@ Serve over localhost, test at 1024x768 and 768x1024 in headless Chromium with th
 Keep test scripts out of the repo. John is not a programmer: reply in plain words about what he'll see.
 
 ## Layout
-Home grid is full (7 tiles). Extra features live behind the header "Fun" button (trivia, joke or riddle, word of the day).
+Home grid is full (7 tiles; Word of the day replaced the Guest Wi-Fi tile). Extra features live behind the header "Fun" button:
+trivia, scoreboard, dice and coin, drawing pad, movie night picker, guest Wi-Fi, joke or riddle, word of the day.
 Trivia buzzers fire on touchstart so the first finger wins; host buttons use the normal click handler with `q*` actions.
-Idle return: 1 minute; a running timer never closes; a trivia game in progress gets 10 minutes.
+Idle return: 1 minute; a running timer never closes; trivia in progress, scoreboard and drawing pad get 10 minutes.
 
 ## Publishing
 Bump `<meta name="panel-version">` on EVERY change. The iPad checks the live page every 15 minutes and reloads

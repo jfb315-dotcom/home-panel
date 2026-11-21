@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.4">
+<meta name="panel-version" content="2026-11-21.5">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Home Panel</title>
 <style>
@@ -92,6 +92,12 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .buzz{flex:1;height:180px;border-radius:22px;color:#fff;font-size:36px;font-weight:800;text-align:center;-webkit-touch-callout:none}
 .hb.btn{margin:0 0 0 10px}
 .fcard{text-align:left}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:12px;margin-bottom:12px}
+.fl{background:var(--tile);border-radius:20px;padding:20px 22px;min-height:104px;box-sizing:border-box}
+.sbtn{width:78px;height:66px;border-radius:14px;background:rgba(255,255,255,.22);color:#fff;font-size:28px;font-weight:800;text-align:center;margin:0 5px}
+#drawBox{flex:1;margin:0 24px;border-radius:16px;overflow:hidden;background:#fff;min-height:0}
+#drawCanvas{display:block;touch-action:none}
+#drawBar{display:flex;align-items:center;padding:14px 24px 20px;flex:none}
 @media (orientation:portrait){
   .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:1fr;grid-auto-flow:dense}
   .bigtime{font-size:150px}
@@ -128,7 +134,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     <button class="tile" id="tCount" data-open="count" aria-label="Countdown"></button>
     <button class="tile" id="tPhoto" data-open="photo" aria-label="Photo of the day"></button>
     <button class="tile" id="tMoon" data-open="moon" aria-label="Moon and stars"></button>
-    <button class="tile" id="tWifi" data-open="wifi" aria-label="Guest Wi-Fi"></button>
+    <button class="tile" id="tWord" data-open="fun" aria-label="Word of the day"></button>
   </div>
 </div>
 
@@ -140,6 +146,10 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 <section class="view" id="v-wifi"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Guest Wi-Fi</h1></div><div class="vbody" id="wifiBody"></div></section>
 <section class="view" id="v-fun"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Fun</h1></div><div class="vbody" id="funBody"></div></section>
 <section class="view" id="v-trivia"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Trivia night</h1><button class="btn" data-act="qnew" style="margin:0 0 0 auto">New game</button></div><div class="vbody" id="triviaBody"></div></section>
+<section class="view" id="v-score"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Scoreboard</h1><div class="sub" style="margin:0 0 0 16px">Tap a team name to rename it</div></div><div class="vbody" id="scoreBody"></div></section>
+<section class="view" id="v-dice"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Dice and coin</h1></div><div class="vbody" id="diceBody"></div></section>
+<section class="view" id="v-draw"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Drawing pad</h1></div><div id="drawBox"><canvas id="drawCanvas"></canvas></div><div id="drawBar"></div></section>
+<section class="view" id="v-movie"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Movie night picker</h1></div><div class="vbody" id="movieBody"></div></section>
 <section class="view" id="v-photo"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1 id="photoTitle">Photos</h1></div><div id="photoBig"></div><div class="pbar" id="photoBar"></div></section>
 
 <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
@@ -2531,7 +2541,7 @@ function tickClock(){
  $("clock").innerHTML=((h%12)||12)+":"+pad(d.getMinutes())+"<small>"+(h<12?"AM":"PM")+"</small>";
  $("hdate").textContent=DAYS[d.getDay()]+", "+MONTHS[d.getMonth()]+" "+d.getDate();
  var dn=dayNum(d);
- if(dn!==lastDay){lastDay=dn;jokeShown=false;renderVerse();renderCount();renderPhotoTile();renderMoon();}
+ if(dn!==lastDay){lastDay=dn;jokeShown=false;renderWordTile();renderVerse();renderCount();renderPhotoTile();renderMoon();}
  applyTheme();
  // Pick up any app updates once a night, unless a timer is going.
  if(h===3&&d.getMinutes()===30&&!timer)setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},1000);
@@ -2827,7 +2837,8 @@ function qrSvg(text,px){
 function wifiString(){return "WIFI:T:"+(wifi.sec==="nopass"?"nopass":"WPA")+";S:"+wifiEsc(wifi.ssid)+";"+(wifi.sec==="nopass"?"":"P:"+wifiEsc(wifi.pass)+";")+";";}
 function renderWifi(){
  var el=$("tWifi");
- if(wifi&&wifi.ssid)el.innerHTML='<div class="qrbox mr">'+qrSvg(wifiString(),112)+'</div><div class="col"><div class="lbl">Guest Wi-Fi</div><div style="font-size:20px;font-weight:600;margin-top:4px">Scan to join</div><div class="sub" style="font-size:15px;word-break:break-all">'+esc(wifi.ssid)+'</div></div>';
+ if(!el){}
+ else if(wifi&&wifi.ssid)el.innerHTML='<div class="qrbox mr">'+qrSvg(wifiString(),112)+'</div><div class="col"><div class="lbl">Guest Wi-Fi</div><div style="font-size:20px;font-weight:600;margin-top:4px">Scan to join</div><div class="sub" style="font-size:15px;word-break:break-all">'+esc(wifi.ssid)+'</div></div>';
  else el.innerHTML='<div class="mr" style="color:var(--muted)">'+icon("wifi",56)+'</div><div class="col"><div class="lbl">Guest Wi-Fi</div><div style="font-size:20px;font-weight:600;margin-top:4px">Tap to set up</div></div>';
  var b=$("wifiBody");
  if(wifi&&wifi.ssid&&!wifiEdit)b.innerHTML='<div class="card row" style="justify-content:center"><div class="qrbox mr" style="padding:0">'+qrSvg(wifiString(),380)+'</div><div class="col"><div class="lbl">Network</div><div style="font-size:34px;font-weight:700;margin:4px 0 20px;word-break:break-all">'+esc(wifi.ssid)+'</div>'+(wifi.sec==="nopass"?'<div class="sub" style="font-size:22px">No password</div>':'<div class="lbl">Password</div><div style="font-size:34px;font-weight:700;margin-top:4px;word-break:break-all">'+esc(wifi.pass)+'</div>')+'<div class="sub" style="font-size:20px;margin-top:20px">Point your phone’s camera at the code.</div></div></div><button class="btn" data-act="wedit">Change network</button>';
@@ -3052,10 +3063,16 @@ var jokeShown=false;
 
 function renderFun(){
  var dn=dayNum(new Date()),j=JOKES[dn%JOKES.length],w=WORDS[dn%WORDS.length];
- $("funBody").innerHTML=
-  '<button class="card fcard" data-open="trivia" style="display:block;width:100%;background:var(--accent);color:var(--onaccent)"><div style="font-size:34px;font-weight:700">Trivia night</div><div style="font-size:20px;margin-top:6px">2 to 4 teams with buzzers. First to 10 wins.'+(trivia&&!trivia.winner?' Tap to keep playing.':'')+'</div></button>'+
-  '<button class="card fcard" data-act="joke" style="display:block;width:100%"><div class="lbl">Joke or riddle of the day</div><div style="font-size:28px;font-weight:600;margin-top:10px;line-height:1.3">'+esc(j[0])+'</div><div style="font-size:26px;margin-top:14px;color:var(--accentTxt);font-weight:600">'+(jokeShown?esc(j[1]):"Tap for the answer")+'</div></button>'+
-  '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:40px;font-weight:700;margin-top:8px">'+esc(w[0])+' <span style="font-size:20px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:24px;margin-top:8px">'+esc(w[2])+'</div><div style="font-size:20px;color:var(--muted);margin-top:10px">“'+esc(w[3])+'”</div></div>';
+ var L=function(open,title,sub,pri){return '<button class="fl" data-open="'+open+'"'+(pri?' style="background:var(--accent);color:var(--onaccent)"':'')+'><div style="font-size:26px;font-weight:700">'+title+'</div><div style="font-size:16px;margin-top:4px;opacity:.8">'+sub+'</div></button>';};
+ $("funBody").innerHTML='<div class="fgrid">'+
+  L("trivia","Trivia night",trivia&&trivia.winner==null?"Game in progress":"2 to 4 teams, buzzers",1)+
+  L("score","Scoreboard",score.an+" "+score.a+" · "+score.bn+" "+score.b)+
+  L("dice","Dice and coin","Roll or flip")+
+  L("draw","Drawing pad","Finger painting")+
+  L("movie","Movie night picker",movies.length?movies.length+" movies on the list":"Add movies, it picks")+
+  L("wifi","Guest Wi-Fi","QR code for guests")+'</div>'+
+  '<button class="card fcard" data-act="joke" style="display:block;width:100%"><div class="lbl">Joke or riddle of the day</div><div style="font-size:26px;font-weight:600;margin-top:8px;line-height:1.3">'+esc(j[0])+'</div><div style="font-size:24px;margin-top:10px;color:var(--accentTxt);font-weight:600">'+(jokeShown?esc(j[1]):"Tap for the answer")+'</div></button>'+
+  '<div class="card"><div class="lbl">Word of the day</div><div style="font-size:34px;font-weight:700;margin-top:6px">'+esc(w[0])+' <span style="font-size:18px;font-weight:400;color:var(--muted);font-style:italic">'+esc(w[1])+'</span></div><div style="font-size:22px;margin-top:6px">'+esc(w[2])+'</div><div style="font-size:19px;color:var(--muted);margin-top:8px">“'+esc(w[3])+'”</div></div>';
 }
 
 function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var k=n-1;k>0;k--){var r=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[r];a[r]=t;}return a;}
@@ -3120,6 +3137,102 @@ function onBuzz(e){
 document.addEventListener("touchstart",onBuzz,{passive:false});
 document.addEventListener("mousedown",onBuzz,false);
 
+/* ---------- Word of the day tile ---------- */
+function renderWordTile(){
+ var w=WORDS[dayNum(new Date())%WORDS.length];
+ $("tWord").innerHTML='<div class="col" style="width:100%"><div class="lbl">Word of the day</div><div style="font-size:30px;font-weight:700;margin-top:6px;word-break:break-word">'+esc(w[0])+'</div><div style="font-size:15px;color:var(--muted);font-style:italic">'+esc(w[1])+'</div><div id="wordMean" style="font-size:17px;margin-top:6px;line-height:1.3">'+esc(w[2])+'</div></div>';
+ fitText($("wordMean"),17,13);
+}
+
+/* ---------- Scoreboard ---------- */
+var score=lsGet("scoreboard",null)||{a:0,b:0,an:"Home",bn:"Away"};
+function renderScore(){
+ var side=function(k,name,col){return '<div style="flex:1;margin-left:'+(k==="b"?12:0)+'px;border-radius:22px;background:'+col+';color:#fff;display:flex;flex-direction:column;align-items:center;padding:16px">'+
+  '<button data-act="sname" data-k="'+k+'" style="font-size:26px;font-weight:700;padding:6px 16px;text-align:center">'+esc(name)+'</button>'+
+  '<div style="font-size:170px;font-weight:800;line-height:1;margin:6px 0 12px">'+score[k]+'</div>'+
+  '<div class="row">'+[1,2,3].map(function(n){return '<button class="sbtn" data-act="sadd" data-k="'+k+'" data-n="'+n+'">+'+n+'</button>';}).join("")+'<button class="sbtn" data-act="sadd" data-k="'+k+'" data-n="-1">−1</button></div></div>';};
+ $("scoreBody").innerHTML='<div class="row" style="align-items:stretch">'+side("a",score.an,"#D93B3B")+side("b",score.bn,"#2F6FDB")+'</div><div class="center" style="margin-top:16px"><button class="btn'+(scoreResetArm?" warn":"")+'" data-act="sreset">'+(scoreResetArm?"Tap again to reset to 0–0":"Reset scores")+'</button></div>';
+}
+var scoreResetArm=false;
+function scoreAct(a,t){
+ if(a==="sadd"){var k=t.getAttribute("data-k");score[k]=Math.max(0,score[k]+(+t.getAttribute("data-n")));scoreResetArm=false;tone(660,audio()?audio().currentTime+0.01:0,0.06,0.15);}
+ else if(a==="sreset"){if(scoreResetArm){score.a=0;score.b=0;scoreResetArm=false;}else scoreResetArm=true;}
+ else if(a==="sname"){var k2=t.getAttribute("data-k"),cur=k2==="a"?score.an:score.bn,nn=window.prompt("Team name",cur);if(nn&&nn.trim()){if(k2==="a")score.an=nn.trim().slice(0,14);else score.bn=nn.trim().slice(0,14);}}
+ else return false;
+ lsSet("scoreboard",score);renderScore();return true;
+}
+
+/* ---------- Dice and coin ---------- */
+var diceRes=null; // {kind:"dice", vals:[..]} or {kind:"coin", v:"Heads"}
+var PIPS={1:[[50,50]],2:[[28,28],[72,72]],3:[[28,28],[50,50],[72,72]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[28,28],[72,28],[50,50],[28,72],[72,72]],6:[[28,26],[72,26],[28,50],[72,50],[28,74],[72,74]]};
+function dieSvg(v){return '<svg width="200" height="200" viewBox="0 0 100 100" role="img" aria-label="'+v+'" style="display:inline-block;margin:0 14px"><rect x="4" y="4" width="92" height="92" rx="16" fill="#fff" stroke="#1A1206" stroke-width="3"/>'+PIPS[v].map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="8" fill="#1A1206"/>';}).join("")+'</svg>';}
+function renderDice(){
+ var res="";
+ if(diceRes&&diceRes.kind==="dice")res='<div>'+diceRes.vals.map(dieSvg).join("")+'</div>'+(diceRes.vals.length>1?'<div style="font-size:34px;font-weight:700;margin-top:10px">Total: '+(diceRes.vals[0]+diceRes.vals[1])+'</div>':'');
+ else if(diceRes&&diceRes.kind==="coin")res='<div style="width:220px;height:220px;border-radius:50%;background:#E2A417;color:#1A1206;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800">'+diceRes.v+'</div>';
+ else res='<div class="sub" style="font-size:24px;padding:80px 0">Pick one below.</div>';
+ $("diceBody").innerHTML='<div class="card center" style="min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center">'+res+'</div><div class="center"><button class="btn pri" data-act="roll" data-n="1" style="height:84px;font-size:26px">Roll 1 die</button><button class="btn pri" data-act="roll" data-n="2" style="height:84px;font-size:26px">Roll 2 dice</button><button class="btn pri" data-act="coin" style="height:84px;font-size:26px">Flip a coin</button></div>';
+}
+function rnd(n){return 1+Math.floor(Math.random()*n);}
+function diceAct(a,t){
+ if(a!=="roll"&&a!=="coin")return false;
+ var steps=0,iv=setInterval(function(){
+  steps++;
+  if(a==="roll"){var n=+t.getAttribute("data-n"),v=[];for(var i=0;i<n;i++)v.push(rnd(6));diceRes={kind:"dice",vals:v};}
+  else diceRes={kind:"coin",v:Math.random()<0.5?"Heads":"Tails"};
+  var au=audio();if(au)tone(300+steps*40,au.currentTime+0.005,0.03,0.12);
+  renderDice();if(steps>=8)clearInterval(iv);
+ },70);
+ return true;
+}
+
+/* ---------- Drawing pad ---------- */
+var draw={color:"#1A1206",size:8,ready:false};
+var PENS=["#1A1206","#D93B3B","#2F6FDB","#2E9E57","#E2A417","#8E44AD"];
+function renderDrawBar(){
+ $("drawBar").innerHTML=PENS.map(function(c){return '<button data-act="pen" data-c="'+c+'" aria-label="Color" style="width:56px;height:56px;border-radius:50%;background:'+c+';border:2px solid var(--line);box-sizing:border-box;margin-right:12px;box-shadow:'+(draw.color===c?'0 0 0 4px var(--ink)':'none')+'"></button>';}).join("")+
+  '<button class="btn" data-act="psize" style="margin:0 12px 0 8px">'+(draw.size>10?"Thin pen":"Thick pen")+'</button><button class="btn" data-act="perase" style="margin:0 12px 0 0">'+(draw.color==="#FFFFFF"?"Eraser on":"Eraser")+'</button><button class="btn warn" data-act="pclear" style="margin:0">Clear</button>';
+}
+function setupCanvas(){
+ var c=$("drawCanvas"),box=c.parentNode,r=window.devicePixelRatio||1,w=box.clientWidth,h=box.clientHeight;
+ if(draw.ready&&c.width===Math.round(w*r))return;
+ c.width=Math.round(w*r);c.height=Math.round(h*r);c.style.width=w+"px";c.style.height=h+"px";
+ var g=c.getContext("2d");g.setTransform(r,0,0,r,0,0);g.fillStyle="#FFFFFF";g.fillRect(0,0,w,h);draw.ready=true;
+}
+(function(){
+ var c=$("drawCanvas"),last=null;
+ function pt(e){var b=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return {x:s.clientX-b.left,y:s.clientY-b.top};}
+ function dot(p){var g=c.getContext("2d");g.fillStyle=draw.color;g.beginPath();g.arc(p.x,p.y,draw.size/2,0,Math.PI*2);g.fill();}
+ function line(a,b){var g=c.getContext("2d");g.strokeStyle=draw.color;g.lineWidth=draw.size;g.lineCap="round";g.lineJoin="round";g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke();}
+ function start(e){e.preventDefault();lastTouch=Date.now();last=pt(e);dot(last);}
+ function move(e){if(!last)return;e.preventDefault();lastTouch=Date.now();var p=pt(e);line(last,p);last=p;}
+ function end(){last=null;}
+ c.addEventListener("touchstart",start,{passive:false});c.addEventListener("touchmove",move,{passive:false});c.addEventListener("touchend",end,false);
+ c.addEventListener("mousedown",start,false);c.addEventListener("mousemove",move,false);window.addEventListener("mouseup",end,false);
+})();
+function drawAct(a,t){
+ if(a==="pen")draw.color=t.getAttribute("data-c");
+ else if(a==="psize")draw.size=draw.size>10?8:22;
+ else if(a==="perase")draw.color="#FFFFFF";
+ else if(a==="pclear"){draw.ready=false;setupCanvas();}
+ else return false;
+ renderDrawBar();return true;
+}
+
+/* ---------- Movie night picker ---------- */
+var movies=lsGet("movie-list",[]),moviePick=null,movieRmArm=null;
+function renderMovie(){
+ var list=movies.map(function(m,i){return '<div class="crow"><div class="n">'+esc(m)+'</div><button class="btn'+(movieRmArm===i?" warn":"")+'" data-act="mrm" data-i="'+i+'" style="margin:0">'+(movieRmArm===i?"Tap again":"Remove")+'</button></div>';}).join("");
+ $("movieBody").innerHTML='<div class="card center" style="padding:28px"><div style="font-size:44px;font-weight:800;min-height:56px;color:var(--accentTxt)">'+(moviePick!=null?esc(moviePick):(movies.length?"Ready to pick":"Add some movies below"))+'</div><button class="btn pri" data-act="mpick" style="margin:18px 0 0;height:84px;font-size:28px;padding:0 60px"'+(movies.length<2?' disabled':'')+'>Pick one!</button></div>'+
+  '<div class="card"><div class="row"><label class="field" style="flex:1;margin:0 12px 0 0"><input id="movieIn" type="text" placeholder="Type a movie name" autocomplete="off"></label><button class="btn pri" data-act="madd" style="margin:0">Add</button></div>'+(list?'<div style="margin-top:8px">'+list+'</div>':'')+'</div>';
+}
+function movieAct(a,t){
+ if(a==="madd"){var v=($("movieIn").value||"").trim();if(!v){toast("Type a movie name");return true;}movies.push(v.slice(0,60));lsSet("movie-list",movies);moviePick=null;renderMovie();return true;}
+ if(a==="mrm"){var i=+t.getAttribute("data-i");if(movieRmArm===i){movies.splice(i,1);lsSet("movie-list",movies);movieRmArm=null;}else movieRmArm=i;renderMovie();return true;}
+ if(a==="mpick"){if(movies.length<2)return true;var n=0,iv=setInterval(function(){n++;moviePick=movies[Math.floor(Math.random()*movies.length)];var au=audio();if(au)tone(400+n*25,au.currentTime+0.005,0.04,0.12);renderMovie();if(n>=16){clearInterval(iv);var au2=audio();if(au2){var tt=au2.currentTime+0.02;tone(523,tt,0.12,0.25);tone(659,tt+0.12,0.12,0.25);tone(784,tt+0.24,0.25,0.25);}}},90);return true;}
+ return false;
+}
+
 /* ---------- Views, taps, idle return ---------- */
 var view=null,lastTouch=Date.now();
 function openView(name){
@@ -3131,7 +3244,12 @@ function openView(name){
  if(name==="wifi"){wifiEdit=false;renderWifi();}
  if(name==="fun")renderFun();
  if(name==="trivia")renderTrivia();
- $("v-"+name).className="view on";$("v-"+name).querySelector(".vbody, #photoBig").scrollTop=0;
+ if(name==="score"){scoreResetArm=false;renderScore();}
+ if(name==="dice")renderDice();
+ if(name==="draw")renderDrawBar();
+ if(name==="movie"){movieRmArm=null;renderMovie();}
+ $("v-"+name).className="view on";var sc=$("v-"+name).querySelector(".vbody, #photoBig");if(sc)sc.scrollTop=0;
+ if(name==="draw")setupCanvas();
 }
 function closeView(){if(view)$("v-"+view).className="view";view=null;}
 document.addEventListener("click",function(e){
@@ -3143,6 +3261,7 @@ document.addEventListener("click",function(e){
  var a=t.getAttribute("data-act");
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a.charAt(0)==="q"&&triviaAct(a,t))return;
+ if(scoreAct(a,t)||diceAct(a,t)||drawAct(a,t)||movieAct(a,t))return;
  if(a==="tpause"&&timer){if(timer.paused){timer.end=Date.now()+timer.left;timer.paused=false;}else{timer.left=timeLeft();timer.paused=true;}tickTimer();}
  else if(a==="tadd"&&timer){if(timer.paused)timer.left+=60000;else timer.end+=60000;tickTimer();}
  else if(a==="tcancel"||a==="tstop"){timer=null;closeView();renderTimerTile();}
@@ -3157,8 +3276,8 @@ document.addEventListener("click",function(e){
  else if(a==="wsave"){var s=($("wSsid").value||"").trim();if(!s){toast("Type the network name");return;}wifi={ssid:s.slice(0,32),pass:$("wPass").value||"",sec:$("wSec").value};lsSet("wifi",wifi);wifiEdit=false;renderWifi();toast("Saved");}
 },false);
 ["touchstart","mousedown","keydown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();},true);});
-// Back to the home screen after 1 minute untouched; a running timer stays, and a trivia game gets 10 minutes.
-setInterval(function(){var lim=(view==="trivia"&&trivia&&trivia.winner==null)?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
+// Back to the home screen after 1 minute untouched; a running timer stays; trivia, scoreboard and drawing get 10 minutes.
+setInterval(function(){var lim=((view==="trivia"&&trivia&&trivia.winner==null)||view==="score"||view==="draw")?600000:60000;if(view&&Date.now()-lastTouch>lim&&!(view==="timer"&&timer))closeView();},5000);
 
 
 /* ---------- Self-update ---------- */
@@ -3183,7 +3302,7 @@ tickClock();setInterval(tickClock,10000);
 setInterval(tickTimer,250);
 loadWeather();setInterval(loadWeather,15*60000);
 idbOpen().then(function(d){db=d;return idbAll();}).then(function(all){photos=all.map(function(r){return {id:r.id,data:r.data};});renderPhotoTile();}).catch(function(){renderPhotoTile();});
-window.addEventListener("resize",function(){fitText($("verseText"),22,14);});
+window.addEventListener("resize",function(){fitText($("verseText"),22,14);renderWordTile();});
 })();
 </script>
 </body>
