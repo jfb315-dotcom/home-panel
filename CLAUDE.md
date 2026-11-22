@@ -69,6 +69,11 @@ Round 2 (all 10-minute idle except agent): Vault cracker (`v-vault`, drag the di
 Code breaker (`v-code`, 4 pegs, 6 colors, 10 tries; `spy-code`), Laser grid (`v-laser`, drag from START to EXIT, sliding-gap gates and spinners, 3 lives; `spy-laser` best level),
 Lie detector (`v-lie`, hold thumb 5 s, random verdict; host secret: tap the title = next is LIE, tap READY = next is TRUTH; ink and paper turn light red on a LIE), Agent ID scan (`v-agent`, button under the radar, thumbprint pad, hold 3 s, random code name).
 `press()` binds touch+mouse for these; `window.__spy` exists only on localhost for tests.
+Round 3: red "CLASSIFIED" button under the radar opens `v-cls` (8 tiles, `cl` action); game backs use `clsback` (return to the files, not HQ).
+Bomb defuse (`v-bomb`, clues each rule out one wrong wire, levels add wires and cut time, `spy-bomb`), Morse code (`v-morse`, decode game with •/— keys + translator, chart),
+Spy decoder (`v-decode`, shift cipher key 1-25 incl. digits), Satellite map (`v-sat`, procedurally drawn town on a 1600px offscreen canvas, zoom/pan/pins, fake coords, infrared/night),
+Disguise kit (`v-disguise`, SVG face parts + badge, saved in `spy-disguise`), Hacker terminal (`v-hack`, mash on-screen keys, bar slips back when idle),
+Memory test (`v-mem`, Simon 3x3, `spy-mem`), Escape room (`v-escape`, number lock from facts, pattern, riddle; +10 s per wrong answer, `spy-escape`).
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
