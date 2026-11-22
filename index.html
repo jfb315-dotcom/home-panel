@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.26">
+<meta name="panel-version" content="2026-11-21.27">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -281,7 +281,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .agsub{font-size:17px;margin-top:6px;color:#E9FFF2}
 
 /* Spy round 3: classified files */
-.spyview button,#p3 button{text-align:center}
+.spyview button,#p3 button{text-align:center;touch-action:manipulation}
+.spyview{touch-action:manipulation}
 #decBox,#mIn,#dIn{-webkit-box-sizing:border-box;box-sizing:border-box}
 .memt{padding:0}
 .sred{border:1px solid #FF4D4D;background:rgba(40,4,4,.8);color:#FF8A8A}
@@ -4057,6 +4058,7 @@ function flash(){var f=$("flash");f.style.opacity=".55";setTimeout(function(){f.
 /* ---------- Views, taps, idle return ---------- */
 var view=null,lastTouch=Date.now(),toBedArm=false;
 function openView(name){
+ freeGames(name);
  if(view)$("v-"+view).className=$("v-"+view).className.replace(/ on\b/,"");
  view=name;removeArm=null;photoRmArm=false;
  if(name==="timer")renderTimerView();
@@ -4087,7 +4089,7 @@ function openView(name){
  if(name==="mem")memOpen();
  if(name==="escape")erOpen();
 }
-function closeView(){if(view)$("v-"+view).className=$("v-"+view).className.replace(/ on\b/,"");view=null;}
+function closeView(){freeGames(null);if(view)$("v-"+view).className=$("v-"+view).className.replace(/ on\b/,"");view=null;}
 document.addEventListener("click",function(e){
  var t=e.target;while(t&&t!==document&&!(t.getAttribute&&(t.hasAttribute("data-open")||t.hasAttribute("data-timer")||t.hasAttribute("data-act")||t.hasAttribute("data-back"))))t=t.parentNode;
  if(!t||t===document)return;
@@ -4703,6 +4705,15 @@ function spyAct2(a,t){
 }
 
 /* ---------- Classified files (spy round 3) ---------- */
+// The iPad mini 2 has little memory: drop full-screen game canvases and the satellite town when leaving them.
+function freeGames(next){
+ try{
+  var own={carCv:"car",lzCv:"laser",lieCv:"lie",satCv:"sat",hRain:"hack"};
+  for(var id in own){if(own[id]!==next){var c=document.getElementById(id);if(c&&c.width>1){c.width=1;c.height=1;}}}
+  if(next!=="sat"&&typeof sat!=="undefined"&&sat.world){sat.world.width=1;sat.world=null;sat.pins=[];}
+  if(document.activeElement&&document.activeElement.blur&&document.activeElement!==document.body)document.activeElement.blur();
+ }catch(e){}
+}
 function sine(f,dur,vol,type){var a=audio();if(!a)return;var t=a.currentTime+0.01,o=a.createOscillator(),g=a.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+0.01);g.gain.setValueAtTime(vol,t+Math.max(0.02,dur-0.02));g.gain.linearRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+0.05);}
 function boomSound(){var a=audio();if(!a)return;var n=Math.floor(a.sampleRate*1.4),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.5);var s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type="lowpass";f.frequency.value=900;g.gain.value=0.9;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);s.start(a.currentTime+0.01);sine(60,0.8,0.5);}
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
@@ -4894,12 +4905,13 @@ function dsgSvg(){
   '<ellipse cx="94" cy="58" rx="64" ry="22" fill="#1E1E2A" transform="rotate(-10 94 58)"></ellipse><path d="M92 37 L94 28" stroke="#1E1E2A" stroke-width="5"></path>'][d.hat];
  return s+'</svg>';
 }
-function dsgRender(){
+function dsgRender(){try{dsgDraw();}catch(e){toast("Disguise kit hit a snag");}}
+function dsgDraw(){
  $("disFace").innerHTML=dsgSvg();$("disName").textContent="AGENT "+dsg.name;$("disNo").textContent=dsg.no;$("disCl").textContent="LEVEL "+dsg.cl;$("disSp").textContent=dsg.sp;
  $("disBar").innerHTML='<svg width="100%" height="44" viewBox="0 0 420 44" preserveAspectRatio="none" fill="#1A1F1C" aria-hidden="true">'+dsg.bar+'</svg>';
  var h="";["hair","hat","glasses","stache","skin"].forEach(function(k){h+='<div class="drow"><span class="vlab">'+DLAB[k]+'</span><button data-act="dpart" data-k="'+k+'" data-d="-1" aria-label="Previous">◂</button><span>'+DPART[k][dsg[k]]+'</span><button data-act="dpart" data-k="'+k+'" data-d="1" aria-label="Next">▸</button></div>';});
  h+='<div style="margin-top:10px"><button class="sbtn2 sghost" data-act="dname">NEW NAME</button><button class="sbtn2 sgo" data-act="drand" style="border:0">RANDOM DISGUISE</button></div>';
- $("disCtl").innerHTML=h;lsSet("spy-disguise",dsg);
+ $("disCtl").innerHTML=h;clearTimeout(dsg._t);dsg._t=setTimeout(function(){var c={};for(var k in dsg)if(k!=="_t")c[k]=dsg[k];lsSet("spy-disguise",c);},800);
 }
 
 /* 6. Hacker terminal: mash keys to fill the bar */
