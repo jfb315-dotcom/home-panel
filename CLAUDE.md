@@ -86,7 +86,7 @@ Football (`v-football`, state `fb-board`): team names (prompt), colors, timeouts
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
-over 10/20/30 min, then a "Good morning" screen for 45 min or until tapped), sleep sounds generated with Web Audio
+over 10/20/30 min, then a "Good morning" screen for 45 min or until pressed and held 1.2 s with a filling bar, so a brush won't end it), sleep sounds generated with Web Audio
 (white/pink/brown/rain/ocean/fan, sleep timer with 1-minute fade), night light, bedtime reminder, today/tomorrow weather.
 No alarm sound by John's choice. Clock look (15 fonts in `FONTS`, each with the weights it has; a separate Light/Regular/Bold choice `S.weight`; size; color) is in the "Clock" button; fonts load
 from Google Fonts on demand and the clock shrinks to fit the width. The colon is drawn as two dots (`placeColons`) centered on the

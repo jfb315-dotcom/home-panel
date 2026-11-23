@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-23.b8">
+<meta name="panel-version" content="2026-11-23.b9">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -59,6 +59,8 @@ input[type=range]{width:100%;height:44px}
 #morning .g{font-size:44px;font-weight:600;margin-top:10px}
 #morning .w{font-size:26px;margin-top:12px}
 #morning .h{font-size:20px;margin-top:40px;opacity:.7}
+#mBar{width:280px;height:8px;border-radius:4px;background:rgba(58,26,0,.15);margin-top:14px;overflow:hidden}
+#mBar i{display:block;height:100%;width:0;background:#C46A00}
 #frame{position:fixed;top:6px;left:6px;right:6px;bottom:6px;border-radius:26px;box-shadow:0 0 0 40px #000;pointer-events:none;z-index:200}
 #frame:after{content:"";position:absolute;top:0;left:0;right:0;bottom:0;border-radius:26px;border:2px solid var(--cb);opacity:.8;-webkit-transition:opacity 2s;transition:opacity 2s}
 .dim #frame:after{opacity:.4}
@@ -88,7 +90,7 @@ input[type=range]{width:100%;height:44px}
 <section class="view" id="v-style"><div class="vbar"><button class="back" data-back>BACKICON Back</button><h1>Clock look</h1></div><div class="vbody" id="styleBody"></div></section>
 <section class="view" id="v-light"><div class="vbar" style="position:absolute;top:0;left:0;z-index:2"><button class="back" data-back style="color:#7a4a10;border-color:rgba(122,74,16,.4)">BACKICON Back</button></div><button id="glow" data-act="glow" aria-label="Change brightness"></button></section>
 
-<div id="morning" role="button" data-act="morning"><div class="t" id="mClock"></div><div class="g">Good morning</div><div class="w" id="mWx"></div><div class="h">Tap anywhere to turn off</div></div>
+<div id="morning"><div class="t" id="mClock"></div><div class="g">Good morning</div><div class="w" id="mWx"></div><div class="h" id="mHint">Press and hold anywhere to turn off</div><div id="mBar"><i></i></div></div>
 <div id="toast"></div>
 <div id="frame"></div>
 
@@ -352,7 +354,7 @@ document.addEventListener("click",function(e){
  else if(a==="latest")getLatest();
  else if(a==="stop")stopSound();
  else if(a==="glow"){glowI=(glowI+1)%GLOWS.length;lsSet("bed-glow",glowI);showGlow();}
- else if(a==="morning"){demo=null;var n=new Date();if(S.on){doneDay=dayKey(n);lsSet("bed-done",doneDay);}render();}
+ else if(a==="morning")endMorning();
 },false);
 ["touchstart","mousedown"].forEach(function(ev){document.addEventListener(ev,function(){lastTouch=Date.now();if(document.body.className==="dim")render();},true);});
 // iOS only allows sound after a tap; wake the audio on the first touch.
@@ -376,6 +378,15 @@ function checkUpdate(){
 }
 
 window.addEventListener("resize",applyLook);
+function endMorning(){demo=null;var n=new Date();if(S.on){doneDay=dayKey(n);lsSet("bed-done",doneDay);}render();}
+// A brush or quick tap won't turn off the morning screen: it needs a 1.2 second press.
+(function(){
+ var M=$("morning"),bar=$("mBar").firstChild,t0=0,iv=0;
+ function down(e){if(e&&e.preventDefault)e.preventDefault();t0=Date.now();clearInterval(iv);iv=setInterval(function(){var p=(Date.now()-t0)/1200;bar.style.width=Math.min(100,p*100)+"%";if(p>=1){clearInterval(iv);t0=0;bar.style.width="0";endMorning();}},30);}
+ function up(){if(!t0)return;clearInterval(iv);var held=Date.now()-t0;t0=0;bar.style.width="0";if(held<1200){var h=$("mHint");h.textContent="Keep holding to turn off";clearTimeout(up.t);up.t=setTimeout(function(){h.textContent="Press and hold anywhere to turn off";},2000);}}
+ M.addEventListener("touchstart",down,{passive:false});M.addEventListener("touchend",up,false);M.addEventListener("touchcancel",up,false);
+ M.addEventListener("mousedown",down,false);window.addEventListener("mouseup",up,false);
+})();
 render();setInterval(render,5000);setInterval(function(){if(demo)render();},1000);
 loadWx();setInterval(loadWx,30*60000);
 setTimeout(checkUpdate,10000);setInterval(checkUpdate,15*60000);
