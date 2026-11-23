@@ -27,7 +27,7 @@ Font: Nunito (Google Fonts; falls back to the system font offline). Behind the t
 day/dawn/dusk/night, sun or real-phase moon crossing the header strip, stars, drifting CSS clouds, rain/snow on a 30fps canvas
 (paused while a view is open), fog bands, storm flashes. Tiles and pills are translucent (`--tileA`); header text is white with a shadow.
 Both apps draw a black rounded-corner frame (`#frame`, box-shadow ring) so they look like an app screen; Bedside adds a faint outline in the clock color (`#frame:after`, dimmer when idle).
-Header pills: theme, "Home" (`toHome`: close any view, go to screen 1), 007, moon icon only (bedside), Fun, Don't press. The moon pill goes to bedside/ (blocked while a timer runs; asks twice during trivia); Bedside's "Panel" button goes back.
+Header pills: theme, "Home" (`toHome`: close any view, go to screen 1), 007, moon icon only (bedside), Fun, Don't press. The moon pill opens bedside/ inside the panel in a full-screen iframe (`openBed`/`closeBed`, `#bedFrame`, body class `bedOn` hides the rest) so iOS shows no address bar; blocked while a timer runs, asks twice during trivia. Bedside's "Panel" button posts "closeBedside" to the parent when framed, else goes to ../. The panel never self-updates while `bedOpen`.
 
 ## Layout
 Two screens: swipe left/right on the home area (`#pager`, `setPage`, saved in `panel-page`; dots at the bottom).

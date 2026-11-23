@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-23.4">
+<meta name="panel-version" content="2026-11-23.5">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -503,6 +503,11 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 #fwCv{position:fixed;top:0;left:0;z-index:60;pointer-events:none}
 .pill.icononly{padding:0 16px}
 
+/* Bedside clock opens inside the panel (an iframe), so iOS shows no address bar */
+#bedFrame{position:fixed;top:0;left:0;right:0;bottom:0;z-index:70;background:#000;display:none}
+#bedFrame.on{display:block}
+#bedFrame iframe{width:100%;height:100%;border:0;display:block}
+body.bedOn>*:not(#bedFrame){visibility:hidden}
 @media (orientation:portrait){
   .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:1fr;grid-auto-flow:dense}
   .bigtime{font-size:150px}
@@ -4325,7 +4330,7 @@ document.addEventListener("click",function(e){
  var a=t.getAttribute("data-act");
  if(spyAct(a,t)||holAct(a,t)||fbAct(a,t))return;
  if(a==="latest"){toast("Getting the latest version…");setTimeout(function(){location.replace(location.pathname+"?v="+Date.now());},600);return;}
- if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}location.href="bedside/";return;}
+ if(a==="toBedside"){if(timer){toast("Stop the timer first");return;}if(trivia&&trivia.winner==null&&!toBedArm){toBedArm=true;toast("Tap again to leave the trivia game");setTimeout(function(){toBedArm=false;},3000);return;}openBed();return;}
  if(a==="joke"){jokeShown=!jokeShown;renderFun();return;}
  if(a==="ssec"){slideSec=+t.getAttribute("data-v");lsSet("slide-sec",slideSec);renderPhotoView();if(page===2)startSlides();else startTile();toast("Changes every "+(slideSec<60?slideSec+" seconds":slideSec/60+" minute"+(slideSec>60?"s":"")));return;}
  if(a==="sfit"){slideFit=t.getAttribute("data-v");lsSet("slide-fit",slideFit);applyFit();renderPhotoView();return;}
@@ -4359,7 +4364,7 @@ function checkUpdate(){
   var m=t.match(/name="panel-version" content="([^"]+)"/);
   if(!m||m[1]===APP_VERSION)return;
   // Only when nobody is using it: home screen showing, no timer, no trivia game going.
-  if(view||timer||(trivia&&trivia.winner==null)||Date.now()-lastTouch<60000){setTimeout(checkUpdate,60000);return;}
+  if(bedOpen||view||timer||(trivia&&trivia.winner==null)||Date.now()-lastTouch<60000){setTimeout(checkUpdate,60000);return;}
   location.replace(location.pathname+"?v="+encodeURIComponent(m[1]));
  }).catch(function(){});
 }
@@ -5680,6 +5685,16 @@ function holAct(a,t){
 }
 if(location.hostname==="localhost")window.__hol=function(){return {tc:tc,ht:ht,tw:tw,tst:tst,mt:mt,xd:xd,xr:xr,xf:xf,fb:fb};};
 
+/* ---------- Bedside clock inside the panel ---------- */
+var bedOpen=false;
+function openBed(){
+ if(bedOpen)return;if(view)closeView();bedOpen=true;var f=$("bedFrame");f.innerHTML='<iframe src="bedside/" title="Bedside clock"></iframe>';f.className="on";document.body.className+=" bedOn";
+}
+function closeBed(){
+ if(!bedOpen)return;bedOpen=false;var f=$("bedFrame");f.className="";f.innerHTML="";document.body.className=document.body.className.replace(/ ?bedOn\b/g,"");lastTouch=Date.now();
+}
+// The bedside page asks to close itself with a message when its Panel button is tapped.
+window.addEventListener("message",function(e){if(e.origin===location.origin&&e.data==="closeBedside")closeBed();},false);
 /* ---------- Start ---------- */
 applyTheme();
 renderWeather();renderTimerTile();renderWifi();
@@ -5714,5 +5729,6 @@ window.addEventListener("resize",function(){skyKey="";renderSky();fitText($("ver
 })();
 </script>
 <canvas id="fwCv" width="1" height="1"></canvas>
+<div id="bedFrame"></div>
 </body>
 </html>

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Bedside">
-<meta name="panel-version" content="2026-11-21.b7">
+<meta name="panel-version" content="2026-11-23.b8">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Bedside</title>
 <style>
@@ -348,7 +348,7 @@ document.addEventListener("click",function(e){
  if(a==="sunToggle"){S.on=!S.on;saveS();renderSunrise();render();toast(S.on?"Sunrise on for "+fmtTime(S.h,S.m):"Sunrise off");}
  else if(a==="bedToggle"){S.bedOn=!S.bedOn;saveS();renderSunrise();render();}
  else if(a==="demo"){closeView();demo=new Date();render();}
- else if(a==="toPanel"){location.href="../";}
+ else if(a==="toPanel"){if(window.parent!==window){try{window.parent.postMessage("closeBedside",location.origin);}catch(er){}}else location.href="../";}
  else if(a==="latest")getLatest();
  else if(a==="stop")stopSound();
  else if(a==="glow"){glowI=(glowI+1)%GLOWS.length;lsSet("bed-glow",glowI);showGlow();}
