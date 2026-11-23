@@ -27,7 +27,7 @@ Font: Nunito (Google Fonts; falls back to the system font offline). Behind the t
 day/dawn/dusk/night, sun or real-phase moon crossing the header strip, stars, drifting CSS clouds, rain/snow on a 30fps canvas
 (paused while a view is open), fog bands, storm flashes. Tiles and pills are translucent (`--tileA`); header text is white with a shadow.
 Both apps draw a black rounded-corner frame (`#frame`, box-shadow ring) so they look like an app screen; Bedside adds a faint outline in the clock color (`#frame:after`, dimmer when idle).
-Header "Bedside" pill goes to bedside/ (blocked while a timer runs; asks twice during trivia); Bedside's "Panel" button goes back.
+Header pills: theme, "Home" (`toHome`: close any view, go to screen 1), 007, moon icon only (bedside), Fun, Don't press. The moon pill goes to bedside/ (blocked while a timer runs; asks twice during trivia); Bedside's "Panel" button goes back.
 
 ## Layout
 Two screens: swipe left/right on the home area (`#pager`, `setPage`, saved in `panel-page`; dots at the bottom).
@@ -75,6 +75,14 @@ Bomb defuse (`v-bomb`, clues each rule out one wrong wire, levels add wires and 
 Spy decoder (`v-decode`, shift cipher key 1-25 incl. digits), Satellite map (`v-sat`, procedurally drawn town on a 1600px offscreen canvas, zoom/pan/pins, fake coords, infrared/night),
 Disguise kit (`v-disguise`, SVG face parts + badge, saved in `spy-disguise`), Hacker terminal (`v-hack`, mash on-screen keys, bar slips back when idle),
 Memory test (`v-mem`, Simon 3x3, `spy-mem`), Escape room (`v-escape`, number lock from facts, pattern, riddle; +10 s per wrong answer, `spy-escape`).
+
+## Holiday games and football (in Fun)
+Fun grid adds Football scoreboard, Thanksgiving games (`v-tg`) and Christmas games (`v-xm`); themed views use class `hview tg|xm`, `.hbar/.hback` (back to the menu via data-open), overlays `.hover` via `hOver/hOff`, loops via `hLoop(view,step)`, `fireworks(ms,colors)` on the full-screen `#fwCv`, `cheer()`, `horn()`. Emoji drawn on canvas (`EMO` font stack).
+Thanksgiving: Feast Catch (`tcatch`, levels, `hg-tcatch`), Turkey Trivia (`ttriv`), Whack-a-Turkey (`twhack`, 5 levels 1P / best of 3 rounds 2P, same pop pattern on both grids, touchstart multi-touch), Pie Tower (`tstack`, `hg-tstack`), Harvest Match (`tmatch`).
+Christmas: Present Drop (`xdrop`), Christmas Trivia (`xtriv`), Reindeer Race (`xrace`, 2P best of 3 or 5 levels vs Comet), Sleigh Ride (`xfly`, flappy, `hg-xfly`), Ornament Match (`xmatch`).
+Trivia engine `HTRIV[tg|xm][level]` (8 questions per level, 5 or 6 asked, 20 s each, 1P needs 3 right to move up). Match engine `MSETS`, `MSIZE` 4 boards; 2P keeps the turn on a pair.
+Football (`v-football`, state `fb-board`): team names (prompt), colors, timeouts, possession, quarter, game clock (keeps running when the view closes; never auto-closed), down & distance, tap/drag the field to place the ball, TD/FG/XP/2PT/safety/−1 with celebrations and fireworks, undo, New game needs two taps.
+`press()` ignores touches that start on a `.hover` overlay so its buttons still click. `window.__hol` exists only on localhost for tests.
 
 ## Bedside app (bedside/index.html)
 Separate Home Screen app at /home-panel/bedside/: dim amber clock, silent sunrise wake-up (screen ramps black > red > orange > warm white
