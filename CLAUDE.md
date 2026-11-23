@@ -69,8 +69,6 @@ Round 2 (all 10-minute idle except agent): Vault cracker (`v-vault`, drag the di
 Code breaker (`v-code`, 4 pegs, 6 colors, 10 tries; `spy-code`), Laser grid (`v-laser`, drag from START to EXIT, sliding-gap gates and spinners, 3 lives; `spy-laser` best level),
 Lie detector (`v-lie`, hold thumb 5 s, random verdict; host secret: tap the title = next is LIE, tap READY = next is TRUTH; ink and paper turn light red on a LIE), Agent ID scan (`v-agent`, button under the radar, thumbprint pad, hold 3 s, random code name).
 `freeGames()` (in openView/closeView) shrinks game canvases and drops the satellite town when leaving them (iPad mini 2 memory). The Cancel/Undo pop-up is iOS Shake to Undo, not the app.
-Lock screen (`#spyLock` inside `#p3`): shows on arriving at page 3, or after 10 minutes on it, when no spy touch for 10 min (`spyLast`, memory only, so a reload locks it).
-Hold thumb 2.2 s (`lkPad`) to unlock; random silly "unauthorized access will result in" line (`LK_WHAT`); 3 early lifts = fake self-destruct then retry. Taps on the lock don't reach HQ.
 `press()` binds touch+mouse for these; `window.__spy` exists only on localhost for tests.
 Round 3: red "CLASSIFIED" button under the radar opens `v-cls` (8 tiles, `cl` action); game backs use `clsback` (return to the files, not HQ).
 Bomb defuse (`v-bomb`, clues each rule out one wrong wire, levels add wires and cut time, `spy-bomb`), Morse code (`v-morse`, decode game with •/— keys + translator, chart),
