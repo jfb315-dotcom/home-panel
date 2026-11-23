@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.27">
+<meta name="panel-version" content="2026-11-23.3">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -479,7 +479,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
         <svg id="sweep" viewBox="0 0 420 420" aria-hidden="true"><path d="M210 210 L210 10 A200 200 0 0 1 351 69 Z" fill="#39FF88" opacity=".22"></path><path d="M210 210 L351 69" stroke="#39FF88" stroke-width="3"></path></svg>
         <div id="blips"></div>
       </div>
-      <div id="radarSide"><div id="blipInfo">TAP A BLIP TO IDENTIFY</div><button class="sbtn2 sghost" data-act="gagent">SCAN AGENT ID</button><button class="sbtn2 sred" data-act="gcls">CLASSIFIED ▸</button></div>
+      <div id="radarSide"><div id="blipInfo">TAP A BLIP TO IDENTIFY</div><button class="sbtn2 sred" data-act="gagent">SCAN AGENT ID ▸ CLASSIFIED</button></div>
     </div>
     <div id="spyR">
       <div class="spycard" id="mission"></div>
@@ -4666,13 +4666,13 @@ press($("liePad"),function(){
 
 /* Agent ID scan */
 var AG_A=["NIGHT","SILVER","SHADOW","IRON","MIDNIGHT","GOLDEN","SILENT","ARCTIC","THUNDER","GHOST","CRIMSON","STEALTH"],AG_B=["OWL","FOX","FALCON","WOLF","PANTHER","VIPER","HAWK","BADGER","RAVEN","SHARK","LYNX","MONGOOSE"],ag={st:"idle"};
-function agMsg(a,b,col,btn){$("agMsg").innerHTML='<div class="agbig" style="color:'+col+'">'+a+'</div><div class="agsub">'+b+'</div>'+(btn?'<button class="sbtn2 sgo" data-back style="border:0;margin-top:16px">ENTER HQ ▸</button>':'');}
-function startAgent(){clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";ag.L=[];ag.R=[];$("agPad").className="";$("agL").textContent="";$("agR").textContent="";agMsg("PLACE YOUR THUMB ON THE SCANNER","HOLD STILL FOR 3 SECONDS","#7DFFB0");}
+function agMsg(a,b,col,btn){$("agMsg").innerHTML='<div class="agbig" style="color:'+col+'">'+a+'</div><div class="agsub">'+b+'</div>'+(btn?'<button class="sbtn2 sgo" data-act="gcls" style="border:0;margin-top:16px;height:56px;font-size:18px">OPEN CLASSIFIED FILES ▸</button>':'');}
+function startAgent(){clearInterval(ag.iv);clearTimeout(ag.to);ag.st="idle";ag.L=[];ag.R=[];$("agPad").className="";$("agL").textContent="";$("agR").textContent="";agMsg("PLACE YOUR THUMB ON THE SCANNER","CLASSIFIED FILES NEED AGENT CLEARANCE · HOLD STILL FOR 3 SECONDS","#7DFFB0");}
 function hex(n){var s="";while(s.length<n)s+="0123456789ABCDEF".charAt(Math.floor(Math.random()*16));return s;}
 function agGrant(){
  if(view!=="agent")return;ag.st="idle";chime();
  var name=AG_A[Math.floor(Math.random()*AG_A.length)]+" "+AG_B[Math.floor(Math.random()*AG_B.length)];
- agMsg("ACCESS GRANTED","WELCOME, AGENT "+name+" · CLEARANCE LEVEL "+(1+Math.floor(Math.random()*9)),"#39FF88",true);
+ agMsg("ACCESS GRANTED","WELCOME, AGENT "+name+" · CLEARANCE LEVEL "+(1+Math.floor(Math.random()*9)),"#39FF88",true);clearTimeout(ag.go);ag.go=setTimeout(function(){if(view==="agent"&&ag.st==="idle")openView("cls");},5000);
 }
 press($("agPad"),function(){
  if(ag.st!=="idle")return;ag.st="scan";$("agPad").className="scan";agMsg("SCANNING…","KEEP YOUR THUMB ON THE SCANNER","#FFB020");
