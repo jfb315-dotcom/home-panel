@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Home Panel">
-<meta name="panel-version" content="2026-11-21.27">
+<meta name="panel-version" content="2026-11-23.1">
 <link rel="apple-touch-icon" href="icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&family=Oswald:wght@700&display=swap" rel="stylesheet">
 <title>Home Panel</title>
@@ -384,6 +384,28 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
 .eopts button{height:70px;border-radius:14px;border:1px solid #2BBF6A;background:#06120B;color:#E9FFF2;font-family:"Share Tech Mono",Menlo,monospace;font-size:22px;text-align:center}
 .eseq{font-size:44px;color:#FFE14D;letter-spacing:.06em;margin:10px 0 20px}
 
+/* Spy HQ lock screen: thumbprint after 10 minutes away */
+#spyLock{position:absolute;top:0;left:0;right:0;bottom:0;z-index:6;background:rgba(4,2,2,.97);border:2px solid #FF4D4D;border-radius:14px;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;-webkit-transition:opacity .6s;transition:opacity .6s}
+#spyLock.on{display:flex}
+.lkStripe{position:absolute;left:0;right:0;top:0;height:18px;background:repeating-linear-gradient(45deg,#FFB020 0,#FFB020 16px,#140404 16px,#140404 32px);opacity:.85}
+.lkStripe.bot{top:auto;bottom:0}
+.lkHead{font-family:Oswald,"Arial Narrow",sans-serif;font-size:44px;font-weight:700;letter-spacing:.12em;color:#FF4D4D;-webkit-animation:lkBlink 1s steps(2) infinite;animation:lkBlink 1s steps(2) infinite}
+@-webkit-keyframes lkBlink{50%{opacity:.35}}
+@keyframes lkBlink{50%{opacity:.35}}
+.lkSub{font-size:16px;letter-spacing:.16em;color:#FF8A8A;margin:6px 0 18px}
+.lkWarn{max-width:640px;font-size:16px;letter-spacing:.08em;color:#E9FFF2;border:1px solid #5C1E1E;background:rgba(255,77,77,.08);border-radius:12px;padding:12px 18px;line-height:1.4}
+.lkWarn b{display:block;font-family:Oswald,"Arial Narrow",sans-serif;font-size:26px;letter-spacing:.04em;color:#FFB020;margin-top:6px}
+#lkPad{position:relative;width:170px;height:200px;margin:20px 0 12px;border:2px solid #2BBF6A;border-radius:22px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(3,10,6,.9);touch-action:none;-webkit-user-select:none;user-select:none;flex:none}
+#lkPad svg{pointer-events:none}
+#lkLine{position:absolute;left:0;right:0;top:0;height:4px;background:#39FF88;box-shadow:0 0 18px 4px rgba(57,255,136,.6);display:none}
+#lkPad.scan{border-color:#FFB020}
+#lkPad.scan #lkLine{display:block;-webkit-animation:lkscan .8s ease-in-out infinite alternate;animation:lkscan .8s ease-in-out infinite alternate}
+#lkPad.ok{border-color:#39FF88;box-shadow:0 0 30px rgba(57,255,136,.5)}
+#lkPad.bad{border-color:#FF4D4D}
+@-webkit-keyframes lkscan{from{top:0}to{top:192px}}
+@keyframes lkscan{from{top:0}to{top:192px}}
+#lkMsg{font-size:18px;letter-spacing:.08em;min-height:48px;line-height:1.35;color:#7DFFB0}
+
 @media (orientation:portrait){
   .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:1fr;grid-auto-flow:dense}
   .bigtime{font-size:150px}
@@ -494,6 +516,15 @@ header{display:flex;align-items:flex-end;justify-content:space-between;height:72
     </div>
     <div id="ticker"><div id="tickIn"></div></div>
     <div id="static"></div>
+    <div id="spyLock">
+      <div class="lkStripe"></div>
+      <div class="lkHead">⚠ RESTRICTED AREA ⚠</div>
+      <div class="lkSub">SPY HQ · LEVEL 7 CLEARANCE REQUIRED</div>
+      <div class="lkWarn">WARNING: UNAUTHORIZED ACCESS WILL RESULT IN<b id="lkWhat"></b></div>
+      <div id="lkPad"><svg width="110" height="140" viewBox="0 0 150 190" fill="none" stroke="#39FF88" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><ellipse cx="75" cy="95" rx="64" ry="86" stroke-dasharray="60 10"></ellipse><ellipse cx="75" cy="100" rx="52" ry="72" stroke-dasharray="44 9"></ellipse><ellipse cx="75" cy="104" rx="40" ry="58" stroke-dasharray="70 8"></ellipse><ellipse cx="75" cy="108" rx="28" ry="44" stroke-dasharray="30 7"></ellipse><ellipse cx="75" cy="112" rx="16" ry="28" stroke-dasharray="50 6"></ellipse><path d="M75 100v26"></path></svg><div id="lkLine"></div></div>
+      <div id="lkMsg"></div>
+      <div class="lkStripe bot"></div>
+    </div>
   </div>
   </div>
   <div id="dots"><i class="on"></i><i></i><i></i></div>
@@ -4149,6 +4180,7 @@ function setPage(n){
  $("p3").className="page"+(n===3?" live":"");
  if(n===2){stopTile();renderPage2();startSlides();}else if(n===1){stopSlides();renderPhotoTile();startTile();}else{stopSlides();stopTile();}
  spyOn(n===3);
+ if(n===3)spyCheckLock();
 }
 function renderPage2(){
  var wx=lsGet("wx",null),html;
@@ -5053,6 +5085,49 @@ function spyAct3(a,t){
  if(a==="erid"){if(er.ridO[iv]===er.rid[1])erNext();else erWrong();return true;}
  return false;
 }
+
+/* ---------- Spy HQ lock: thumbprint needed after 10 minutes away from the spy screens ---------- */
+var LK_WHAT=["IMMEDIATE DELIVERY OF 10,000 RUBBER DUCKS TO YOUR BEDROOM","YOUR SOCKS BEING CONFISCATED FOR 30 DAYS","MANDATORY BROCCOLI AT EVERY MEAL UNTIL 2035","THE DOG BEING PROMOTED TO YOUR BOSS","YOUR EYEBROWS BEING TRIMMED BY TINY ROBOTS","A LIFETIME BAN FROM DESSERT","BEING LAUNCHED INTO SPACE WITH ONLY A SPORK","YOUR HOMEWORK BEING DOUBLED. THEN TRIPLED.","A SQUADRON OF PIGEONS FOLLOWING YOU EVERYWHERE","IMMEDIATE TICKLE INTERROGATION","BEING TURNED INTO A GARDEN GNOME","YOUR BED BEING FILLED WITH COLD SPAGHETTI"];
+var spyLast=0,lk={on:false,st:"idle",fails:0};
+function spyHere(){if(page===3&&!view)return true;var v=view&&$("v-"+view);return !!(v&&/\bspyview\b/.test(v.className));}
+function lkMsg(t,c){$("lkMsg").innerHTML='<span style="color:'+(c||"#7DFFB0")+'">'+t+'</span>';}
+function spyLockShow(){
+ if(lk.on)return;lk.on=true;lk.st="idle";lk.fails=0;var L=$("spyLock");L.style.opacity="1";L.className="on";$("lkPad").className="";
+ $("lkWhat").textContent=pick(LK_WHAT);lkMsg("PLACE YOUR THUMB ON THE SCANNER");
+ sine(440,0.18,0.18,"square");setTimeout(function(){sine(330,0.25,0.18,"square");},220);
+}
+function spyLockHide(){lk.on=false;spyLast=Date.now();var L=$("spyLock");L.style.opacity="0";setTimeout(function(){if(!lk.on)L.className="";},650);}
+function spyCheckLock(){if(Date.now()-spyLast>600000)spyLockShow();}
+// Any touch on the spy screens keeps the clearance fresh.
+["touchstart","mousedown"].forEach(function(ev){document.addEventListener(ev,function(){if(!lk.on&&spyHere())spyLast=Date.now();},true);});
+setInterval(function(){if(page===3&&!view&&!lk.on)spyCheckLock();},15000);
+(function(){
+ var pad=$("lkPad"),to=0,iv=0;
+ function down(e){
+  e.preventDefault();e.stopPropagation();if(lk.st!=="idle")return;lk.st="scan";pad.className="scan";lkMsg("SCANNING… HOLD STILL","#FFB020");
+  iv=setInterval(function(){sine(1800+Math.random()*700,0.02,0.05);},140);
+  to=setTimeout(function(){
+   clearInterval(iv);lk.st="done";pad.className="ok";chime();
+   var nm=(typeof dsg!=="undefined"&&dsg&&dsg.name)?dsg.name:pick(AG_A)+" "+pick(AG_B);
+   lkMsg("IDENTITY CONFIRMED<br>WELCOME BACK, AGENT "+esc(nm),"#39FF88");setTimeout(spyLockHide,1400);
+  },2200);
+ }
+ function up(e){
+  e.stopPropagation();if(lk.st!=="scan")return;clearTimeout(to);clearInterval(iv);lk.st="idle";lk.fails++;pad.className="bad";
+  if(lk.fails<3){spyBeep(220,0.25,0.2);lkMsg("SCAN FAILED · ATTEMPT "+lk.fails+" OF 3<br>KEEP YOUR THUMB DOWN UNTIL IT FINISHES","#FF8A8A");return;}
+  // Third strike: fake self-destruct, then a second chance.
+  lk.st="boom";var n=3;lkMsg("TOO MANY FAILED ATTEMPTS<br>SELF-DESTRUCT IN "+n,"#FF4D4D");alarm();
+  var cd=setInterval(function(){n--;if(n>0){lkMsg("TOO MANY FAILED ATTEMPTS<br>SELF-DESTRUCT IN "+n,"#FF4D4D");spyBeep(880,0.1,0.25);return;}
+   clearInterval(cd);boomSound();var p=$("p3");p.className="page boom live";setTimeout(function(){p.className="page"+(page===3?" live":"");},1000);
+   lkMsg("…JUST KIDDING. TRY AGAIN, AGENT.","#FFB020");lk.fails=0;lk.st="idle";pad.className="";},1000);
+ }
+ pad.addEventListener("touchstart",down,{passive:false});pad.addEventListener("touchend",up,false);pad.addEventListener("touchcancel",up,false);
+ pad.addEventListener("touchmove",function(e){e.preventDefault();e.stopPropagation();},{passive:false});
+ pad.addEventListener("mousedown",down,false);window.addEventListener("mouseup",function(e){if(lk.st==="scan")up(e);},false);
+ // Taps anywhere else on the lock screen do nothing (they don't reach the radar or gadgets).
+ $("spyLock").addEventListener("click",function(e){e.stopPropagation();},false);
+})();
+if(location.hostname==="localhost")window.__unlockSpy=function(){spyLast=Date.now();lk.on=false;$("spyLock").className="";};
 
 /* ---------- Start ---------- */
 applyTheme();
